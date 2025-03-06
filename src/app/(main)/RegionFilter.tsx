@@ -33,6 +33,10 @@ interface SubstationsResponse {
   message: string;
   substations: RegionObject[];
 }
+interface TmsResponse {
+  message: string;
+  tms: RegionObject[];
+}
 
 export default function RegionFilter() {
   return (
@@ -53,10 +57,12 @@ export function FilterSelect() {
   );
   const [substationState, setSubstationState] =
     useState<SubstationsResponse | null>(null);
+  const [tmState, setTmState] = useState<TmsResponse | null>(null);
   const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
   const [selectedSubstation, setSelectedSubstation] = useState<string | null>(
     null,
   );
+  const [selectedTm, setSelectedTM] = useState<string | null>(null);
 
   const {
     data: regionData,
@@ -93,6 +99,15 @@ export function FilterSelect() {
       .json<SubstationsResponse>();
     setSubstationState(response);
     setSelectedSubstation(null);
+  };
+  const fetchTms = async (id: number) => {
+    const response = await kyInstance
+      .get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/region/district/substation/${id}/tms`,
+      )
+      .json<TmsResponse>();
+    setTmState(response);
+    setSelectedTM(null);
   };
 
   return (
@@ -175,7 +190,7 @@ export function FilterSelect() {
         value={selectedSubstation || ""}
         onValueChange={(value) => {
           setSelectedSubstation(value);
-          fetchDistricts(parseInt(value));
+          fetchTms(parseInt(value));
         }}
       >
         <SelectTrigger className="h-12 w-48 rounded-2xl border border-muted-foreground bg-secondary">
@@ -196,13 +211,13 @@ export function FilterSelect() {
             <SelectLabel>Substations</SelectLabel>
             {substationState ? (
               substationState.substations.map((substation) => (
-                <SelectItem key={substation.id} value={substation.name}>
+                <SelectItem key={substation.id} value={String(substation.id)}>
                   {substation.name}
                 </SelectItem>
               ))
             ) : (
               <SelectItem disabled value="no-districts">
-                Choose substations options first
+                Choose district options first
               </SelectItem>
             )}
           </SelectGroup>
@@ -225,12 +240,18 @@ export function FilterSelect() {
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            <SelectLabel>TM Options</SelectLabel>
-            <ScrollArea className="h-30 border-t">
-              <SelectItem value="tm1">TM 1</SelectItem>
-              <SelectItem value="tm2">TM 2</SelectItem>
-              <SelectItem value="tm3">TM 3</SelectItem>
-            </ScrollArea>
+            <SelectLabel>Tms</SelectLabel>
+            {tmState ? (
+              tmState.tms.map((tm) => (
+                <SelectItem key={tm.id} value={String(tm.id)}>
+                  {tm.name}
+                </SelectItem>
+              ))
+            ) : (
+              <SelectItem disabled value="no-districts">
+                Choose substations options first
+              </SelectItem>
+            )}
           </SelectGroup>
         </SelectContent>
       </Select>

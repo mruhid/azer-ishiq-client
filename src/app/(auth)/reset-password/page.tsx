@@ -10,11 +10,10 @@ interface PageProps {
   searchParams: Promise<{ t: string; email: string }>;
 }
 
-export function generateMetadata({ searchParams }: PageProps): Metadata {
-  return {
-    title: `Reset Password`,
-  };
-}
+export const metadata: Metadata = {
+  title: "Reset password",
+};
+
 export default async function Page({ searchParams }: PageProps) {
   const { t, email } = await searchParams;
   const data = {
