@@ -23,3 +23,44 @@ export async function getCoordinates(place: string) {
     console.error("Error fetching coordinates:", error);
   }
 }
+type RequestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+
+interface ResponseData {
+  [key: string]: any; 
+}
+
+export const  sendRequest = async <T>(
+  url: string,
+  method: RequestMethod = 'GET',
+  token: string,
+  body: Record<string, any> | null = null
+): Promise<T> => {
+  try {
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+
+    const options: RequestInit = {
+      method,
+      headers,
+    };
+
+    if (body) {
+      options.body = JSON.stringify(body);
+    }
+
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      const errorData: ResponseData = await response.json();
+      throw new Error(errorData.message || 'Request failed');
+    }
+
+    const data: T = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error:', error);
+    throw error; // Rethrow error for further handling
+  }
+};

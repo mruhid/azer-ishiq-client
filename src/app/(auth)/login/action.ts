@@ -30,6 +30,7 @@ export async function login(
       return { error: "Invalid server response. Please try again." };
     }
 
+    console.log(data)
     const { userName, email, roles, token, refreshToken } = data.response;
 
     const session = await encrypt({

@@ -14,40 +14,72 @@ import { useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import kyInstance from "@/lib/ky";
+import DataTable from "./DataTable";
+import { toast } from "@/components/ui/use-toast";
 
-interface RegionObject {
+export interface RegionObject {
   id: number;
   name: string;
 }
 
-interface RegionsResponse {
+export interface RegionsResponse {
   message: string;
   region: RegionObject[];
 }
 
-interface DistrictsResponse {
+export interface DistrictsResponse {
   message: string;
   districts: RegionObject[];
 }
-interface SubstationsResponse {
+export interface SubstationsResponse {
   message: string;
   substations: RegionObject[];
 }
-interface TmsResponse {
+export interface TmsResponse {
   message: string;
   tms: RegionObject[];
 }
+export type URLProps = {
+  activeOption: string;
+  url: Url;
+};
+export type Url = {
+  default: string;
+  region: string;
+  district: string;
+  substation: string;
+  tm: string;
+};
 
 export default function RegionFilter() {
+  const [url, setUrl] = useState<URLProps>({
+    activeOption: "default",
+    url: {
+      default: "/Tm",
+      region: "/tm/regionid",
+      district: "/tm/districtID",
+      substation: "/tm/substationID",
+      tm: "/tm/tmID",
+    },
+  });
   return (
-    <div className="mx-auto flex w-full flex-col items-center justify-between rounded-2xl border border-muted-foreground/40 bg-card/70 p-2 shadow-lg backdrop-blur-md md:flex-row">
-      <FilterSelect />
-      <div className="mx-auto my-2 flex w-48 md:w-20">
-        <Button className="h-12 w-48 rounded-2xl bg-primary transition-all hover:bg-primary/60 md:w-20">
-          Search
-        </Button>
+    <>
+      <div
+        className="mx-auto flex w-full flex-col items-center justify-between rounded-2xl border border-muted-foreground/40 bg-card/70 p-2 shadow-lg backdrop-blur-md md:flex-row"
+      >
+        <FilterSelect />
+        <div
+          className="mx-auto my-2 flex w-48 md:w-20"
+        >
+          {" "}
+          <Button className="h-12 w-48 rounded-2xl bg-primary transition-all hover:bg-primary/60 md:w-20">
+            Search
+          </Button>
+        </div>
       </div>
-    </div>
+
+      <DataTable />
+    </>
   );
 }
 
@@ -63,7 +95,6 @@ export function FilterSelect() {
     null,
   );
   const [selectedTm, setSelectedTM] = useState<string | null>(null);
-
   const {
     data: regionData,
     isFetching: isFetchingRegions,
@@ -77,13 +108,23 @@ export function FilterSelect() {
     staleTime: Infinity,
   });
   const fetchDistricts = async (id: number) => {
-    const response = await kyInstance
-      .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/region/${id}/districts`)
-      .json<DistrictsResponse>();
-    setDistrictState(response);
-    setSelectedDistrict(null);
-    setSubstationState(null);
-    setSelectedSubstation(null);
+    try {
+      const response = await kyInstance
+        .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/region/${id}/districts`)
+        .json<DistrictsResponse>();
+      setDistrictState(response);
+      setSelectedDistrict(null);
+      setSubstationState(null);
+      setSelectedSubstation(null);
+      setSelectedTM(null);
+      setTmState(null);
+    } catch (error) {
+      console.log(error);
+      toast({
+        title: "District not found current region",
+        variant: "destructive",
+      });
+    }
   };
   const handleRegionChange = (value: string) => {
     const regionId = value;
@@ -92,24 +133,48 @@ export function FilterSelect() {
     }
   };
   const fetchSubstations = async (id: number) => {
-    const response = await kyInstance
-      .get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/region/district/${id}/substations`,
-      )
-      .json<SubstationsResponse>();
-    setSubstationState(response);
-    setSelectedSubstation(null);
+    try {
+      const response = await kyInstance
+        .get(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/region/district/${id}/substations`,
+        )
+        .json<SubstationsResponse>();
+      setSubstationState(response);
+      setSelectedSubstation(null);
+      setSelectedTM(null);
+      setTmState(null);
+    } catch (error) {
+      console.log(error);
+      toast({
+        title: "Substation not found current district",
+        variant: "destructive",
+      });
+    }
   };
   const fetchTms = async (id: number) => {
-    const response = await kyInstance
-      .get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/region/district/substation/${id}/tms`,
-      )
-      .json<TmsResponse>();
-    setTmState(response);
-    setSelectedTM(null);
+    try {
+      const response = await kyInstance
+        .get(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/region/district/substation/${id}/tms`,
+        )
+        .json<TmsResponse>();
+      setTmState(response);
+      setSelectedTM(null);
+    } catch (error) {
+      console.log(error);
+      toast({
+        title: "Tms not found curret subtation",
+        variant: "destructive",
+      });
+    }
   };
 
+  if (isRegionError) {
+    toast({
+      title: "Server error",
+      description: "Server not response,try latter",
+    });
+  }
   return (
     <div className="flex flex-col flex-wrap items-center justify-center gap-4 py-2 sm:flex-row">
       <Select onValueChange={(value) => handleRegionChange(value)}>
@@ -126,7 +191,7 @@ export function FilterSelect() {
             }
           />
         </SelectTrigger>
-        <SelectContent className="rounded-xl border border-muted-foreground bg-secondary text-start">
+        <SelectContent className="rounded-xl border border-muted-foreground bg-secondary">
           <SelectGroup>
             <SelectLabel className="text-left">
               <div className="text-left">Regions</div>
@@ -168,7 +233,7 @@ export function FilterSelect() {
             }
           />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="rounded-xl border border-muted-foreground bg-secondary">
           <SelectGroup>
             <SelectLabel>Districts</SelectLabel>
             {districtState ? (
@@ -190,6 +255,8 @@ export function FilterSelect() {
         value={selectedSubstation || ""}
         onValueChange={(value) => {
           setSelectedSubstation(value);
+          setSelectedTM(null);
+          setTmState(null);
           fetchTms(parseInt(value));
         }}
       >
@@ -206,7 +273,7 @@ export function FilterSelect() {
             }
           />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="rounded-xl border border-muted-foreground bg-secondary">
           <SelectGroup>
             <SelectLabel>Substations</SelectLabel>
             {substationState ? (
@@ -224,7 +291,12 @@ export function FilterSelect() {
         </SelectContent>
       </Select>
 
-      <Select>
+      <Select
+        value={selectedTm || ""}
+        onValueChange={(value) => {
+          setSelectedTM(value);
+        }}
+      >
         <SelectTrigger className="h-12 w-48 rounded-2xl border border-muted-foreground bg-secondary">
           <SelectValue
             placeholder={
@@ -238,7 +310,7 @@ export function FilterSelect() {
             }
           />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="rounded-xl border border-muted-foreground bg-secondary">
           <SelectGroup>
             <SelectLabel>Tms</SelectLabel>
             {tmState ? (

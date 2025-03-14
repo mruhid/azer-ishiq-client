@@ -1,5 +1,5 @@
 "use client";
-
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Form,
   FormControl,
@@ -28,6 +28,9 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import LoadingButton from "@/components/LoadingButton";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
+import Image from "next/image";
+import LImgae from "@/assets/robotLoading.gif";
 
 export default function LoginForm() {
   const [error, setError] = useState<string>();
@@ -60,48 +63,113 @@ export default function LoginForm() {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-        {error && <p className="text-center text-destructive">{error}</p>}
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Input
-                  placeholder="Email"
-                  {...field}
-                  className="rounded-full border border-muted-foreground/50 bg-secondary py-6"
-                  autoComplete="off"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <PasswordInput
-                  placeholder="Password"
-                  {...field}
-                  className="rounded-full border border-muted-foreground/50 bg-secondary py-6"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <ForgotPasswordDialog email={form.getValues("email")} />
-        <LoadingButton loading={isPending} type="submit" className="w-full rounded-full py-6 bg-primary hover:bg-primary/70 transition-all">
-          Log in
-        </LoadingButton>
-      </form>
-    </Form>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="mx-auto max-w-md rounded-lg p-6"
+    >
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+          {error && <p className="text-center text-destructive">{error}</p>}
+
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field, fieldState }) => (
+              <FormItem>
+                <FormControl>
+                  <Input
+                    placeholder="Email"
+                    {...field}
+                    className="rounded-full border border-muted-foreground/50 bg-secondary py-6"
+                    autoComplete="off"
+                  />
+                </FormControl>
+                <AnimatePresence>
+                  {fieldState.invalid && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -5 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <FormMessage />
+                    </motion.div>
+                  )}
+                </AnimatePresence>{" "}
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field, fieldState }) => (
+              <FormItem>
+                <FormControl>
+                  <PasswordInput
+                    placeholder="Password"
+                    {...field}
+                    className="rounded-full border border-muted-foreground/50 bg-secondary py-6"
+                  />
+                </FormControl>
+                <AnimatePresence>
+                  {fieldState.invalid && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -5 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <FormMessage />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </FormItem>
+            )}
+          />
+
+          <ForgotPasswordDialog email={form.getValues("email")} />
+          <motion.div whileTap={{ scale: 0.95 }}>
+            <LoadingButton
+              loading={isPending}
+              type="submit"
+              className="w-full rounded-full bg-primary py-6 transition-all hover:bg-primary/70"
+            >
+              Log in
+            </LoadingButton>
+          </motion.div>
+
+          {/* Loading Overlay Effect */}
+          <AnimatePresence>
+            {isPending && (
+              <motion.div
+                className="fixed inset-0 flex h-screen items-center justify-center backdrop-blur-sm"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <motion.div
+                  className="flex flex-col items-center rounded-lg bg-muted-foreground/60"
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.8, opacity: 0 }}
+                >
+                  <Image
+                    src={LImgae}
+                    className="rounded-2xl"
+                    alt="Loading"
+                    width={400}
+                    height={400}
+                  />
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </form>
+      </Form>
+    </motion.div>
   );
 }
 
@@ -116,7 +184,6 @@ export function ForgotPasswordDialog({ email }: { email: string }) {
       setForggottenEmail(email);
     }
   }, [email, isOpen]);
-  
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setForggottenEmail(event.target.value);
@@ -139,8 +206,7 @@ export function ForgotPasswordDialog({ email }: { email: string }) {
             "The reset link has been successfully sent to your email address.",
         });
       }
-    setIsOpen(false);
-
+      setIsOpen(false);
     });
   };
 
@@ -148,12 +214,12 @@ export function ForgotPasswordDialog({ email }: { email: string }) {
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <div className="mr-2 flex items-center justify-end">
-          <strong className="cursor-pointer text-sm text-muted-foreground/40 transition-all hover:text-primary hover:underline">
+          <strong className="cursor-pointer text-sm transition-all hover:text-primary hover:underline">
             Forgot password
           </strong>
         </div>
       </DialogTrigger>
-      <DialogContent className="rounded-2xl border border-muted-foreground/40 bg-card/80 shadow-lg  backdrop-blur-2xl sm:max-w-[425px]">
+      <DialogContent className="rounded-2xl border border-muted-foreground/40 bg-card/60 shadow-lg backdrop-blur-2xl sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Forgot password</DialogTitle>
           <DialogDescription>
@@ -180,7 +246,7 @@ export function ForgotPasswordDialog({ email }: { email: string }) {
             loading={isPending}
             onClick={onSubmit}
             disabled={!forggotenEmail}
-            variant={'outline'}
+            variant={"outline"}
             className="rounded-xl border border-muted-foreground"
           >
             Send link

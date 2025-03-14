@@ -13,7 +13,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { ChevronDown, MoreHorizontal } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -21,7 +20,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
@@ -36,21 +34,12 @@ import {
 import { PaginationBox } from "@/components/PaginationBox";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "./SessionProvider";
-import ky from "ky";
+import DataTableLoading from "@/components/DataTableLoading";
+import { Tmitem, TmRableProps } from "@/lib/type";
+import Link from "next/link";
 
-export type Test = {
-  items: item[];
-  totalCount: number;
-  page: number;
-  pageSize: number;
-};
-type item = {
-  id: number;
-  name: string;
-  substationId: number;
-};
-export const columns: ColumnDef<item>[] = [
-  { id: "index", header: "ID", cell: ({ row }) => <div>{row.index + 1}</div> },
+export const columns: ColumnDef<Tmitem>[] = [
+  { id: "ID", header: "ID", cell: ({ row }) => <div>{row.index + 1}</div> },
   {
     accessorKey: "name",
     header: "Name",
@@ -58,15 +47,15 @@ export const columns: ColumnDef<item>[] = [
   },
   {
     id: "actions",
-    header:()=><div>Actions</div>,
+    header: () => <div>Actions</div>,
     enableHiding: false,
     cell: ({ row }) => {
-      const payment = row.original;
+      const tmId = row.original.id;
 
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 ml-auto w-8 p-0 ">
+            <Button variant="ghost" className="ml-auto h-8 w-8 p-0">
               <MoreHorizontal />
             </Button>
           </DropdownMenuTrigger>
@@ -75,7 +64,11 @@ export const columns: ColumnDef<item>[] = [
             align="center"
           >
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>See this TMS</DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href={`/tm/${tmId}`} className="hover:underline">
+                See this TM
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuItem>View img</DropdownMenuItem>
             <DropdownMenuItem>View payment location</DropdownMenuItem>
           </DropdownMenuContent>
@@ -106,7 +99,7 @@ export function DefaultTable() {
     data: tmData,
     isPending,
     isError,
-  } = useQuery<Test>({
+  } = useQuery<TmRableProps>({
     queryKey: ["Tms-table-feed", pageNumber],
     queryFn: async () => {
       const response = await fetch(
@@ -148,7 +141,7 @@ export function DefaultTable() {
     return <h1>Has Error</h1>;
   }
   if (isPending) {
-    return <h1>Loading</h1>;
+    return <DataTableLoading />;
   }
   return (
     <div className="w-full">
@@ -159,13 +152,13 @@ export function DefaultTable() {
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
           }
-          className="m-2 max-w-sm rounded-xl border border-muted-foreground/40 bg-secondary backdrop-blur-md"
+          className="m-2 max-w-sm rounded-xl border border-muted-foreground bg-secondary backdrop-blur-md"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="outline"
-              className="ml-auto mr-2 rounded-xl border border-muted-foreground/40 bg-secondary backdrop-blur-md"
+              className="ml-auto mr-2 rounded-xl border border-muted-foreground bg-secondary backdrop-blur-md"
             >
               Columns <ChevronDown />
             </Button>
@@ -194,7 +187,7 @@ export function DefaultTable() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="m-2 rounded-xl border border-muted-foreground/40 bg-secondary backdrop-blur-md">
+      <div className="m-2 rounded-xl border border-muted-foreground bg-secondary backdrop-blur-md">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -251,7 +244,7 @@ export function DefaultTable() {
       <PaginationBox
         page={pageNumber}
         setPageNumber={setPageNumber}
-        size={Math.ceil(tmData.totalCount/tmData.pageSize)}
+        size={Math.ceil(tmData.totalCount / tmData.pageSize)}
       />
     </div>
   );

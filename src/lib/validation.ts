@@ -45,7 +45,7 @@ export const resetPasswordSchema = z
 
 export type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
 
-const MAX_FILE_SIZE = 1000000;
+const MAX_FILE_SIZE = 2000000;
 const ACCEPTED_IMAGE_TYPES = [
   "image/jpeg",
   "image/jpg",
@@ -54,47 +54,68 @@ const ACCEPTED_IMAGE_TYPES = [
 ];
 
 export const substationSchema = z.object({
-  name: z
-    .string()
-    .min(3, "Name must be at least 3 characters")
-    .nonempty("Name is required"),
+  name: z.string().min(1, "Substation name is required"), // Fix for required name field
 
-  regionId: z
-    .number()
-    .nullable()
-    .refine((value) => value !== null, "Region is required"),
+  regionId: requiredString,
 
-  districtId: z
-    .number()
-    .nullable()
-    .refine((value) => value !== null, "District is required"),
+  districtId: requiredString,
 
-  latitude: z
-    .number()
-    .min(-90, "Latitude must be between -90 and 90")
-    .max(90, "Latitude must be between -90 and 90"),
+  latitude: requiredString,
 
-  longitude: z
-    .number()
-    .min(-180, "Longitude must be between -180 and 180")
-    .max(180, "Longitude must be between -180 and 180"),
-
+  longitude: requiredString,
   address: z
     .string()
     .min(5, "Address must be at least 5 characters")
     .nonempty("Address is required"),
 
   image: z
-    .any()
+    .instanceof(File)
     .nullable()
     .refine((file) => {
-      if (file === null) return true; // No file uploaded is acceptable
-      return file?.size <= MAX_FILE_SIZE;
-    }, `Max image size is 1MB.`)
+      if (!file) return true;
+      return file.size <= MAX_FILE_SIZE;
+    }, "Max image size is 2MB.")
     .refine((file) => {
-      if (file === null) return true; // No file uploaded is acceptable
-      return ACCEPTED_IMAGE_TYPES.includes(file?.type);
-    }, "Only .jpg, .jpeg, .png and .webp formats are supported."),
+      if (!file) return true;
+      return ACCEPTED_IMAGE_TYPES.includes(file.type);
+    }, "Only .jpg, .jpeg, .png, and .webp formats are supported."),
 });
 
 export type SubstationValues = z.infer<typeof substationSchema>;
+
+export const NewSubstationSchema = z.object({
+  name: z.string().min(1, "Substation name is required"), // Fix for required name field
+  image: z
+    .any()
+    .nullable()
+    .refine((file) => {
+      if (!file) return true; // No file uploaded is acceptable
+      return file.size <= MAX_FILE_SIZE;
+    }, `Max image size is 1MB.`)
+    .refine((file) => {
+      if (!file) return true; // No file uploaded is acceptable
+      return ACCEPTED_IMAGE_TYPES.includes(file.type);
+    }, "Only .jpg, .jpeg, .png, and .webp formats are supported."),
+});
+
+export type NewSubstationValues = z.infer<typeof NewSubstationSchema>;
+
+export const tmSchema = z.object({
+  name: z.string().min(1, "Substation name is required"), // Fix for required name field
+
+  regionId: z.number(),
+
+  districtId: z.number(),
+  substationId: z.number(),
+
+  latitude: requiredString,
+
+  longitude: requiredString,
+
+  address: z
+    .string()
+    .min(5, "Address must be at least 5 characters")
+    .nonempty("Address is required"),
+});
+
+export type TMValues = z.infer<typeof tmSchema>;

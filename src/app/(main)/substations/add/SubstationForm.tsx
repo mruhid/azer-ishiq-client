@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import {
   Form,
   FormControl,
@@ -11,23 +11,35 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { substationSchema, SubstationValues } from "@/lib/validation";
+import {
+  NewSubstationSchema,
+  NewSubstationValues,
+  substationSchema,
+  SubstationValues,
+} from "@/lib/validation";
 import { useToast } from "@/components/ui/use-toast";
 import LoadingButton from "@/components/LoadingButton";
+import addSubstation from "./action";
+import { useRouter } from "next/navigation";
+import { valueProps } from "./SubstationFeed";
 
 export interface SubstationFormProps {
-  values: SubstationValues;
-  setValues: React.Dispatch<React.SetStateAction<SubstationValues>>;
+  Values: valueProps;
+  setValues: React.Dispatch<React.SetStateAction<valueProps>>;
 }
 
-export function SubstationForm({ values, setValues }: SubstationFormProps) {
+export function SubstationForm({ Values, setValues }: SubstationFormProps) {
   const [error, setError] = useState<string>();
+  const [isPending, startTransition] = useTransition();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-
+  const router = useRouter();
   const { toast } = useToast();
-  const form = useForm<SubstationValues>({
-    resolver: zodResolver(substationSchema),
-    defaultValues: values, // Use the current values passed from parent
+  const form = useForm<NewSubstationValues>({
+    resolver: zodResolver(NewSubstationSchema),
+    defaultValues: {
+      name: "",
+      image: null,
+    },
   });
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,38 +50,41 @@ export function SubstationForm({ values, setValues }: SubstationFormProps) {
         ...prevValues,
         image: file,
       }));
+      form.setValue("image", file, { shouldValidate: true });
     }
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
-    setValues((prevValues) => ({
-      ...prevValues,
-      [name]: value,
-    }));
-  };
-
-  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setValues((prevValues) => ({
-      ...prevValues,
-      [name]: value ? Number(value) : null,
-    }));
-  };
-
-  async function onSubmit(values: SubstationValues) {
-    // Handle form submission logic here (e.g., upload image, etc.)
-    toast({
-      title: "Substation added successfully",
-      description: "Your substation has been added.",
+  async function onSubmit(data: NewSubstationValues) {
+    const newValues = {
+      name: data.name,
+      image: data.image,
+      regionId: String(Values.regionId),
+      districtId: String(Values.districtId),
+      latitude: Number(Values.latitude).toFixed(6),
+      longitude: Number(Values.longitude).toFixed(6),
+      address: Values.address,
+    };
+    setError(undefined);
+    startTransition(async () => {
+      const { success, error, id } = await addSubstation(newValues);
+      if (error) {
+        setError(error);
+      } else if (success) {
+        toast({
+          title: "Successful Operation",
+          description: "New substation has been added",
+        });
+        router.push(`/substations/${id}`);
+      }
     });
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3 mb-3 w-full">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="mb-3 w-full space-y-3"
+      >
         {error && <p className="text-center text-destructive">{error}</p>}
 
         <FormField
@@ -79,10 +94,9 @@ export function SubstationForm({ values, setValues }: SubstationFormProps) {
             <FormItem>
               <FormControl>
                 <Input
-                  name="name"
+                  {...field}
                   placeholder="Enter substation name"
-                  value={values.name}
-                  onChange={handleChange}
+                  autoComplete="off"
                   className="rounded-xl border border-muted-foreground/50 bg-secondary"
                 />
               </FormControl>
@@ -100,10 +114,10 @@ export function SubstationForm({ values, setValues }: SubstationFormProps) {
               <FormControl>
                 <Input
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg, image/png,"
                   placeholder="Add substation image"
-                  onChange={handleImageChange}
                   className="rounded-xl border border-muted-foreground/50 bg-secondary"
+                  onChange={handleImageChange} // Update image change handler
                 />
               </FormControl>
               <FormMessage />
@@ -111,7 +125,7 @@ export function SubstationForm({ values, setValues }: SubstationFormProps) {
                 <img
                   src={imagePreview}
                   alt="Image preview"
-                  className="mt-2 h-24 w-24 object-cover"
+                  className="mx-auto h-24 w-24 object-cover"
                 />
               )}
             </FormItem>
@@ -119,9 +133,10 @@ export function SubstationForm({ values, setValues }: SubstationFormProps) {
         />
 
         <LoadingButton
-          loading={false}
+          loading={isPending}
+          disabled={!Values.regionId || !Values.districtId}
           type="submit"
-          className="w-full rounded-xl bg-primary  transition-all hover:bg-primary/70"
+          className="w-full rounded-xl bg-primary transition-all hover:bg-primary/70"
         >
           Submit
         </LoadingButton>

@@ -9,12 +9,12 @@ import {
   PaginationPrevious,
 } from "./ui/pagination";
 
-type PaginationProps={
-  page:number;
-  size:number;
-  setPageNumber: Dispatch<SetStateAction<number>>
-}
-export function PaginationBox({page,size,setPageNumber}:PaginationProps) {
+type PaginationProps = {
+  page: number;
+  size: number;
+  setPageNumber: Dispatch<SetStateAction<number>>;
+};
+export function PaginationBox({ page, size, setPageNumber }: PaginationProps) {
   const totalPages = size;
 
   const handlePageChange = (page: number) => {
@@ -67,11 +67,11 @@ export function PaginationBox({page,size,setPageNumber}:PaginationProps) {
   };
 
   return (
-    <Pagination className="my-2 mx-auto">
+    <Pagination className="mx-auto my-2">
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious
-            className="cursor-pointer hidden md:flex"
+            className="hidden cursor-pointer md:flex"
             onClick={() => handlePageChange(page - 1)}
           />
         </PaginationItem>
@@ -80,7 +80,7 @@ export function PaginationBox({page,size,setPageNumber}:PaginationProps) {
 
         <PaginationItem>
           <PaginationNext
-            className="cursor-pointer hidden md:flex"
+            className="hidden cursor-pointer md:flex"
             onClick={() => handlePageChange(page + 1)}
           />
         </PaginationItem>

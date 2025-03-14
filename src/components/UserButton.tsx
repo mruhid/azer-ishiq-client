@@ -44,7 +44,10 @@ export default function UserButton({ className }: UserButtonProps) {
           <UserAvatar avatarUrl={"azerishiq"} size={54} />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
+      <DropdownMenuContent
+        align="end"
+        className="rounded-xl border border-muted-foreground/60 py-2 px-4"
+      >
         <DropdownMenuLabel>Logged in as @{user?.userName}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <Link href={`/users/${user?.userName}`}>
@@ -82,7 +85,7 @@ export default function UserButton({ className }: UserButtonProps) {
         <DropdownMenuItem
           onClick={() => {
             queryClient.clear();
-            logout()
+            logout();
           }}
         >
           <LogOutIcon className="mr-2 size-4" />
