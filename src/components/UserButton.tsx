@@ -37,11 +37,11 @@ export default function UserButton({ className }: UserButtonProps) {
       <DropdownMenuTrigger asChild>
         <button
           className={cn(
-            "flex-none rounded-full border-[3px] border-primary/60",
+            "flex-none bg-card rounded-full border-[3px] border-primary/60",
             className,
           )}
         >
-          <UserAvatar avatarUrl={"azerishiq"} size={54} />
+          <UserAvatar avatarUrl={"azerishiq"} size={40} />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent

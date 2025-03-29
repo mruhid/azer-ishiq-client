@@ -26,11 +26,10 @@ export async function signUp(
 
     const data = await response.json();
 
-    if (data?.error) {
-      return {
-        error: data?.error || "Invalid server response. Please try again.",
-      };
+    if (!response.ok || data.error) {
+      return { error: data.error || "Register failed. Please try again." };
     }
+
     return { success: true };
   } catch (error: any) {
     console.error("Sign up error:", error.response?.data || error.message);

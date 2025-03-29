@@ -1,7 +1,15 @@
 "use client";
-import MapComponent from "@/components/MapComponents";
 import { Dispatch, SetStateAction } from "react";
-
+import dynamic from "next/dynamic";
+import { Loader2Icon } from "lucide-react";
+const MapComponent = dynamic(() => import("@/components/MapComponents"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex w-[350px] h-[300px] items-center justify-center rounded-xl">
+      <Loader2Icon className="size-10 animate-spin text-muted-foreground" />
+    </div>
+  ),
+});
 type Location = {
   lat: number;
   lng: number;

@@ -52,3 +52,35 @@ export type SubstationItemsProps = {
   name: string;
   substationId: number;
 };
+
+// Subscriber props
+export interface Subscriber {
+  id: number;
+  name: string;
+  surname: string;
+  patronymic: string;
+  phoneNumber: string;
+  finCode: string;
+  populationStatus: number;
+  regionId: number;
+  regionName: string;
+  districtId: number;
+  districtName: string;
+  territoryId: number;
+  terriotoryName: string;
+  streetId: number;
+  streetName: string;
+  building: string;
+  apartment: string;
+  status: number;
+  ats: string;
+  createdDate: string;
+  subscriberCode: string;
+}
+
+export interface SubscribersProps {
+  items: Subscriber[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+}

@@ -18,8 +18,12 @@ export default function SearchField() {
   return (
     <form onSubmit={handleSubmit} method="GET" action="/search">
       <div className="relative">
-        <Input name="q" placeholder="Search" className="pe-10 rounded-xl border border-muted-foreground/60" />
-        <SearchIcon className="absolute right-3 top-1/2 size-5 -translate-y-1/2 transform text-muted-foreground" />
+        <SearchIcon className="absolute left-3 top-1/2 size-5 -translate-y-1/2 transform text-muted-foreground" />
+        <Input
+          name="q"
+          placeholder="Search"
+          className="rounded-xl border-0 ps-10"
+        />
       </div>
     </form>
   );

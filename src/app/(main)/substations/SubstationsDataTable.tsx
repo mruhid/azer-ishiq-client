@@ -84,7 +84,7 @@ export const columns: ColumnDef<SubstationItemsProps>[] = [
 
 export default function SubstationDataTable() {
   return (
-    <div className="rounded-2xl border border-muted-foreground/40 bg-card/70 p-2 shadow-lg backdrop-blur-md">
+    <div className="rounded-2xl w-full border border-muted-foreground/40 bg-card/70 p-2 shadow-lg backdrop-blur-md">
       <DefaultTable />
     </div>
   );

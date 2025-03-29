@@ -22,6 +22,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import kyInstance from "@/lib/ky";
 import { useQuery } from "@tanstack/react-query";
 import { DistrictsResponse, RegionsResponse } from "../../RegionFilter";
+import MapSearchedPlaceInput from "@/components/MapSearchedPlaceInput";
 
 export type valueProps = {
   regionId: number;
@@ -95,20 +96,7 @@ export default function SubstationFeed() {
           <h1 className="my-8 block rounded-xl border border-muted-foreground/60 bg-card py-2 text-center md:hidden">
             New substation
           </h1>
-
-          <div className="relative my-2">
-            <Input
-              onKeyDown={handleKeyDown}
-              className="rounded-xl border border-muted-foreground/60 bg-secondary"
-              onChange={handleSearchedPlace}
-              value={searchedPlace}
-              placeholder="Write a place to find "
-            />
-            <SearchIcon
-              onClick={search}
-              className="absolute right-3 top-1/2 size-5 -translate-y-1/2 transform text-muted-foreground"
-            />
-          </div>
+          <MapSearchedPlaceInput setSelectedLocation={setSelectedLocation} />
           <SubstationMap
             selectedLocation={selectedLocation}
             setSelectedLocation={setSelectedLocation}

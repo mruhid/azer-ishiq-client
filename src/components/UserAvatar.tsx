@@ -1,10 +1,10 @@
 import avatarPlaceholder from "@/assets/avatar-placeholder.png";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
-import Logo from "@/assets/AzerIshiqBC.png"
+import Image, { StaticImageData } from "next/image";
+import Logo from "@/assets/AzerIshiqBC.png";
 
 interface UserAvatarProps {
-  avatarUrl: string | null | undefined;
+  avatarUrl: string | null | undefined | StaticImageData;
   size?: number;
   className?: string;
 }
@@ -16,7 +16,13 @@ export default function UserAvatar({
 }: UserAvatarProps) {
   return (
     <Image
-      src={avatarUrl ? (avatarUrl=="azerishiq"?Logo:avatarUrl):avatarPlaceholder}
+      src={
+        avatarUrl
+          ? avatarUrl == "azerishiq"
+            ? Logo
+            : avatarUrl
+          : avatarPlaceholder
+      }
       alt="User avatar"
       width={size ?? 48}
       height={size ?? 48}

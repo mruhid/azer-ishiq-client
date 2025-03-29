@@ -26,6 +26,7 @@ import {
 } from "../../RegionFilter";
 import TMMap from "./TMMap";
 import { TMForms } from "./TMForms";
+import MapSearchedPlaceInput from "@/components/MapSearchedPlaceInput";
 
 export type valueProps = {
   regionId: number;
@@ -45,14 +46,13 @@ export default function AddTMFeed() {
     lng: 49.8671,
   });
 
-  const [searchedPlace, setSearchedPlace] = useState<string>("");
   const [values, setValues] = useState<valueProps>({
     regionId: 0,
     districtId: 0,
     substationId: 0,
     latitude: selectedLocation.lat,
     longitude: selectedLocation.lng,
-    address: searchedPlace ? searchedPlace : "No Place",
+    address: "No Place",
   });
 
   useEffect(() => {
@@ -63,37 +63,6 @@ export default function AddTMFeed() {
     }));
   }, [selectedLocation]);
 
-  const handleSearchedPlace = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setSearchedPlace(value);
-  };
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      search();
-    }
-  };
-
-  const search = async () => {
-    if (!searchedPlace.trim()) {
-      toast({
-        title: "You need to write something first",
-        variant: "destructive",
-      });
-      return;
-    }
-    const coordinate = await getCoordinates(searchedPlace);
-    if (!coordinate) {
-      toast({
-        title: "Place not found!",
-        variant: "destructive",
-      });
-      return;
-    }
-    const { lat, lon } = coordinate;
-    const newLocation = { lat: lat, lng: lon };
-    setSelectedLocation(newLocation);
-    
-  };
   return (
     <>
       <SubstationSelect values={values} setValues={setValues} />
@@ -103,19 +72,8 @@ export default function AddTMFeed() {
             New TM
           </h1>
 
-          <div className="relative my-2">
-            <Input
-              onKeyDown={handleKeyDown}
-              className="rounded-xl border border-muted-foreground/60 bg-secondary"
-              onChange={handleSearchedPlace}
-              value={searchedPlace}
-              placeholder="Write a place to find "
-            />
-            <SearchIcon
-              onClick={search}
-              className="absolute right-3 top-1/2 size-5 -translate-y-1/2 transform text-muted-foreground"
-            />
-          </div>
+          <MapSearchedPlaceInput setSelectedLocation={setSelectedLocation} />
+
           <TMMap
             selectedLocation={selectedLocation}
             setSelectedLocation={setSelectedLocation}

@@ -8,6 +8,7 @@ import L from "leaflet";
 interface MapComponentProps {
   initialCoords: { lat: number; lng: number };
   onLocationSelect: (coords: { lat: number; lng: number }) => void;
+  size?:number
 }
 
 // Custom red marker icon
@@ -21,7 +22,6 @@ const redIcon = new L.Icon({
   shadowSize: [41, 41],
 });
 
-// Component to handle user clicks on the map
 const LocationSelector = ({
   onLocationSelect,
 }: {
@@ -35,7 +35,6 @@ const LocationSelector = ({
   return null;
 };
 
-// Component to update map view when coordinates change
 const MapViewUpdater = ({ coords }: { coords: { lat: number; lng: number } }) => {
   const map = useMap();
 
@@ -46,20 +45,19 @@ const MapViewUpdater = ({ coords }: { coords: { lat: number; lng: number } }) =>
   return null;
 };
 
-// ✅ **Fix: Component to force Leaflet to resize map correctly**
 const MapResizer = () => {
   const map = useMap();
   
   useEffect(() => {
     setTimeout(() => {
       map.invalidateSize();
-    }, 200); // Small delay ensures Leaflet recalculates correctly
+    }, 200); 
   }, [map]);
 
   return null;
 };
 
-const MapComponent: React.FC<MapComponentProps> = ({ initialCoords, onLocationSelect }) => {
+const MapComponent: React.FC<MapComponentProps> = ({ initialCoords, onLocationSelect,size=350 }) => {
   const [markerPosition, setMarkerPosition] = useState(initialCoords);
 
   useEffect(() => {
@@ -70,7 +68,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ initialCoords, onLocationSe
     <MapContainer
       center={markerPosition}
       zoom={11}
-      style={{ height: "350px", width: "350px" }}
+      style={{ height: `${size}px`, width: `${size}px` }}
       attributionControl={false}
     >
       <TileLayer

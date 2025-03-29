@@ -6,14 +6,29 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache, useState } from "react";
 import ImageBox from "@/components/ImageBox";
-import MapOnlyRead from "@/components/MapOnlyRead";
 import { Card, CardContent } from "@/components/ui/card";
-import { Globe, AlertCircle, HomeIcon, ImageIcon } from "lucide-react";
+import {
+  Globe,
+  AlertCircle,
+  HomeIcon,
+  ImageIcon,
+  Loader2Icon,
+} from "lucide-react";
 import UnauthorizedPage from "@/components/UnauthorizedPage";
 import { Button } from "@/components/ui/button";
 import DeleteSubtationDialog from "./SubstationDialogs";
 import { sendRequest } from "@/lib/utils";
+import dynamic from "next/dynamic";
+import Link from "next/link";
 
+const MapOnlyRead = dynamic(() => import("@/components/MapOnlyRead"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex h-[300px] w-[350px] items-center justify-center rounded-xl">
+      <Loader2Icon className="size-10 animate-spin text-muted-foreground" />
+    </div>
+  ),
+});
 const getSubstation = cache(
   async (id: number): Promise<SubstationProps | null> => {
     try {
@@ -29,7 +44,7 @@ const getSubstation = cache(
         session,
       );
 
-      return substation; 
+      return substation;
     } catch (error) {
       console.error("Error fetching substation:", error);
       return null;
@@ -102,7 +117,7 @@ export default async function Page({ params }: { params: { id: number } }) {
           <div className="mt-6 flex flex-col justify-center gap-y-2 pr-2">
             <div className="grid w-full max-w-36 grid-cols-[auto_1fr] items-center gap-2 text-lg">
               <span className="font-medium">Region:</span>
-              <span className="rounded-md w-full bg-muted px-3 py-1 text-sm text-muted-foreground">
+              <span className="w-full rounded-md bg-muted px-3 py-1 text-sm text-muted-foreground">
                 {substation.district.region.name}
               </span>
             </div>
@@ -115,9 +130,13 @@ export default async function Page({ params }: { params: { id: number } }) {
           </div>
           <div className="mt-5 flex w-full flex-col justify-center gap-3">
             <div>
-              <Button className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-lg font-semibold text-white shadow-md transition-all duration-200 hover:bg-primary/80">
-                Edit
-              </Button>
+              <Link
+                href={`/substations/${substation.id}/edit?region=${substation.district.region.id}&district=${substation.district.id}`}
+              >
+                <Button className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-lg font-semibold text-white shadow-md transition-all duration-200 hover:bg-primary/80">
+                  Edit
+                </Button>
+              </Link>
             </div>
             <div>
               <DeleteSubtationDialog id={substation.id} />

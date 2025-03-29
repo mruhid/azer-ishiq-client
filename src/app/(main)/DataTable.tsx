@@ -37,6 +37,7 @@ import { useSession } from "./SessionProvider";
 import DataTableLoading from "@/components/DataTableLoading";
 import { Tmitem, TmRableProps } from "@/lib/type";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 export const columns: ColumnDef<Tmitem>[] = [
   { id: "ID", header: "ID", cell: ({ row }) => <div>{row.index + 1}</div> },
@@ -87,6 +88,11 @@ export default function DataTable() {
 }
 
 export function DefaultTable() {
+  const searchParams = useSearchParams();
+  const region = searchParams.get("region");
+  const district = searchParams.get("district");
+  const substation = searchParams.get("substation");
+
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   );
@@ -100,10 +106,10 @@ export function DefaultTable() {
     isPending,
     isError,
   } = useQuery<TmRableProps>({
-    queryKey: ["Tms-table-feed", pageNumber],
+    queryKey: ["Tms-table-feed", pageNumber, region, district],
     queryFn: async () => {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/Tm/paged?page=${pageNumber}&pageSize=5`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/Tm/filtered?page=${pageNumber}&pageSize=5${region ? `&regionId=${region}` : ``}${district ? `&districtId=${district}` : ``}${substation ? `&substationId=${substation}` : ``}`,
         {
           method: "GET",
           headers: {
@@ -119,6 +125,7 @@ export function DefaultTable() {
 
       return response.json();
     },
+
     staleTime: Infinity,
   });
 
@@ -138,13 +145,17 @@ export function DefaultTable() {
   });
 
   if (isError) {
-    return <h1>Has Error</h1>;
+    return (
+      <h1 className="text-center text-xl font-bold text-destructive">
+        Something went wrong .Try latter
+      </h1>
+    );
   }
   if (isPending) {
     return <DataTableLoading />;
   }
   return (
-    <div className="w-full">
+    <div className="w-full" id="data-table">
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter tm name..."
@@ -241,11 +252,15 @@ export function DefaultTable() {
           </TableBody>
         </Table>
       </div>
-      <PaginationBox
-        page={pageNumber}
-        setPageNumber={setPageNumber}
-        size={Math.ceil(tmData.totalCount / tmData.pageSize)}
-      />
+      {tmData.items.length ? (
+        <PaginationBox
+          page={pageNumber}
+          setPageNumber={setPageNumber}
+          size={Math.ceil(tmData.totalCount / tmData.pageSize)}
+        />
+      ) : (
+        ""
+      )}
     </div>
   );
 }

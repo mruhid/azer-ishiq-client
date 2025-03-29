@@ -7,7 +7,6 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <div className="mx-auto w-full min-w-0 max-w-[1000px] space-y-5">
-      <h1>Substation</h1>
       <SubstationFeed />
     </div>
   );

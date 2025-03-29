@@ -4,6 +4,7 @@ import "./globals.css";
 import ReactQueryProvider from "@/ReactQueryProvider";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/toaster";
+import NextTopLoader from 'nextjs-toploader';
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -19,7 +20,7 @@ export const metadata: Metadata = {
     template: "%s | AzerIshiq",
     default: "AzerIshiq",
   },
-  description: "The admin panel  for Azrerishiq employeers",
+  description: "The admin panel for Azrerishiq employeers",
 };
 
 export default function RootLayout({
@@ -30,6 +31,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <NextTopLoader color="#1e3a8a" height={4}/>
+
         <ReactQueryProvider>
           <ThemeProvider
             attribute="class"

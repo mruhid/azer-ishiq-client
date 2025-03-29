@@ -23,21 +23,21 @@ export async function getCoordinates(place: string) {
     console.error("Error fetching coordinates:", error);
   }
 }
-type RequestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+type RequestMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
 interface ResponseData {
-  [key: string]: any; 
+  [key: string]: any;
 }
 
-export const  sendRequest = async <T>(
+export const sendRequest = async <T>(
   url: string,
-  method: RequestMethod = 'GET',
+  method: RequestMethod = "GET",
   token: string,
-  body: Record<string, any> | null = null
+  body: Record<string, any> | null = null,
 ): Promise<T> => {
   try {
     const headers = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     };
 
@@ -54,13 +54,28 @@ export const  sendRequest = async <T>(
 
     if (!response.ok) {
       const errorData: ResponseData = await response.json();
-      throw new Error(errorData.message || 'Request failed');
+      throw new Error(errorData.message || "Request failed");
     }
 
     const data: T = await response.json();
     return data;
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
     throw error; // Rethrow error for further handling
   }
 };
+
+export function formatDate(isoString: string) {
+  const date = new Date(isoString);
+  return date
+    .toLocaleString("en-GB", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    })
+    .replace(",", "");
+}

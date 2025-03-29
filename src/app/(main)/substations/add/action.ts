@@ -25,8 +25,6 @@ export default async function addSubstation(
       return { error: "Unauthorized" };
     }
 
-    console.log("Sending FormData:", formData);
-
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/substation`,
       {
@@ -42,12 +40,6 @@ export default async function addSubstation(
     console.log("Response Data:", data);
 
     if (!response.ok) {
-      if (
-        data.message ==
-        "An error occurred while saving the entity changes. See the inner exception for details."
-      ) {
-        logout();
-      }
       return {
         error: data.message || "Add substation failed. Please try again.",
       };

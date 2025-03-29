@@ -31,6 +31,7 @@ import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import LImgae from "@/assets/robotLoading.gif";
+import CountdownTimer from "./CountdownTimer";
 
 export default function LoginForm() {
   const [error, setError] = useState<string>();
@@ -71,7 +72,20 @@ export default function LoginForm() {
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-          {error && <p className="text-center text-destructive">{error}</p>}
+          {error &&
+            (error === "block" ? (
+              <CountdownTimer time={600} />
+            ) : (
+              <motion.p
+                className="text-center text-destructive"
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 1, y: -5 }}
+                transition={{ duration: 0.3 }}
+              >
+                {error}
+              </motion.p>
+            ))}
 
           <FormField
             control={form.control}
@@ -219,10 +233,10 @@ export function ForgotPasswordDialog({ email }: { email: string }) {
           </strong>
         </div>
       </DialogTrigger>
-      <DialogContent className="rounded-2xl border border-muted-foreground/40 bg-card/60 shadow-lg backdrop-blur-2xl sm:max-w-[425px]">
+      <DialogContent className="rounded-2xl border border-muted-foreground/40 bg-card/60 shadow-lg backdrop-blur-2xl max-w-[400px] sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Forgot password</DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-primary">
             Enter your email to reset your password.
           </DialogDescription>
         </DialogHeader>

@@ -21,7 +21,7 @@ export default function NotFound() {
         </Link>
       </div>
       <motion.div
-        className="mb-4 flex items-center justify-center rounded-full bg-black p-6"
+        className="mb-4 flex items-center justify-center p-6"
         animate={{
           rotate: [0, 360],
           x: [0, 15, 15, -15, 0],
@@ -33,7 +33,7 @@ export default function NotFound() {
           <Image
             src={notFoundImg}
             alt='"Astronaut floating'
-            className="w-[200px]"
+            className="w-[300px]"
           />
         </div>
       </motion.div>

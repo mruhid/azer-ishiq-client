@@ -1,4 +1,4 @@
-import { useState, useTransition } from "react";
+import React, { useState, useTransition } from "react";
 import {
   Form,
   FormControl,
@@ -22,6 +22,7 @@ import LoadingButton from "@/components/LoadingButton";
 import addSubstation from "./action";
 import { useRouter } from "next/navigation";
 import { valueProps } from "./SubstationFeed";
+import { Plus } from "lucide-react";
 
 export interface SubstationFormProps {
   Values: valueProps;
@@ -79,6 +80,23 @@ export function SubstationForm({ Values, setValues }: SubstationFormProps) {
     });
   }
 
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files?.[0];
+
+    if (file) {
+      setImagePreview(URL.createObjectURL(file));
+      setValues((prevValues) => ({
+        ...prevValues,
+        image: file,
+      }));
+      form.setValue("image", file, { shouldValidate: true });
+    }
+  };
   return (
     <Form {...form}>
       <form
@@ -112,13 +130,20 @@ export function SubstationForm({ Values, setValues }: SubstationFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input
-                  type="file"
-                  accept="image/jpeg, image/png,"
-                  placeholder="Add substation image"
-                  className="rounded-xl border border-muted-foreground/50 bg-secondary"
-                  onChange={handleImageChange} // Update image change handler
-                />
+                <div
+                  className="relative flex h-40 w-full cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-muted-foreground bg-secondary text-muted-foreground transition-all hover:border-primary hover:bg-secondary/70 hover:text-primary"
+                  onDragOver={handleDragOver}
+                  onDrop={handleDrop}
+                >
+                  <Input
+                    type="file"
+                    accept="image/jpeg, image/png,"
+                    placeholder="Add substation image"
+                    className="absolute inset-0 cursor-pointer opacity-0"
+                    onChange={handleImageChange} // Update image change handler
+                  />
+                  <Plus className="h-10 w-full" />
+                </div>
               </FormControl>
               <FormMessage />
               {imagePreview && (
