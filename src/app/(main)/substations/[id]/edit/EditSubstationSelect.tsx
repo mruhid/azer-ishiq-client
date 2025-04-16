@@ -15,6 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import kyInstance from "@/lib/ky";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useSession } from "@/app/(main)/SessionProvider";
 
 export interface RegionObject {
   id: number;
@@ -35,11 +36,7 @@ export default function EditSubstationSelect() {
   return (
     <div className="mx-auto flex w-full flex-col items-center justify-between rounded-2xl border border-muted-foreground/40 bg-card/70 p-2 shadow-lg backdrop-blur-md md:flex-row">
       <FilterSelect />
-      <div className="mr-2 flex w-48">
-        <Button className="ml-auto h-12 w-48 rounded-2xl bg-primary transition-all hover:bg-primary/60 md:w-20">
-          Search
-        </Button>
-      </div>
+    
     </div>
   );
 }
@@ -54,6 +51,7 @@ export function FilterSelect() {
 
   const [selectedRegion, setSelectedRegion] = useState(initialRegion);
   const [selectedDistrict, setSelectedDistrict] = useState(initialDistrict);
+  const { session } = useSession();
 
   const {
     data: regionData,
@@ -61,22 +59,48 @@ export function FilterSelect() {
     isError: isRegionError,
   } = useQuery<RegionsResponse>({
     queryKey: ["regions-feed"],
-    queryFn: () =>
-      kyInstance
-        .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/region`)
-        .json<RegionsResponse>(),
+    queryFn: async () => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/region`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session}`,
+          },
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      return response.json();
+    },
     staleTime: Infinity,
   });
 
   const { data: districtData, isFetching: isFetchingDistricts } =
     useQuery<DistrictsResponse>({
-      queryKey: ["districts", selectedRegion],
-      queryFn: () =>
-        kyInstance
-          .get(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/region/${selectedRegion}/districts`,
-          )
-          .json<DistrictsResponse>(),
+      queryKey: ["districts", selectedDistrict],
+      queryFn: async () => {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/region/${selectedRegion}/districts`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session}`,
+            },
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        return response.json();
+      },
       enabled: !!selectedRegion,
     });
 
@@ -107,7 +131,7 @@ export function FilterSelect() {
   const districtValue = validDistrict ? selectedDistrict : "";
 
   return (
-    <div className="flex flex-col flex-wrap items-center justify-center gap-4 py-2 sm:flex-row">
+    <div className="w-full flex flex-col flex-wrap items-center justify-center sm:justify-around gap-4 sm:gap-0 py-2 sm:flex-row">
       {/* Region Select */}
       <Select value={selectedRegion} onValueChange={handleRegionChange}>
         <SelectTrigger className="h-12 w-48 rounded-2xl border border-muted-foreground bg-secondary">
@@ -146,7 +170,7 @@ export function FilterSelect() {
 
       {/* District Select */}
       <Select
-        value={selectedDistrict ||"Select district"}
+        value={selectedDistrict || "Select district"}
         onValueChange={handleDistrictChange}
         disabled={!selectedRegion}
       >

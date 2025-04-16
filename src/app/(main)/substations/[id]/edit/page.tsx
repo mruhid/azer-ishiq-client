@@ -8,19 +8,29 @@ import UpdateSubs from "./UpdateSubs";
 import UpdateImg from "@/assets/updateGif.gif";
 import UserAvatar from "@/components/UserAvatar";
 import { notFound } from "next/navigation";
+import { sendRequest } from "@/lib/utils";
 const getSubstation = cache(
   async (id: number): Promise<SubstationProps | null> => {
     try {
-      const response = await kyInstance.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/substation/${id}`,
+      const { session } = await validateRequest();
+      if (!session) {
+        return null;
+      }
+
+      const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/substation/${id}`;
+      const substation = await sendRequest<SubstationProps>(
+        url,
+        "GET",
+        session,
       );
-      return await response.json<SubstationProps>();
+
+      return substation;
     } catch (error) {
+      console.error("Error fetching substation:", error);
       return null;
     }
   },
 );
-
 export async function generateMetadata({
   params: { id },
 }: {

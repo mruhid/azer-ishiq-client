@@ -17,6 +17,7 @@ import kyInstance from "@/lib/ky";
 import DataTable from "./DataTable";
 import { toast } from "@/components/ui/use-toast";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useSession } from "./SessionProvider";
 
 export interface RegionObject {
   id: number;
@@ -89,6 +90,7 @@ export function FilterSelect() {
   const [selectedSubstation, setSelectedSubstation] = useState<string | null>(
     initialSubstation,
   );
+  const {session}=useSession()
 
   const [selectedTm, setSelectedTM] = useState<string | null>(null);
   useEffect(() => {
@@ -96,30 +98,48 @@ export function FilterSelect() {
     if (initialDistrict) fetchSubstations(parseInt(initialDistrict));
     if (initialSubstation) fetchTms(parseInt(initialSubstation));
   }, []);
+
   const {
     data: regionData,
     isFetching: isFetchingRegions,
     isError: isRegionError,
   } = useQuery<RegionsResponse>({
     queryKey: ["regions-feed"],
-    queryFn: () =>
-      kyInstance
-        .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/region`)
-        .json<RegionsResponse>(),
+    queryFn: async () => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/region`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session}`,
+          },
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      return response.json();
+    },
     staleTime: Infinity,
   });
-  const fetchDistricts = async (id: number) => {
-    try {
-      const response = await kyInstance
-        .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/region/${id}/districts`)
-        .json<DistrictsResponse>();
-      setDistrictState(response);
-    } catch (error) {
-      toast({
-        title: "District not found for current region",
-        variant: "destructive",
-      });
-    }
+  const fetchDistricts = async (id: number): Promise<DistrictsResponse> => {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/region/${id}/districts`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session}`,
+        },
+      },
+    );
+
+    const result: DistrictsResponse = await response.json();
+    setDistrictState(result);
+    return result;
   };
 
   const handleSearch = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -169,43 +189,60 @@ export function FilterSelect() {
   const handleRegionChange = (value: string) => {
     const regionId = value;
     setSelectedRegion(value);
-    setDistrictState(null);
-    setSubstationState(null);
-    setTmState(null);
+    
     if (regionId) {
       fetchDistricts(parseInt(regionId));
     }
   };
-  const fetchSubstations = async (id: number) => {
-    try {
-      const response = await kyInstance
-        .get(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/region/district/${id}/substations`,
-        )
-        .json<SubstationsResponse>();
-      setSubstationState(response);
-    } catch (error) {
-      toast({
-        title: "Substation not found for current district",
-        variant: "destructive",
-      });
-    }
-  };
-  const fetchTms = async (id: number) => {
-    try {
-      const response = await kyInstance
-        .get(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/region/district/substation/${id}/tms`,
-        )
-        .json<TmsResponse>();
-      setTmState(response);
-    } catch (error) {
-      toast({
-        title: "TMs not found for current substation",
-        variant: "destructive",
-      });
-    }
-  };
+  
+  const fetchSubstations = async (id: number): Promise<SubstationsResponse> => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/region/district/${id}/substations`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session}`,
+          },
+        },
+      );
+      if (!response.ok) {
+        toast({
+          title: "Substations not found on current district",
+          variant: "destructive",
+        });
+        throw new Error(`Error fetching substation: ${response.statusText}`);
+      }
+      const result: SubstationsResponse = await response.json();
+  
+      setSubstationState(result);
+      return result;
+    };
+ 
+  const fetchTms = async (id: number): Promise<TmsResponse> => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/region/district/substation/${id}/tms`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session}`,
+          },
+        },
+      );
+  
+      if (!response.ok) {
+        toast({
+          title: "Tms not found on current substation",
+          variant: "destructive",
+        });
+        throw new Error(`Error fetching tms: ${response.statusText}`);
+      }
+  
+      const result: TmsResponse = await response.json();
+      setTmState(result);
+      return result;
+    };
   if (isRegionError) {
     toast({
       title: "Server error",
@@ -219,11 +256,13 @@ export function FilterSelect() {
         <Select
           value={selectedRegion || ""}
           onValueChange={(value) => {
-            setSelectedDistrict(null);
-            setSelectedSubstation(null);
-            setSelectedTM(null);
+            setDistrictState(null);
+            setSelectedDistrict(null)
+            setSubstationState(null);
+            setSelectedSubstation(null)
+            setTmState(null);
+            setSelectedTM(null)
             handleRegionChange(value);
-            setSelectedRegion(value);
           }}
         >
           <SelectTrigger className="h-12 w-44 rounded-2xl border border-muted-foreground bg-secondary">

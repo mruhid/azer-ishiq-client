@@ -150,3 +150,35 @@ export const tmSchema = z.object({
 });
 
 export type TMValues = z.infer<typeof tmSchema>;
+
+export const subscriberSchema = z.object({
+  name: z.string().min(1, "Subscriber name is required"),
+  surname: z.string().min(1, "Subscriber surname is required"),
+  patronymic: z.string().min(1, "Subscriber patronymic is required"),
+  finCode: z.string().min(7, "Subscriber finCode should be 7 simvols"),
+  phoneNumber: z
+    .string()
+    .regex(
+      /^\+994(50|51|55|70|77|99)\d{7}$/,
+      "Invalid Azerbaijani mobile number",
+    ),
+  regionId: z.number().optional(),
+  districtId: z.number().optional(),
+  territoryId: z.number().optional(),
+  streetId: z.number().optional(),
+
+  populationStatus: z.string().or(z.number().min(1).max(2)),
+  building: z.string().min(1, "Subscriber building is required"),
+  apartment: z.string().min(1, "Subscriber apartment is required"),
+});
+
+export type SubscriberValues = z.infer<typeof subscriberSchema>;
+
+export const otpVerifySchema = z.object({
+  email: requiredString.email("Invalid email address").optional(),
+  otpCode: requiredString.min(6, {
+    message: "Your one-time password must be 6 characters.",
+  }),
+});
+
+export type OtpVerifyValues = z.infer<typeof otpVerifySchema>;

@@ -27,6 +27,7 @@ import {
 import TMMap from "./TMMap";
 import { TMForms } from "./TMForms";
 import MapSearchedPlaceInput from "@/components/MapSearchedPlaceInput";
+import { useSession } from "../../SessionProvider";
 
 export type valueProps = {
   regionId: number;
@@ -107,17 +108,32 @@ export function SubstationSelect({ values, setValues }: SubstationSelectProps) {
     null,
   );
 
+  const { session } = useSession();
   const { toast } = useToast();
   const {
     data: regionData,
     isFetching: isFetchingRegions,
     isError: isRegionError,
   } = useQuery<RegionsResponse>({
-    queryKey: ["substation-location-feed"],
-    queryFn: () =>
-      kyInstance
-        .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/region`)
-        .json<RegionsResponse>(),
+    queryKey: ["tm-location-feed"],
+    queryFn: async () => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/region`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session}`,
+          },
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      return response.json();
+    },
     staleTime: Infinity,
   });
   if (isRegionError) {
@@ -129,12 +145,21 @@ export function SubstationSelect({ values, setValues }: SubstationSelectProps) {
     return;
   }
 
-  const fetchDistricts = async (id: number) => {
-    const response = await kyInstance
-      .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/region/${id}/districts`)
-      .json<DistrictsResponse>();
-    setDistrictState(response);
-    setSelectedDistrict(null);
+  const fetchDistricts = async (id: number): Promise<DistrictsResponse> => {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/region/${id}/districts`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session}`,
+        },
+      },
+    );
+
+    const result: DistrictsResponse = await response.json();
+    setDistrictState(result);
+    return result;
   };
   const handleRegionChange = (value: string) => {
     const Id = parseInt(value, 10);
@@ -143,26 +168,36 @@ export function SubstationSelect({ values, setValues }: SubstationSelectProps) {
         ...prevValues,
         regionId: Id,
       }));
+      setSelectedDistrict(null);
+      setDistrictState(null);
+      setSubstationState(null);
+      setSelectedSubstation(null);
       fetchDistricts(Id);
     }
   };
 
-  const fetchSubstations = async (id: number) => {
-    try {
-      const response = await kyInstance
-        .get(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/region/district/${id}/substations`,
-        )
-        .json<SubstationsResponse>();
-      setSubstationState(response);
-      setSelectedSubstation(null);
-    } catch (error) {
-      console.log(error);
+  const fetchSubstations = async (id: number): Promise<SubstationsResponse> => {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/region/district/${id}/substations`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session}`,
+        },
+      },
+    );
+    if (!response.ok) {
       toast({
-        title: "Substation not found current district",
+        title: "Substations not found on current district",
         variant: "destructive",
       });
+      throw new Error(`Error fetching tms: ${response.statusText}`);
     }
+    const result: SubstationsResponse = await response.json();
+
+    setSubstationState(result);
+    return result;
   };
   return (
     <div className="flex flex-col flex-wrap items-center justify-center gap-4 rounded-2xl border border-muted-foreground/40 bg-card/70 p-2 py-2 shadow-lg backdrop-blur-md sm:flex-row">
@@ -211,6 +246,8 @@ export function SubstationSelect({ values, setValues }: SubstationSelectProps) {
         value={selectedDistrict || ""}
         onValueChange={(value) => {
           setSelectedDistrict(value);
+          setSubstationState(null);
+          setSelectedSubstation(null);
           setValues((prevValues) => ({
             ...prevValues,
             districtId: parseInt(value, 10),

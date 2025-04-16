@@ -23,6 +23,7 @@ import kyInstance from "@/lib/ky";
 import { useQuery } from "@tanstack/react-query";
 import { DistrictsResponse, RegionsResponse } from "../../RegionFilter";
 import MapSearchedPlaceInput from "@/components/MapSearchedPlaceInput";
+import { useSession } from "../../SessionProvider";
 
 export type valueProps = {
   regionId: number;
@@ -123,7 +124,7 @@ export function SubstationSelect({ values, setValues }: SubstationSelectProps) {
     null,
   );
   const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
-
+  const { session } = useSession();
   const { toast } = useToast();
   const {
     data: regionData,
@@ -131,19 +132,42 @@ export function SubstationSelect({ values, setValues }: SubstationSelectProps) {
     isError: isRegionError,
   } = useQuery<RegionsResponse>({
     queryKey: ["substation-location-feed"],
-    queryFn: () =>
-      kyInstance
-        .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/region`)
-        .json<RegionsResponse>(),
+    queryFn: async () => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/region`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session}`,
+          },
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      return response.json();
+    },
     staleTime: Infinity,
   });
 
-  const fetchDistricts = async (id: number) => {
-    const response = await kyInstance
-      .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/region/${id}/districts`)
-      .json<DistrictsResponse>();
-    setDistrictState(response);
-    setSelectedDistrict(null);
+  const fetchDistricts = async (id: number): Promise<DistrictsResponse> => {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/region/${id}/districts`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session}`,
+        },
+      },
+    );
+
+    const result: DistrictsResponse = await response.json();
+    setDistrictState(result);
+    return result;
   };
   const handleRegionChange = (value: string) => {
     const Id = parseInt(value, 10);
@@ -152,6 +176,8 @@ export function SubstationSelect({ values, setValues }: SubstationSelectProps) {
         ...prevValues,
         regionId: Id,
       }));
+      setDistrictState(null);
+      setSelectedDistrict(null);
       fetchDistricts(Id);
     }
   };

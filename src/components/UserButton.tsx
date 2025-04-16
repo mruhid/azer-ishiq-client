@@ -37,43 +37,51 @@ export default function UserButton({ className }: UserButtonProps) {
       <DropdownMenuTrigger asChild>
         <button
           className={cn(
-            "flex-none bg-card rounded-full border-[3px] border-primary/60",
+            "flex items-center gap-2 rounded-full border-[3px] border-primary/60 bg-card p-1 shadow-sm transition-all hover:brightness-105",
             className,
           )}
         >
           <UserAvatar avatarUrl={"azerishiq"} size={40} />
         </button>
       </DropdownMenuTrigger>
+
       <DropdownMenuContent
         align="end"
-        className="rounded-xl border border-muted-foreground/60 py-2 px-4"
+        className="w-48 rounded-xl border border-muted-foreground/20  shadow-xl"
       >
-        <DropdownMenuLabel>Logged in as @{user?.userName}</DropdownMenuLabel>
-        <DropdownMenuSeparator />
+        <div className="mb-2 flex items-center gap-3 border-b border-muted pb-2">
+          <UserAvatar avatarUrl={""} size={35} />
+          <div>
+            <p className="text-sm font-medium">@{user?.userName}</p>
+            <p className="text-xs text-muted-foreground">Logged in</p>
+          </div>
+        </div>
+
         <Link href={`/users/${user?.userName}`}>
-          <DropdownMenuItem>
+          <DropdownMenuItem className="transition-all py-2 rounded-lg hover:bg-primary/10">
             <UserIcon className="mr-2 size-4" />
             Profile
           </DropdownMenuItem>
         </Link>
+
         <DropdownMenuSub>
-          <DropdownMenuSubTrigger>
+          <DropdownMenuSubTrigger className="py-2 rounded-lg">
             <Monitor className="mr-2 size-4" />
             Theme
           </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
-            <DropdownMenuSubContent>
-              <DropdownMenuItem onClick={() => setTheme("system")}>
+            <DropdownMenuSubContent className="rounded-lg py-2">
+              <DropdownMenuItem className="rounded-lg py-2" onClick={() => setTheme("system")}>
                 <Monitor className="mr-2 size-4" />
                 System default
-                {theme === "system" && <Check className="ms-2 size-4" />}
+                {theme === "system" && <Check className="ms-2 size-" />}
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("light")}>
+              <DropdownMenuItem className="rounded-lg py-2" onClick={() => setTheme("light")}>
                 <Sun className="mr-2 size-4" />
                 Light
                 {theme === "light" && <Check className="ms-2 size-4" />}
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme("dark")}>
+              <DropdownMenuItem className="rounded-lg py-2" onClick={() => setTheme("dark")}>
                 <Moon className="mr-2 size-4" />
                 Dark
                 {theme === "dark" && <Check className="ms-2 size-4" />}
@@ -81,15 +89,18 @@ export default function UserButton({ className }: UserButtonProps) {
             </DropdownMenuSubContent>
           </DropdownMenuPortal>
         </DropdownMenuSub>
+
         <DropdownMenuSeparator />
+
         <DropdownMenuItem
           onClick={() => {
             queryClient.clear();
             logout();
           }}
+          className="transition-all py-2 rounded-lg hover:bg-destructive/10"
         >
-          <LogOutIcon className="mr-2 size-4" />
-          Logout
+          <LogOutIcon className="mr-2 size-4 text-destructive" />
+          <span className="text-destructive">Logout</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

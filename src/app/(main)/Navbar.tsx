@@ -19,10 +19,10 @@ export default function Navbar() {
         whileInView="show"
         className="sticky top-0 z-10 mr-6  w-full bg-secondary border-0 shadow-none"
       >
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-center gap-x-5 px-5 py-1">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-center gap-x-5 px-2 py-1">
           <motion.div
             variants={textVariant(1.1)}
-            className="mt-2 flex w-full items-center justify-between gap-x-4 py-2 pl-2 pr-2 lg:pr-12"
+            className="mt-2 flex w-full items-center justify-between gap-x-4 py-2 pl-2 pr-12 lg:pr-0"
           >
             <MenuIcon size={35} onClick={toggleSidebar} />
             <Link href="/" className="text-2xl font-bold text-primary">

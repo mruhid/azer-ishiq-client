@@ -1,8 +1,6 @@
 import { Metadata } from "next";
 import SubstationFeed from "./SubstationFeed";
 import { validateRequest } from "@/lib/session";
-import { setTimeout } from "timers/promises";
-import { redirect } from "next/navigation";
 export const metadata: Metadata = {
   title: "Add substation",
 };

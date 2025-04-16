@@ -22,21 +22,33 @@ const components: { title: string; href: string; description: string }[] = [
     description: "You can see the substations by filtering on this page.",
   },
   {
-    title: "TMS",
-    href: "/",
-    description: "You can see the tms by filtering on this page.",
-  },
-  {
     title: "Add Substations",
     href: "/substations/add",
     description:
       "This page for creating new substation which is build at Azerbaijan ",
   },
   {
+    title: "TMS",
+    href: "/",
+    description: "You can see the tms by filtering on this page.",
+  },
+  {
     title: "Add TMS",
     href: "/tm/add",
     description:
       "This page is for creating a new TM, which is linked with some substations. ",
+  },
+
+  {
+    title: "Subscribers",
+    href: "/subscriber",
+    description: "You can see the subscribers by filtering on this page.",
+  },
+  {
+    title: "Add Subscriber",
+    href: "/subscriber/add",
+    description:
+      "This page is for adding a new subscriber, which is linked with some tm appartment. ",
   },
 ];
 
@@ -52,7 +64,7 @@ export function NavMenu() {
             <ul className="grid gap-3 rounded-2xl p-4 shadow-sm backdrop-blur-md md:w-[400px] lg:w-[550px] lg:grid-cols-[.75fr_1fr]">
               <li className="row-span-3">
                 <NavigationMenuLink asChild>
-                  <a
+                  <Link
                     className="flex h-full w-full select-none flex-col items-center justify-center rounded-2xl border border-muted-foreground/40 bg-secondary/40 p-6 no-underline outline-none backdrop-blur-md focus:shadow-md"
                     href="/"
                   >
@@ -69,7 +81,7 @@ export function NavMenu() {
                       Here, you can access real-time information about the
                       Azerbaijani electricity network
                     </p>
-                  </a>
+                  </Link>
                 </NavigationMenuLink>
               </li>
               <ListItem href="/roles" title="Roles">
@@ -113,7 +125,9 @@ export function NavMenu() {
         </NavigationMenuItem>
         <NavigationMenuItem>
           <Link href="/terms-of-use" legacyBehavior passHref>
-            <NavigationMenuLink className={`${navigationMenuTriggerStyle()} bg-secondary hover:bg-card transition-all`}>
+            <NavigationMenuLink
+              className={`${navigationMenuTriggerStyle()} bg-secondary transition-all hover:bg-card`}
+            >
               Terms of use{" "}
             </NavigationMenuLink>
           </Link>
@@ -125,12 +139,12 @@ export function NavMenu() {
 
 const ListItem = React.forwardRef<
   React.ElementRef<"a">,
-  React.ComponentPropsWithoutRef<"a">
+  React.ComponentPropsWithoutRef<typeof Link>
 >(({ className, title, children, ...props }, ref) => {
   return (
     <li>
       <NavigationMenuLink asChild>
-        <a
+        <Link
           ref={ref}
           className={cn(
             "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
@@ -142,7 +156,7 @@ const ListItem = React.forwardRef<
           <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
             {children}
           </p>
-        </a>
+        </Link>
       </NavigationMenuLink>
     </li>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { Building2, Cable, ChevronDown } from "lucide-react";
+import { Building2, Cable, ChevronDown, UserCheck2 } from "lucide-react";
 import Link from "next/link";
 import {
   Sidebar,
@@ -35,6 +35,23 @@ type MenuProps = {
 };
 
 const sidebarEquipment: MenuProps[] = [
+  {
+    name: "Subscribers",
+    src: null,
+    icon: UserCheck2,
+    altMenu: [
+      {
+        name: "All Subscriber",
+        src: "/subscriber",
+        icon: null,
+      },
+      {
+        name: "Add Subscriber",
+        src: "/subscriber/add",
+        icon: null,
+      },
+    ],
+  },
   {
     name: "TMS",
     src: null,

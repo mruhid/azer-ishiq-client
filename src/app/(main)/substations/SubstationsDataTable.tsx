@@ -38,6 +38,9 @@ import DataTableLoading from "@/components/DataTableLoading";
 import { useToast } from "@/components/ui/use-toast";
 import { SubstationDataTableProps, SubstationItemsProps } from "@/lib/type";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { SubstationTableMapDialog } from "./[id]/SubstationDialogs";
+import { fetchQueryFN } from "../fetchQueryFN";
 
 export const columns: ColumnDef<SubstationItemsProps>[] = [
   { id: "ID", header: "ID", cell: ({ row }) => <div>{row.index + 1}</div> },
@@ -47,12 +50,34 @@ export const columns: ColumnDef<SubstationItemsProps>[] = [
     cell: ({ row }) => <div>{row.getValue("name")}</div>,
   },
   {
+    accessorKey: "latitude",
+    header: "Location",
+    cell: ({ row }) => (
+      <div>
+        <SubstationTableMapDialog
+          ids={{
+            subsId: Number(row.original.id),
+            regionId: Number(row.original.regionId),
+            districtId: Number(row.original.districtId),
+          }}
+          initialCoords={
+            row.original.longitude !== "The longitude is not specified"
+              ? {
+                  lat: row.getValue("latitude"),
+                  lng: Number(row.original.longitude),
+                }
+              : null
+          }
+        />
+      </div>
+    ),
+  },
+  {
     id: "actions",
     header: () => <div>Actions</div>,
     enableHiding: false,
     cell: ({ row }) => {
       const subsId = row.original.id;
-
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -66,15 +91,11 @@ export const columns: ColumnDef<SubstationItemsProps>[] = [
           >
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem>
-              <Link
-              href={`/substations/${subsId}`}
-              className="hover:underline"
-              >
-              See this Substation
+              <Link href={`/substations/${subsId}`} className="hover:underline">
+                See this Substation
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem>View img</DropdownMenuItem>
-            <DropdownMenuItem>View payment location</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -84,13 +105,17 @@ export const columns: ColumnDef<SubstationItemsProps>[] = [
 
 export default function SubstationDataTable() {
   return (
-    <div className="rounded-2xl w-full border border-muted-foreground/40 bg-card/70 p-2 shadow-lg backdrop-blur-md">
+    <div className="w-full rounded-2xl border border-muted-foreground/40 bg-card/70 p-2 shadow-lg backdrop-blur-md">
       <DefaultTable />
     </div>
   );
 }
 
 export function DefaultTable() {
+  const searchParams = useSearchParams();
+  const region = searchParams.get("region");
+  const district = searchParams.get("district");
+
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   );
@@ -99,34 +124,17 @@ export function DefaultTable() {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const { toast } = useToast();
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/substation/filtered?page=${pageNumber}&pageSize=8${
+    region ? `&regionId=${region}` : ""
+  }${district ? `&districtId=${district}` : ""}`;
   const {
     data: substationData,
     isPending,
     isError,
+    error,
   } = useQuery<SubstationDataTableProps>({
-    queryKey: ["substations-table-feed", pageNumber],
-    queryFn: async () => {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/substation/paged?page=${pageNumber}&pageSize=5`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session}`,
-          },
-        },
-      );
-
-      if (!response.ok) {
-        toast({
-          title: "Failed to fetch data",
-          variant: "destructive",
-        });
-        throw new Error("Failed to fetch data");
-      }
-
-      return response.json();
-    },
+    queryKey: ["substations-table-feed", pageNumber, region, district],
+    queryFn: fetchQueryFN(url, session),
     staleTime: Infinity,
   });
 
@@ -144,35 +152,38 @@ export function DefaultTable() {
       columnVisibility,
     },
   });
-
   if (isError) {
     return (
       <h1 className="px-2 py-4 text-center text-2xl font-semibold text-destructive">
-        Has Error
+        {(error as Error).message}
       </h1>
     );
   }
+
   if (isPending) {
     return <DataTableLoading />;
   }
   return (
-    <div className="w-full">
-      <div className="flex items-center py-4">
+    <div className="w-full" id="data-table">
+      <h1 className="mx-3 mt-2 text-xl font-semibold text-primary/70">
+        Substations Summary
+      </h1>
+      <div className="flex items-center pb-4">
         <Input
           placeholder="Filter substation name..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
           }
-          className="m-2 max-w-sm rounded-xl border border-muted-foreground bg-secondary backdrop-blur-md"
+          className="m-2 h-12 max-w-sm rounded-xl border border-muted-foreground bg-secondary backdrop-blur-md"
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="outline"
-              className="ml-auto mr-2 rounded-xl border border-muted-foreground bg-secondary backdrop-blur-md"
+              className="ml-auto mr-2 h-12 w-32 rounded-xl border border-muted-foreground bg-secondary backdrop-blur-md"
             >
-              Columns <ChevronDown />
+              Columns <ChevronDown size={20} className="ml-auto" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent

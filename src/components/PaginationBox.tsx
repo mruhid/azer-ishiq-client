@@ -13,8 +13,14 @@ type PaginationProps = {
   page: number;
   size: number;
   setPageNumber: Dispatch<SetStateAction<number>>;
+  totalPage?: number;
 };
-export function PaginationBox({ page, size, setPageNumber }: PaginationProps) {
+export function PaginationBox({
+  page,
+  size,
+  setPageNumber,
+  totalPage,
+}: PaginationProps) {
   const totalPages = size;
 
   const handlePageChange = (page: number) => {
@@ -55,7 +61,7 @@ export function PaginationBox({ page, size, setPageNumber }: PaginationProps) {
           <PaginationLink
             onClick={() => handlePageChange(Page)}
             isActive={page === Page}
-            className="cursor-pointer"
+            className="cursor-pointer rounded-full"
           >
             {Page}
           </PaginationLink>
@@ -66,25 +72,35 @@ export function PaginationBox({ page, size, setPageNumber }: PaginationProps) {
     ));
   };
 
-  return (
+  return totalPages > 1 ? (
     <Pagination className="mx-auto my-2">
-      <PaginationContent>
-        <PaginationItem>
-          <PaginationPrevious
-            className="hidden cursor-pointer md:flex"
-            onClick={() => handlePageChange(page - 1)}
-          />
-        </PaginationItem>
+      <PaginationContent className="w-full">
+        <div className="flex w-full items-center justify-between">
+          {totalPage ? (
+            <div className="text-sm text-muted-foreground">
+              Page {page} of {totalPages} ({totalPage} items)
+            </div>
+          ) : (
+            ""
+          )}
+          <div className="flex flex-row gap-1">{generatePagination()}</div>
+          <div className="flex flex-row gap-1">
+            <PaginationItem>
+              <PaginationPrevious
+                className="hidden cursor-pointer md:flex"
+                onClick={() => handlePageChange(page - 1)}
+              />
+            </PaginationItem>
 
-        {generatePagination()}
-
-        <PaginationItem>
-          <PaginationNext
-            className="hidden cursor-pointer md:flex"
-            onClick={() => handlePageChange(page + 1)}
-          />
-        </PaginationItem>
+            <PaginationItem>
+              <PaginationNext
+                className="hidden cursor-pointer md:flex"
+                onClick={() => handlePageChange(page + 1)}
+              />
+            </PaginationItem>
+          </div>
+        </div>
       </PaginationContent>
     </Pagination>
-  );
+  ) : null;
 }

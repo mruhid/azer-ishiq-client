@@ -106,10 +106,10 @@ export function DefaultTable() {
     isPending,
     isError,
   } = useQuery<TmRableProps>({
-    queryKey: ["Tms-table-feed", pageNumber, region, district],
+    queryKey: ["Tms-table-feed", pageNumber, region, district,substation],
     queryFn: async () => {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/Tm/filtered?page=${pageNumber}&pageSize=5${region ? `&regionId=${region}` : ``}${district ? `&districtId=${district}` : ``}${substation ? `&substationId=${substation}` : ``}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/Tm/filtered?page=${pageNumber}&pageSize=8${region ? `&regionId=${region}` : ``}${district ? `&districtId=${district}` : ``}${substation ? `&substationId=${substation}` : ``}`,
         {
           method: "GET",
           headers: {

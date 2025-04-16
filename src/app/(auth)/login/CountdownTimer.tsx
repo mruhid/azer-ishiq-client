@@ -30,7 +30,7 @@ export default function CountdownTimer({ time }: { time?: number }) {
       className="flex items-center justify-center p-2"
     >
       <div className="w-28 text-center text-2xl font-bold">
-        {formatTime(timeLeft)}
+        {timeLeft ? formatTime(timeLeft) : ""}
       </div>
     </motion.div>
   );

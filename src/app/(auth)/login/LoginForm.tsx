@@ -30,7 +30,7 @@ import LoadingButton from "@/components/LoadingButton";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
-import LImgae from "@/assets/robotLoading.gif";
+import LImgae from "@/assets/updateGif.gif";
 import CountdownTimer from "./CountdownTimer";
 
 export default function LoginForm() {
@@ -53,6 +53,10 @@ export default function LoginForm() {
       const { success, error } = await login(values);
       if (error) {
         setError(error);
+        toast({
+          title: error,
+          variant:"destructive"
+        });
       } else if (success) {
         toast({
           title: "Welcome back",
@@ -73,8 +77,15 @@ export default function LoginForm() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
           {error &&
-            (error === "block" ? (
-              <CountdownTimer time={600} />
+            (error.split(".")[0] === "Account locked" ? (
+              <>
+              <div className="text-destructive text-center"> {error}</div>
+             
+              <CountdownTimer
+                time={Number(error.split("after")[1].split(" ")[1]) * 60}
+              />
+              </>
+              
             ) : (
               <motion.p
                 className="text-center text-destructive"
@@ -165,14 +176,14 @@ export default function LoginForm() {
                 exit={{ opacity: 0 }}
               >
                 <motion.div
-                  className="flex flex-col items-center rounded-lg bg-muted-foreground/60"
+                  className="flex flex-col items-center rounded-full bg-muted-foreground/60"
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.8, opacity: 0 }}
                 >
                   <Image
                     src={LImgae}
-                    className="rounded-2xl"
+                    className="rounded-full"
                     alt="Loading"
                     width={400}
                     height={400}
@@ -233,12 +244,9 @@ export function ForgotPasswordDialog({ email }: { email: string }) {
           </strong>
         </div>
       </DialogTrigger>
-      <DialogContent className="rounded-2xl border border-muted-foreground/40 bg-card/60 shadow-lg backdrop-blur-2xl max-w-[400px] sm:max-w-[425px]">
+      <DialogContent className="max-w-[400px] rounded-2xl border border-muted-foreground/40 bg-card/60 shadow-lg backdrop-blur-2xl sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Forgot password</DialogTitle>
-          <DialogDescription className="text-primary">
-            Enter your email to reset your password.
-          </DialogDescription>
+          <DialogTitle>Enter your email to reset your password.</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
@@ -260,7 +268,6 @@ export function ForgotPasswordDialog({ email }: { email: string }) {
             loading={isPending}
             onClick={onSubmit}
             disabled={!forggotenEmail}
-            variant={"outline"}
             className="rounded-xl border border-muted-foreground"
           >
             Send link

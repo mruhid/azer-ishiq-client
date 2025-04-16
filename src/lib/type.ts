@@ -51,6 +51,12 @@ export type SubstationItemsProps = {
   id: number;
   name: string;
   substationId: number;
+  regionId: number;
+  districtId: number;
+  longitude: string;
+  latitude: string;
+  address: string;
+  image: null;
 };
 
 // Subscriber props
@@ -62,6 +68,7 @@ export interface Subscriber {
   phoneNumber: string;
   finCode: string;
   populationStatus: number;
+  populationStatusName: string;
   regionId: number;
   regionName: string;
   districtId: number;
@@ -72,9 +79,9 @@ export interface Subscriber {
   streetName: string;
   building: string;
   apartment: string;
-  status: number;
+  status: number | string;
   ats: string;
-  createdDate: string;
+  createdAt: string;
   subscriberCode: string;
 }
 
@@ -83,4 +90,53 @@ export interface SubscribersProps {
   totalCount: number;
   page: number;
   pageSize: number;
+}
+
+// Operation logs
+export interface OperationCells {
+  id: number;
+  action: string;
+  entityName: string;
+  entityId: number;
+  userName: string;
+  userId: number;
+  userRoles: string[];
+  timestamp: string;
+}
+
+export interface OperationLogsProps {
+  data: OperationCells[];
+  total: number;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface UserDataProps {
+  userName: string;
+  email: string;
+  phoneNumber: string;
+  ipAddress: string;
+  createdAt: string;
+  userRoles: string[];
+  isBlocked: boolean;
+}
+
+// users management table
+export interface UserCells {
+  id: number;
+  userName: string;
+  email: string;
+  phoneNumber: string;
+  ipAddress: string;
+  isBlocked: false;
+  createdAt: string;
+  userRoles: string[];
+  failedAttempts: number;
+  lastFailedAttempt: null | number;
+}
+export interface UserManagementProps {
+  items: UserCells[];
+  total: number;
+  page?: number;
+  pageSize?: number;
 }

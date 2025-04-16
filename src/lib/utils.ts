@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from "clsx";
+import { parse } from "date-fns";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -64,18 +65,25 @@ export const sendRequest = async <T>(
     throw error; // Rethrow error for further handling
   }
 };
+export function formatDate(timestamp: string) {
+  const fixedTimestamp = timestamp.split(".")[0] + "Z"; // Append 'Z' to ensure UTC parsing
 
-export function formatDate(isoString: string) {
-  const date = new Date(isoString);
-  return date
-    .toLocaleString("en-GB", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
-    })
-    .replace(",", "");
+  // Create Date object
+  const date = new Date(fixedTimestamp);
+
+  // Check if date is valid
+  if (isNaN(date.getTime())) {
+    return "Invalid Date";
+  }
+
+  // Extract day, month, and year
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0"); // Months are 0-based
+  const year = date.getUTCFullYear();
+
+  return `${day}/${month}/${year}`;
+}
+
+export function parseDate(dateString: string) {
+  return parse(dateString, "dd/MM/yyyy", new Date());
 }
