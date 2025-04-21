@@ -68,17 +68,17 @@ export const substationSchema = z.object({
     .min(5, "Address must be at least 5 characters")
     .nonempty("Address is required"),
 
-  image: z
-    .instanceof(File)
-    .nullable()
-    .refine((file) => {
-      if (!file) return true;
-      return file.size <= MAX_FILE_SIZE;
-    }, "Max image size is 2MB.")
-    .refine((file) => {
-      if (!file) return true;
-      return ACCEPTED_IMAGE_TYPES.includes(file.type);
-    }, "Only .jpg, .jpeg, .png, and .webp formats are supported."),
+  // image: z
+  //   .instanceof(File)
+  //   .nullable()
+  //   .refine((file) => {
+  //     if (!file) return true;
+  //     return file.size <= MAX_FILE_SIZE;
+  //   }, "Max image size is 2MB.")
+  //   .refine((file) => {
+  //     if (!file) return true;
+  //     return ACCEPTED_IMAGE_TYPES.includes(file.type);
+  //   }, "Only .jpg, .jpeg, .png, and .webp formats are supported."),
 });
 
 export type SubstationValues = z.infer<typeof substationSchema>;
