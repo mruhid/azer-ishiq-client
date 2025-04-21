@@ -17,7 +17,7 @@ import { Button } from "./ui/button";
 
 const UserInformationSideBar: React.FC = () => {
   const { session } = useSession();
-  const { isOpen, UserId, toggleSidebar } = useUserInformation();
+  const { isOpen, setId, UserId, toggleSidebar } = useUserInformation();
   if (!isOpen || !UserId) return null;
   console.log(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${UserId}}`,
@@ -85,7 +85,7 @@ const UserInformationSideBar: React.FC = () => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className="flex items-center cursor-pointer gap-2">
+                <div className="flex cursor-pointer items-center gap-2">
                   <Circle
                     size={20}
                     className={`rounded-full ${userData.isBlocked ? "bg-red-600 text-red-600" : "bg-green-600 text-green-600"} `}
@@ -101,7 +101,10 @@ const UserInformationSideBar: React.FC = () => {
             </Tooltip>
           </TooltipProvider>
           <XIcon
-            onClick={toggleSidebar}
+            onClick={() => {
+              toggleSidebar();
+              setId(0);
+            }}
             className="rounded-full border border-secondary transition-all duration-300 hover:border-foreground/20"
           />
         </div>

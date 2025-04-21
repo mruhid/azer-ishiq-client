@@ -4,7 +4,7 @@ import "./globals.css";
 import ReactQueryProvider from "@/ReactQueryProvider";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/toaster";
-import NextTopLoader from 'nextjs-toploader';
+import NextTopLoader from "nextjs-toploader";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -31,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-      <NextTopLoader color="#1e3a8a" height={4}/>
+        <NextTopLoader color="#1e3a8a" height={4} />
 
         <ReactQueryProvider>
           <ThemeProvider
@@ -43,7 +43,23 @@ export default function RootLayout({
             {children}
           </ThemeProvider>
         </ReactQueryProvider>
-        <Toaster/>
+
+        <Toaster />
+
+        {process.env.NODE_ENV === "production" && (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                console.log("%cHELLO DEVELOPER!", "color: limegreen; font-size: 24px; font-weight: bold;");
+                console.log("This is development mode — all console messages are visible.");
+                // Suppress all console output
+                ['log', 'warn', 'error'].forEach(method => {
+                  console[method] = () => {};
+                });
+              `,
+            }}
+          />
+        )}
       </body>
     </html>
   );

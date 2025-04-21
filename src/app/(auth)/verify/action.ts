@@ -28,12 +28,7 @@ export async function otpVerify(
       };
     }
 
-    if (!data.response?.token) {
-      return { error: "Invalid server response. Please try again." };
-    }
-
-    console.log(data);
-    const { userName, email, roles, token, refreshToken } = data.response;
+    const { userName, email, roles, token, refreshToken } = data;
 
     const session = await encrypt({
       userName,

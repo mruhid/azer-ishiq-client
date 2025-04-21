@@ -1,4 +1,3 @@
-import loginImage from "@/assets/login-image.jpg";
 import { Metadata } from "next";
 import VerifyForm from "./VerifyForm";
 export const metadata: Metadata = {

@@ -20,8 +20,6 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { otpVerifySchema, OtpVerifyValues } from "@/lib/validation";
 import LoadingButton from "@/components/LoadingButton";
-import LImgae from "@/assets/robotLoading.gif";
-import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -32,7 +30,6 @@ export default function VerifyForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || undefined;
-  console.log(email);
 
   const [isPending, startTransition] = useTransition();
   const form = useForm<OtpVerifyValues>({

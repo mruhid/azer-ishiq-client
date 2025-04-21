@@ -1,6 +1,13 @@
 "use client";
 
-import { Building2, Cable, ChevronDown, UserCheck2 } from "lucide-react";
+import {
+  Building2,
+  Cable,
+  ChevronDown,
+  UserCheck2,
+  UserCheck2Icon,
+  UserCircle2Icon,
+} from "lucide-react";
 import Link from "next/link";
 import {
   Sidebar,
@@ -34,62 +41,114 @@ type MenuProps = {
   altMenu: MenuItem[] | null;
 };
 
-const sidebarEquipment: MenuProps[] = [
-  {
-    name: "Subscribers",
-    src: null,
-    icon: UserCheck2,
-    altMenu: [
-      {
-        name: "All Subscriber",
-        src: "/subscriber",
-        icon: null,
-      },
-      {
-        name: "Add Subscriber",
-        src: "/subscriber/add",
-        icon: null,
-      },
-    ],
-  },
-  {
-    name: "TMS",
-    src: null,
-    icon: Cable,
-    altMenu: [
-      {
-        name: "All Transformers",
-        src: "/",
-        icon: null,
-      },
-      {
-        name: "Add Transformer",
-        src: "/tm/add",
-        icon: null,
-      },
-    ],
-  },
-  {
-    name: "Substations",
-    src: null,
-    icon: Building2,
-    altMenu: [
-      {
-        name: "All Substations",
-        src: "/substations",
-        icon: null,
-      },
-      {
-        name: "Add Substations",
-        src: "/substations/add",
-        icon: null,
-      },
-    ],
-  },
-];
-
 export default function SideBar() {
   const { user } = useSession();
+  const isUser = user.roles.length == 1 && user.roles[0] === "User";
+  const sidebarEquipment: MenuProps[] = !isUser
+    ? [
+        {
+          name: "Subscribers",
+          src: null,
+          icon: UserCheck2,
+          altMenu: [
+            {
+              name: "All Subscriber",
+              src: "/subscriber",
+              icon: null,
+            },
+            {
+              name: "Add Subscriber",
+              src: "/subscriber/add",
+              icon: null,
+            },
+          ],
+        },
+        {
+          name: "TMS",
+          src: null,
+          icon: Cable,
+          altMenu: [
+            {
+              name: "All Transformers",
+              src: "/",
+              icon: null,
+            },
+            {
+              name: "Add Transformer",
+              src: "/tm/add",
+              icon: null,
+            },
+          ],
+        },
+        {
+          name: "Substations",
+          src: null,
+          icon: Building2,
+          altMenu: [
+            {
+              name: "All Substations",
+              src: "/substations",
+              icon: null,
+            },
+            {
+              name: "Add Substations",
+              src: "/substations/add",
+              icon: null,
+            },
+          ],
+        },
+        {
+          name: "User Management",
+          src: "/users-management",
+          icon: UserCheck2Icon,
+          altMenu: null,
+        },
+        {
+          name: "Operation Logs",
+          src: "/operation-logs",
+          icon: UserCircle2Icon,
+          altMenu: null,
+        },
+      ]
+    : [
+        {
+          name: "Subscribers",
+          src: null,
+          icon: UserCheck2,
+          altMenu: [
+            {
+              name: "All Subscriber",
+              src: "/subscriber",
+              icon: null,
+            },
+          ],
+        },
+        {
+          name: "TMS",
+          src: null,
+          icon: Cable,
+          altMenu: [
+            {
+              name: "All Transformers",
+              src: "/",
+              icon: null,
+            },
+          ],
+        },
+        {
+          name: "Substations",
+          src: null,
+          icon: Building2,
+          altMenu: [
+            {
+              name: "All Substations",
+              src: "/substations",
+              icon: null,
+            },
+          ],
+        },
+      ];
+
   return (
     <Sidebar>
       <SidebarHeader>
@@ -149,19 +208,21 @@ export default function SideBar() {
                     </SidebarMenuItem>
                   </Collapsible>
                 ) : (
-                  <SidebarMenuItem key={menuItem.name}>
-                    <Link
-                      className="flex items-center justify-between space-x-4 rounded-sm px-4 py-3 shadow-sm hover:bg-secondary"
-                      href={menuItem.src || "/"}
-                    >
-                      <div className="flex cursor-pointer items-center justify-center gap-2">
-                        {menuItem.icon && <menuItem.icon className="h-4 w-4" />}
-                        <h4 className="text-sm font-semibold">
+                  <Link
+                    key={menuItem.name}
+                    href={menuItem.src ? menuItem.src : "/"}
+                  >
+                    <div className="flex w-full cursor-pointer items-center justify-between rounded-xl px-2 py-1 transition-all hover:bg-white hover:text-primary">
+                      <div className="flex h-10 w-full items-center justify-center">
+                        {menuItem.icon && (
+                          <menuItem.icon size={24} className="mr-2" />
+                        )}
+                        <h4 className="w-full text-sm font-semibold">
                           {menuItem.name}
                         </h4>
                       </div>
-                    </Link>
-                  </SidebarMenuItem>
+                    </div>
+                  </Link>
                 ),
               )}
             </SidebarMenu>

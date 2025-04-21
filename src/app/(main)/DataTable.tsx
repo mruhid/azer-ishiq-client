@@ -1,15 +1,10 @@
 "use client";
-
 import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
   VisibilityState,
-  flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import { ChevronDown, MoreHorizontal } from "lucide-react";
@@ -23,61 +18,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { PaginationBox } from "@/components/PaginationBox";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "./SessionProvider";
 import DataTableLoading from "@/components/DataTableLoading";
 import { Tmitem, TmRableProps } from "@/lib/type";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-
-export const columns: ColumnDef<Tmitem>[] = [
-  { id: "ID", header: "ID", cell: ({ row }) => <div>{row.index + 1}</div> },
-  {
-    accessorKey: "name",
-    header: "Name",
-    cell: ({ row }) => <div>{row.getValue("name")}</div>,
-  },
-  {
-    id: "actions",
-    header: () => <div>Actions</div>,
-    enableHiding: false,
-    cell: ({ row }) => {
-      const tmId = row.original.id;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="ml-auto h-8 w-8 p-0">
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="rounded-xl border border-muted-foreground/40 bg-secondary backdrop-blur-md"
-            align="center"
-          >
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>
-              <Link href={`/tm/${tmId}`} className="hover:underline">
-                See this TM
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>View img</DropdownMenuItem>
-            <DropdownMenuItem>View payment location</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-  },
-];
+import DataTableLayout from "@/components/DataTableLayout";
+import { fetchQueryFN } from "./fetchQueryFN";
 
 export default function DataTable() {
   return (
@@ -88,6 +36,45 @@ export default function DataTable() {
 }
 
 export function DefaultTable() {
+  const columns: ColumnDef<Tmitem>[] = [
+    { id: "ID", header: "ID", cell: ({ row }) => <div>{row.index + 1}</div> },
+    {
+      accessorKey: "name",
+      header: "Name",
+      cell: ({ row }) => <div>{row.getValue("name")}</div>,
+    },
+    {
+      id: "actions",
+      header: () => <div>Actions</div>,
+      enableHiding: false,
+      cell: ({ row }) => {
+        const tmId = row.original.id;
+
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="ml-auto h-8 w-8 p-0">
+                <MoreHorizontal />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              className="rounded-xl border border-muted-foreground/40 bg-secondary backdrop-blur-md"
+              align="center"
+            >
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem>
+                <Link href={`/tm/${tmId}`} className="hover:underline">
+                  See this TM
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>View img</DropdownMenuItem>
+              <DropdownMenuItem>View payment location</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
   const searchParams = useSearchParams();
   const region = searchParams.get("region");
   const district = searchParams.get("district");
@@ -100,44 +87,22 @@ export function DefaultTable() {
   const { session } = useSession();
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/Tm/filtered?page=${pageNumber}&pageSize=8${region ? `&regionId=${region}` : ``}${district ? `&districtId=${district}` : ``}${substation ? `&substationId=${substation}` : ``}`;
 
   const {
     data: tmData,
     isPending,
     isError,
   } = useQuery<TmRableProps>({
-    queryKey: ["Tms-table-feed", pageNumber, region, district,substation],
-    queryFn: async () => {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/Tm/filtered?page=${pageNumber}&pageSize=8${region ? `&regionId=${region}` : ``}${district ? `&districtId=${district}` : ``}${substation ? `&substationId=${substation}` : ``}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session}`,
-          },
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch data");
-      }
-
-      return response.json();
-    },
-
+    queryKey: ["Tms-table-feed", pageNumber, region, district, substation],
+    queryFn: fetchQueryFN<TmRableProps>(url, session),
     staleTime: Infinity,
   });
-
   const table = useReactTable({
     data: tmData?.items ?? [],
     columns,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
     state: {
       columnFilters,
       columnVisibility,
@@ -198,69 +163,20 @@ export function DefaultTable() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="m-2 rounded-xl border border-muted-foreground bg-secondary backdrop-blur-md">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow
-                className="border-b border-muted-foreground/40"
-                key={headerGroup.id}
-              >
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  className="border-b border-muted-foreground/40"
-                  key={row.id}
-                  data-state={row.getIsSelected()}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-20 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+      <div className="px-1">
+      <DataTableLayout
+        columns={columns}
+        layout="fancy"
+        tableData={tmData.items}
+        pagination={{
+          total: tmData.totalCount,
+          page: pageNumber,
+          setPageNumber,
+          pageSize: 8,
+        }}
+      />
       </div>
-      {tmData.items.length ? (
-        <PaginationBox
-          page={pageNumber}
-          setPageNumber={setPageNumber}
-          size={Math.ceil(tmData.totalCount / tmData.pageSize)}
-        />
-      ) : (
-        ""
-      )}
+     
     </div>
   );
 }

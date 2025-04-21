@@ -121,6 +121,16 @@ export interface UserDataProps {
   isBlocked: boolean;
 }
 
+export type SubscriberDataProps = {
+  id: number;
+  entryName: string;
+  action: string;
+  entryId: number;
+  userId: number;
+  userName: string;
+  userRoles: string[];
+  timestamp: string;
+};
 // users management table
 export interface UserCells {
   id: number;

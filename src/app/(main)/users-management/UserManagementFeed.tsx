@@ -15,21 +15,24 @@ export default function UserManagementFeed() {
       initial="hidden"
       whileInView="show"
       viewport={{ once: false, amount: 0.25 }}
-      className={`mx-auto w-full space-y-4 px-4 transition-all duration-300 ${
-        open ? "max-w-[1100px]" : "max-w-full px-6"
-      }`}
+      className={`mx-auto w-full space-y-4 px-4 transition-all duration-300 sm:max-w-full ${
+        open
+          ? "w-full md:max-w-[500px] lg:max-w-[750px] xl:max-w-[1200px] 2xl:max-w-[1200px]"
+          : "px-6 md:max-w-[1300px] lg:max-w-[1300px] xl:max-w-[1300px] 2xl:max-w-[1300px]"
+      } `}
     >
       <motion.div variants={fadeIn("down", "spring", 0.2, 0.8)}>
-        <div className="flex w-full items-center justify-between pr-4">
+        <div className="flex w-full items-center justify-center pr-4 md:justify-between">
           <Button
-            variant={"ghost"}
+            variant="ghost"
             className="items-center text-2xl font-bold hover:bg-secondary"
           >
-            <UserCheck2 size={30} className="mr-2 text-primary" /> User
-            Management
+            <UserCheck2 size={30} className="mr-2 text-primary" />
+            User Management
           </Button>
         </div>
       </motion.div>
+
       <UsersDataTable />
     </motion.div>
   );

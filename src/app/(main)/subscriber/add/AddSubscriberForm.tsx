@@ -1,7 +1,6 @@
 "use client";
 import LoadingButton from "@/components/LoadingButton";
 import { motion, AnimatePresence } from "framer-motion";
-
 import {
   Form,
   FormControl,
@@ -36,6 +35,7 @@ import LImgae from "@/assets/updateGif.gif";
 import { useSession } from "../../SessionProvider";
 import { StreetResponse, TerritoryResponse } from "../SubscriberDataTable";
 import { Label } from "@/components/ui/label";
+import { fetchQueryFN } from "../../fetchQueryFN";
 
 export type valueProps = {
   regionId: number | undefined;
@@ -482,82 +482,29 @@ export function AddSubscriberSelect({
     isError: isRegionError,
   } = useQuery<RegionsResponse>({
     queryKey: ["Add-subscriber-feed"],
-    queryFn: async () => {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/region`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session}`,
-          },
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch data");
-      }
-
-      return response.json();
-    },
+    queryFn: fetchQueryFN<RegionsResponse>(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/region`,
+      session,
+    ),
     staleTime: Infinity,
   });
 
-  const fetchDistricts = async (id: number): Promise<DistrictsResponse> => {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/region/${id}/districts`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session}`,
-        },
-      },
-    );
-
-    const result: DistrictsResponse = await response.json();
+  const fetchDistricts = async (id: number) => {
+    const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/region/${id}/districts`;
+    const result = await fetchQueryFN<DistrictsResponse>(url, session)();
     setDistrictState(result);
-    return result;
   };
-  const fetchTerritory = async (id: number): Promise<TerritoryResponse> => {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/district/${id}/territories`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session}`,
-        },
-      },
-    );
-    if (!response.ok) {
-      throw new Error(`Error fetching streets: ${response.statusText}`);
-    }
-    const result: TerritoryResponse = await response.json();
-
+  const fetchTerritory = async (id: number) => {
+    const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/district/${id}/territories`;
+    const result = await fetchQueryFN<TerritoryResponse>(url, session)();
     setTerritoryState(result);
-    return result;
   };
-  const fetchStreet = async (id: number): Promise<StreetResponse> => {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/district/territory/${id}/streets`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session}`,
-        },
-      },
-    );
-
-    if (!response.ok) {
-      throw new Error(`Error fetching streets: ${response.statusText}`);
-    }
-
-    const result: StreetResponse = await response.json();
+  const fetchStreet = async (id: number) => {
+    const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/district/territory/${id}/streets`;
+    const result = await fetchQueryFN<StreetResponse>(url, session)();
     setStreetState(result);
-    return result;
   };
+
   const handleRegionChange = (value: string) => {
     const Id = parseInt(value, 10);
     if (Id) {

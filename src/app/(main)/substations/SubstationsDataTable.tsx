@@ -134,7 +134,7 @@ export function DefaultTable() {
     error,
   } = useQuery<SubstationDataTableProps>({
     queryKey: ["substations-table-feed", pageNumber, region, district],
-    queryFn: fetchQueryFN(url, session),
+    queryFn: fetchQueryFN<SubstationDataTableProps>(url, session),
     staleTime: Infinity,
   });
 

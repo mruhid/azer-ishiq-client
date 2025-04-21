@@ -14,45 +14,72 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import UserAvatar from "@/components/UserAvatar";
-
-const components: { title: string; href: string; description: string }[] = [
-  {
-    title: "Substations",
-    href: "/substations",
-    description: "You can see the substations by filtering on this page.",
-  },
-  {
-    title: "Add Substations",
-    href: "/substations/add",
-    description:
-      "This page for creating new substation which is build at Azerbaijan ",
-  },
-  {
-    title: "TMS",
-    href: "/",
-    description: "You can see the tms by filtering on this page.",
-  },
-  {
-    title: "Add TMS",
-    href: "/tm/add",
-    description:
-      "This page is for creating a new TM, which is linked with some substations. ",
-  },
-
-  {
-    title: "Subscribers",
-    href: "/subscriber",
-    description: "You can see the subscribers by filtering on this page.",
-  },
-  {
-    title: "Add Subscriber",
-    href: "/subscriber/add",
-    description:
-      "This page is for adding a new subscriber, which is linked with some tm appartment. ",
-  },
-];
+import { useSession } from "./SessionProvider";
 
 export function NavMenu() {
+  const { user } = useSession();
+  const components: { title: string; href: string; description: string }[] =
+    user.roles.length == 1 && user.roles[0] === "user"
+      ? [
+          {
+            title: "Substations",
+            href: "/substations",
+            description:
+              "You can see the substations by filtering on this page.",
+          },
+
+          {
+            title: "TMS",
+            href: "/",
+            description: "You can see the tms by filtering on this page.",
+          },
+
+          {
+            title: "Subscribers",
+            href: "/subscriber",
+            description:
+              "You can see the subscribers by filtering on this page.",
+          },
+        ]
+      : [
+          {
+            title: "Substations",
+            href: "/substations",
+            description:
+              "You can see the substations by filtering on this page.",
+          },
+          {
+            title: "Add Substations",
+            href: "/substations/add",
+            description:
+              "This page for creating new substation which is build at Azerbaijan ",
+          },
+          {
+            title: "TMS",
+            href: "/",
+            description: "You can see the tms by filtering on this page.",
+          },
+          {
+            title: "Add TMS",
+            href: "/tm/add",
+            description:
+              "This page is for creating a new TM, which is linked with some substations. ",
+          },
+
+          {
+            title: "Subscribers",
+            href: "/subscriber",
+            description:
+              "You can see the subscribers by filtering on this page.",
+          },
+          {
+            title: "Add Subscriber",
+            href: "/subscriber/add",
+            description:
+              "This page is for adding a new subscriber, which is linked with some tm appartment. ",
+          },
+        ];
+
   return (
     <NavigationMenu>
       <NavigationMenuList>

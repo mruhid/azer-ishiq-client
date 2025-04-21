@@ -53,9 +53,12 @@ export default function LoginForm() {
       const { success, error } = await login(values);
       if (error) {
         setError(error);
+        if (error.split(" ")[0] == "OTP") {
+          router.push(`/verify?email=${values.email}`);
+        }
         toast({
           title: error,
-          variant:"destructive"
+          variant: "destructive",
         });
       } else if (success) {
         toast({
@@ -79,13 +82,12 @@ export default function LoginForm() {
           {error &&
             (error.split(".")[0] === "Account locked" ? (
               <>
-              <div className="text-destructive text-center"> {error}</div>
-             
-              <CountdownTimer
-                time={Number(error.split("after")[1].split(" ")[1]) * 60}
-              />
+                <div className="text-center text-destructive"> {error}</div>
+
+                <CountdownTimer
+                  time={Number(error.split("after")[1].split(" ")[1]) * 60}
+                />
               </>
-              
             ) : (
               <motion.p
                 className="text-center text-destructive"

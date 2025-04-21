@@ -155,12 +155,15 @@ export const subscriberSchema = z.object({
   name: z.string().min(1, "Subscriber name is required"),
   surname: z.string().min(1, "Subscriber surname is required"),
   patronymic: z.string().min(1, "Subscriber patronymic is required"),
-  finCode: z.string().min(7, "Subscriber finCode should be 7 simvols"),
+  finCode: z
+    .string()
+    .min(7, "Subscriber finCode should be 7 symbols")
+    .max(7, "Subscriber finCode should be 7 symbols"),
   phoneNumber: z
     .string()
     .regex(
       /^\+994(50|51|55|70|77|99)\d{7}$/,
-      "Invalid Azerbaijani mobile number",
+      "Invalid Azerbaijani mobile number,bunber should start '+994'",
     ),
   regionId: z.number().optional(),
   districtId: z.number().optional(),

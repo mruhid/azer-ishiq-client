@@ -15,13 +15,21 @@ export default function SubscriberFeed() {
       initial="hidden"
       whileInView="show"
       viewport={{ once: false, amount: 0.25 }}
-      className={`mx-auto w-full space-y-4 px-2 transition-all duration-300 ${
-        open ? "max-w-[1100px]" : "max-w-full px-6"
+      className={`mx-auto w-full space-y-4 px-4 transition-all duration-300 sm:max-w-full ${
+        open
+          ? "w-full md:max-w-[500px] lg:max-w-[750px] xl:max-w-[1200px] 2xl:max-w-[1200px]"
+          : "px-6 md:max-w-[1300px] lg:max-w-[1300px] xl:max-w-[1300px] 2xl:max-w-[1300px]"
       } `}
     >
       <motion.div variants={fadeIn("down", "spring", 0.2, 0.8)}>
-        <div className="flex w-full items-center justify-between pr-4 pl-3">
-          <Button variant={"ghost"} className="text-2xl font-bold items-center hover:bg-secondary"><UserCheck2Icon size={30} className="mr-2 text-primary"/> Subscribers</Button>
+        <div className="flex w-full items-center justify-between pl-3 pr-4">
+          <Button
+            variant={"ghost"}
+            className="items-center text-2xl font-bold hover:bg-secondary"
+          >
+            <UserCheck2Icon size={30} className="mr-2 text-primary" />{" "}
+            Subscribers
+          </Button>
           <Link href={"/subscriber/add"}>
             <Button className="h-12 w-full max-w-44 rounded-xl border border-transparent bg-primary capitalize text-white transition-all duration-300 hover:scale-100 hover:border-muted-foreground/70 hover:bg-secondary hover:text-primary">
               Add subcriber

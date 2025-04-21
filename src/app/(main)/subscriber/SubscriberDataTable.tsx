@@ -53,6 +53,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useSidebar } from "@/components/ui/sidebar";
 import { motion } from "framer-motion";
+import { fetchQueryFN } from "../fetchQueryFN";
 
 export type subscriberFilderDataType = {
   regionId: null | number;
@@ -76,7 +77,7 @@ export default function SubscriberDataTable() {
     string | null
   >(null);
   const { session } = useSession();
-  const [subscriberFilderData, setSubscriberFilderData] =
+  const [subscriberFilterData, setSubscriberFilterData] =
     useState<subscriberFilderDataType>({
       regionId: null,
       districtId: null,
@@ -87,6 +88,7 @@ export default function SubscriberDataTable() {
     data: subscriberData,
     isPending,
     isError,
+    error
   } = useQuery<SubscribersProps>({
     queryKey: [
       "subscriber-table-feed",
@@ -100,44 +102,35 @@ export default function SubscriberDataTable() {
       const url = new URL(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/subscriber/filtered`,
       );
+
       url.searchParams.append("page", String(pageNumber));
       url.searchParams.append("pageSize", "10");
 
-      if (subscriberFilderData.regionId)
+      if (subscriberFilterData.regionId)
         url.searchParams.append(
           "regionId",
-          String(subscriberFilderData.regionId),
+          String(subscriberFilterData.regionId),
         );
-      if (subscriberFilderData.districtId)
+      if (subscriberFilterData.districtId)
         url.searchParams.append(
           "districtId",
-          String(subscriberFilderData.districtId),
+          String(subscriberFilterData.districtId),
         );
-      if (subscriberFilderData.territoryId)
+      if (subscriberFilterData.territoryId)
         url.searchParams.append(
           "territoryId",
-          String(subscriberFilderData.territoryId),
+          String(subscriberFilterData.territoryId),
         );
-      if (subscriberFilderData.streetId)
+      if (subscriberFilterData.streetId)
         url.searchParams.append(
           "streetId",
-          String(subscriberFilderData.streetId),
+          String(subscriberFilterData.streetId),
         );
 
-      const response = await fetch(url.toString(), {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch data");
-      }
-
-      // ✅ Ensure proper promise handling with await
-      const data: SubscribersProps = await response.json();
+      const data = await fetchQueryFN<SubscribersProps>(
+        url.toString(),
+        session,
+      )();
 
       return {
         ...data,
@@ -293,14 +286,9 @@ export default function SubscriberDataTable() {
     },
   });
   if (isError) {
-    toast({
-      title: "Server not working",
-      description: "Please try Latter",
-      variant: "destructive",
-    });
     return (
-      <h1 className="text-center text-xl font-bold text-destructive">
-        Something went wrong .Try latter
+      <h1 className="px-2 py-4 text-center text-2xl font-semibold text-destructive">
+        {(error as Error).message}
       </h1>
     );
   }
@@ -308,8 +296,8 @@ export default function SubscriberDataTable() {
   return (
     <div className="relative w-full overflow-x-auto rounded-lg p-4">
       <SubscriberSelect
-        subscriberFilderData={subscriberFilderData}
-        setSubscriberFilderData={setSubscriberFilderData}
+        subscriberFilderData={subscriberFilterData}
+        setSubscriberFilderData={setSubscriberFilterData}
       />
 
       {!isPending ? (
@@ -807,9 +795,11 @@ export function SubscriberSelect({
   return (
     <div className="mx-auto mb-4 flex w-full flex-col items-center justify-center gap-x-5 gap-y-2 rounded-xl border border-muted-foreground/40 bg-card/50 p-2 shadow-sm backdrop-blur-md md:flex-row">
       <div
-        className={`flex flex-col flex-wrap w-full items-center ${!delayedOpen ? "mx-3 w-full justify-between" : "justify-center gap-x-3 "} gap-y-2 pb-2 sm:flex-row`}
+        className={`flex w-full flex-col flex-wrap items-center ${!delayedOpen ? "mx-3 w-full justify-between" : "justify-center gap-x-3"} gap-y-2 pb-2 sm:flex-row`}
       >
-        <div className={`flex w-full   ${delayedOpen ? "sm:w-36" : "sm:w-48"} flex-col justify-start`}>
+        <div
+          className={`flex w-full ${delayedOpen ? "sm:w-36" : "sm:w-48"} flex-col justify-start`}
+        >
           <p className="mb-2 ml-1 text-sm font-bold">Region</p>
           <Select
             value={selectedRegion || ""}
@@ -864,7 +854,9 @@ export function SubscriberSelect({
           </Select>
         </div>
 
-        <div className={`flex w-full   ${delayedOpen ? "sm:w-36" : "sm:w-48"} flex-col justify-start`}>
+        <div
+          className={`flex w-full ${delayedOpen ? "sm:w-36" : "sm:w-48"} flex-col justify-start`}
+        >
           <p className="mb-2 ml-1 text-sm font-bold">District</p>
           <Select
             value={selectedDistrict || ""}
@@ -919,7 +911,9 @@ export function SubscriberSelect({
           </Select>
         </div>
 
-        <div className={`flex w-full   ${delayedOpen ? "sm:w-36" : "sm:w-48"} flex-col justify-start`}>
+        <div
+          className={`flex w-full ${delayedOpen ? "sm:w-36" : "sm:w-48"} flex-col justify-start`}
+        >
           <p className="mb-2 ml-1 text-sm font-bold">Territory</p>
           <Select
             value={selectedTerritory || ""}
@@ -970,7 +964,9 @@ export function SubscriberSelect({
             </SelectContent>
           </Select>
         </div>
-        <div className={`flex w-full   ${delayedOpen ? "sm:w-36" : "sm:w-48"} flex-col justify-start`}>
+        <div
+          className={`flex w-full ${delayedOpen ? "sm:w-36" : "sm:w-48"} flex-col justify-start`}
+        >
           <p className="mb-2 ml-1 text-sm font-bold">Street</p>
           <Select
             value={selectedStreet || ""}
@@ -1018,7 +1014,7 @@ export function SubscriberSelect({
           </Select>
         </div>
         <div
-          className={`flex w-full   ${delayedOpen ? "sm:w-36" : "sm:w-48"} flex-col justify-start`}
+          className={`flex w-full ${delayedOpen ? "sm:w-36" : "sm:w-48"} flex-col justify-start`}
         >
           <p className="mb-2 ml-1 text-sm font-bold opacity-0">Street</p>
           <Button

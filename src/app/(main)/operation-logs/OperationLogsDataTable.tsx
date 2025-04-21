@@ -13,25 +13,11 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import {
-  ArrowUpDown,
-  ChevronDown,
-  MoreHorizontal,
-  Search,
-  TimerReset,
-} from "lucide-react";
+import { Search, TimerReset } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -76,15 +62,18 @@ export const columns: ColumnDef<OperationCells>[] = [
   },
   {
     accessorKey: "userRoles",
-    header: "User Roles",
+    header: () => <div className="hidden md:block">User Roles</div>,
     cell: ({ row }) => (
-      <div className="capitalize">
-        {row.original.userRoles.map((item, index) => (
-          <span key={index}>
-            {item}
-            {index < row.original.userRoles.length - 1 ? ", " : ""}
-          </span>
-        ))}
+      <div className="hidden capitalize md:block">
+        {row.original.userRoles
+          .slice()
+          .sort((a, b) => a.localeCompare(b))
+          .map((item, index) => (
+            <span key={index}>
+              {item}
+              {index < row.original.userRoles.length - 1 ? ", " : ""}
+            </span>
+          ))}
       </div>
     ),
   },
@@ -98,16 +87,16 @@ export const columns: ColumnDef<OperationCells>[] = [
   },
   {
     accessorKey: "timestamp",
-    header: () => <div>Time Stamp</div>,
+    header: () => <div className="hidden lg:block">Time Stamp</div>,
     cell: ({ row }) => (
-      <div className="py-2">
+      <div className="hidden py-2 lg:block">
         {new Date(row.getValue("timestamp")).toLocaleString()}
       </div>
     ),
   },
   {
     accessorKey: "action",
-    header: () => <div>Operation</div>,
+    header: () => <div className="mr-auto">Operation</div>,
     cell: ({ row }) => {
       const value = row.original.action;
 
@@ -188,7 +177,7 @@ export default function OperationLogsDataTable() {
           ]
         : []),
     ],
-    queryFn: fetchQueryFN(url, session),
+    queryFn: fetchQueryFN<OperationLogsProps>(url, session),
 
     staleTime: Infinity,
   });
@@ -199,7 +188,7 @@ export default function OperationLogsDataTable() {
     isError: RoleError,
   } = useQuery<Role[]>({
     queryKey: ["roles"],
-    queryFn: fetchQueryFN(
+    queryFn: fetchQueryFN<Role[]>(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/roles`,
       session,
     ),
@@ -211,7 +200,7 @@ export default function OperationLogsDataTable() {
     isError: entryError,
   } = useQuery<string[]>({
     queryKey: ["enrties"],
-    queryFn: fetchQueryFN(
+    queryFn: fetchQueryFN<string[]>(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/log/entities`,
       session,
     ),
@@ -248,7 +237,9 @@ export default function OperationLogsDataTable() {
   }
 
   const handleUserData = (id: number) => {
-    toggleSidebar();
+    if (!UserId) {
+      toggleSidebar();
+    }
     setId(id);
   };
 
