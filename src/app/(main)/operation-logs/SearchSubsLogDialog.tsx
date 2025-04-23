@@ -17,7 +17,6 @@ import { fetchQueryFN } from "../fetchQueryFN";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "../SessionProvider";
 import { Skeleton } from "@/components/ui/skeleton";
-import LoadingButton from "@/components/LoadingButton";
 
 export default function SearchSubsDialog() {
   const [open, setOpen] = useState(false);
@@ -33,7 +32,7 @@ export default function SearchSubsDialog() {
     isPending,
     isError,
     error,
-    refetch
+    refetch,
   } = useQuery<SubscriberDataProps[]>({
     queryKey: ["subscriber-logs-byId", subCode],
     queryFn: fetchQueryFN<SubscriberDataProps[]>(url, session),
@@ -44,8 +43,7 @@ export default function SearchSubsDialog() {
 
   const handleSearch = () => {
     setSubCode(inputCode);
-    refetch(); 
-
+    refetch();
   };
 
   const handleDialogChange = (open: boolean) => {
@@ -58,7 +56,7 @@ export default function SearchSubsDialog() {
   return (
     <Dialog open={open} onOpenChange={handleDialogChange}>
       <DialogTrigger asChild>
-        <Button className="ml-4 rounded-sm border border-transparent bg-primary text-white transition-all duration-300 hover:border-muted-foreground/70 hover:bg-secondary hover:text-primary">
+        <Button className="ml-0 w-full rounded-sm border border-transparent bg-primary text-white transition-all duration-300 hover:border-muted-foreground/70 hover:bg-secondary hover:text-primary sm:ml-4 sm:w-[300px]">
           <SearchCheck className="mr-2 h-4 w-4" />
           Search log by subscriber's code
         </Button>

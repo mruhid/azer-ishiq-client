@@ -4,7 +4,7 @@ export const fetchData = async <T>({
   session,
 }: {
   url: string;
-  session: string;
+  session: string | null;
 }): Promise<T> => {
   try {
     const response = await fetch(url, {
@@ -33,7 +33,7 @@ export const fetchData = async <T>({
   }
 };
 
-export const fetchQueryFN = <T>(url: string, session: string) => {
+export const fetchQueryFN = <T>(url: string, session: string | null) => {
   return async (): Promise<T> => {
     return await fetchData<T>({ url, session });
   };

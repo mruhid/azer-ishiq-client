@@ -50,6 +50,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Roboto_Flex } from "next/font/google";
 import { fetchQueryFN } from "../fetchQueryFN";
+import { SelectLayout } from "@/components/FilterElementLayout";
 
 export const columns: ColumnDef<OperationCells>[] = [
   { id: "ID", header: "ID", cell: ({ row }) => <div>{row.index + 1}</div> },
@@ -263,8 +264,10 @@ export default function OperationLogsDataTable() {
   };
   return (
     <div className="w-full">
-      <div className="flex flex-col flex-wrap items-center justify-center gap-4 py-4 md:flex-row lg:justify-between lg:gap-0">
-        <div className="flex flex-col items-start justify-start gap-y-1">
+      <div
+        className={`flex flex-col flex-wrap items-center justify-center gap-4 py-4 md:flex-row md:px-0 lg:${isOpen ? `justify-center` : `justify-between`} lg:gap-0`}
+      >
+        <div className="flex w-full flex-col items-start justify-start gap-y-1 md:w-36">
           <p className="ml-1 text-sm font-bold">User Name</p>
           <Input
             placeholder="Filter username..."
@@ -275,10 +278,10 @@ export default function OperationLogsDataTable() {
                 user: event.target.value,
               }))
             }
-            className="w-36 bg-card"
+            className="w-full bg-card"
           />
         </div>
-        <div className="flex flex-col items-start justify-start gap-y-1">
+        <div className="flex w-full flex-col items-start justify-start gap-y-1 md:w-36">
           <p className="ml-1 text-sm font-bold">User Role</p>
           <Select
             value={filterData.userRole}
@@ -289,7 +292,7 @@ export default function OperationLogsDataTable() {
               }))
             }
           >
-            <SelectTrigger className="font-norma w-36 rounded-md bg-card text-sm">
+            <SelectTrigger className="font-norma w-full rounded-md bg-card text-sm">
               <SelectValue placeholder={"Select a roles"} />
             </SelectTrigger>
             <SelectContent className="rounded-md bg-card text-sm font-normal">
@@ -315,7 +318,27 @@ export default function OperationLogsDataTable() {
             </SelectContent>
           </Select>
         </div>
-        <div className="flex flex-col items-start justify-start gap-y-1">
+        <SelectLayout
+          title="Entry Names"
+          placeholder="Select an entry"
+          value={filterData.entryName}
+          onChange={(value) =>
+            setFilteredData((prev) => ({
+              ...prev,
+              entryName: value === "all" ? "" : value,
+            }))
+          }
+          isLoading={entryLoading}
+          isError={entryError}
+          selectData={[
+            { id: "all", name: "All" },
+            ...(entryNames || []).map((entry) => ({
+              id: entry,
+              name: entry,
+            })),
+          ]}
+        />
+        {/* <div className="flex flex-col items-start justify-start gap-y-1">
           <p className="ml-1 text-sm font-bold">Entry Names</p>
           <Select
             value={filterData.entryName}
@@ -351,15 +374,15 @@ export default function OperationLogsDataTable() {
               )}
             </SelectContent>
           </Select>
-        </div>{" "}
-        <div className="flex flex-col items-start justify-start gap-y-1">
+        </div>{" "} */}
+        <div className="flex w-full flex-col items-start justify-start gap-y-1 md:w-[18rem]">
           <p className="ml-1 text-sm font-bold">From-To Date Picker</p>
-          <div className="flex gap-2">
+          <div className="flex w-full flex-col gap-2 md:flex-row">
             <Popover>
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
-                  className="w-36 justify-start bg-card text-left"
+                  className="w-full justify-start bg-card text-left"
                 >
                   {filterData.from || "Select Start Date"}
                 </Button>
@@ -387,7 +410,7 @@ export default function OperationLogsDataTable() {
               <PopoverTrigger asChild>
                 <Button
                   variant="outline"
-                  className="w-36 justify-start bg-card text-left"
+                  className="w-full justify-start bg-card text-left"
                 >
                   {filterData.to || "Select End Date"}
                 </Button>
@@ -410,18 +433,42 @@ export default function OperationLogsDataTable() {
             </Popover>
           </div>
         </div>
-        <div className="flex flex-col items-start justify-start gap-y-1">
+        <div className="hidden flex-col items-start justify-start gap-y-1 md:flex">
           <p className="ml-1 text-sm font-bold opacity-0">
             From-To Date Picker
           </p>
 
           <div>
-            <Button variant={"outline"} onClick={resetFilter}>
+            <Button
+              className="ml-4 rounded-sm border border-foreground bg-card text-foreground transition-all duration-300 hover:scale-100 hover:border-muted-foreground/70 hover:bg-secondary hover:text-primary"
+              onClick={resetFilter}
+            >
               <TimerReset />
               Reset
             </Button>
             <Button
               className="ml-4 rounded-sm border border-transparent bg-primary text-white transition-all duration-300 hover:scale-100 hover:border-muted-foreground/70 hover:bg-secondary hover:text-primary"
+              onClick={handleFilter}
+            >
+              <Search /> Search
+            </Button>
+          </div>
+        </div>
+        <div className="flex w-full flex-col items-start justify-start gap-y-1 md:hidden">
+          <p className="ml-1 text-sm font-bold opacity-0">
+            From-To Date Picker
+          </p>
+
+          <div className="flex w-full flex-col gap-y-2">
+            <Button
+              className="w-full rounded-sm border border-foreground bg-card text-foreground transition-all duration-300 hover:scale-100 hover:border-muted-foreground/70 hover:bg-secondary hover:text-primary"
+              onClick={resetFilter}
+            >
+              <TimerReset />
+              Reset
+            </Button>
+            <Button
+              className="w-full rounded-sm border border-transparent bg-primary text-white transition-all duration-300 hover:scale-100 hover:border-muted-foreground/70 hover:bg-secondary hover:text-primary"
               onClick={handleFilter}
             >
               <Search /> Search

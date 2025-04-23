@@ -3,9 +3,12 @@ import { cookies } from "next/headers";
 import { loginSchema, LoginValues } from "@/lib/validation";
 import { encrypt } from "@/lib/session";
 
-export async function login(
-  credentials: LoginValues,
-): Promise<{ success?: boolean; error?: string }> {
+export async function login(credentials: LoginValues): Promise<{
+  success?: boolean;
+  roles?: string[];
+  id?: number;
+  error?: string;
+}> {
   try {
     const parsedValues = loginSchema.parse(credentials);
 
@@ -30,10 +33,11 @@ export async function login(
       return { error: "Invalid server response. Please try again." };
     }
 
-    console.log(data)
-    const { userName, email, roles, token, refreshToken } = data.response;
+    console.log(data);
+    const { userName, email, roles, token, refreshToken, id } = data.response;
 
     const session = await encrypt({
+      id,
       userName,
       email,
       roles,
@@ -50,7 +54,7 @@ export async function login(
       maxAge: 60 * 60, // 1 hour
     });
 
-    return { success: true };
+    return { success: true, roles, id };
   } catch (error: any) {
     console.error("Login error:", error.response?.data || error.message);
 

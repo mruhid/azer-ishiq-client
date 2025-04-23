@@ -25,17 +25,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
-import { DistrictsResponse, RegionsResponse } from "../../RegionFilter";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import addSubscriber from "./action";
 import Image from "next/image";
 import LImgae from "@/assets/updateGif.gif";
-import { useSession } from "../../SessionProvider";
-import { StreetResponse, TerritoryResponse } from "../SubscriberDataTable";
 import { Label } from "@/components/ui/label";
-import { fetchQueryFN } from "../../fetchQueryFN";
+import { DistrictsResponse, RegionsResponse } from "@/app/(main)/RegionFilter";
+import {
+  StreetResponse,
+  TerritoryResponse,
+} from "@/app/(main)/subscriber/SubscriberDataTable";
+import { useSession } from "../../SessionProvider";
+import { fetchQueryFN } from "@/app/(main)/fetchQueryFN";
 
 export type valueProps = {
   regionId: number | undefined;
@@ -44,6 +47,7 @@ export type valueProps = {
   streetId: number | undefined;
 };
 export default function AddSubscriberForm() {
+  const { user } = useSession();
   const [values, setValues] = useState<valueProps>({
     regionId: undefined,
     districtId: undefined,
@@ -96,7 +100,7 @@ export default function AddSubscriberForm() {
           title: "Successful Operation",
           description: "New substation has been added",
         });
-        router.push(`/subscriber`);
+        router.push(`/user-account/${user?.id}`);
       }
     });
   }

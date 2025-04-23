@@ -3,21 +3,16 @@ import { validateRequest } from "@/lib/session";
 import { SubstationProps } from "@/lib/type";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { cache, useState } from "react";
+import { cache } from "react";
 import ImageBox from "@/components/ImageBox";
-import { Card, CardContent } from "@/components/ui/card";
 import {
-  Globe,
-  AlertCircle,
   HomeIcon,
-  ImageIcon,
   Loader2Icon,
   MapPinIcon,
   Cable,
   Building2Icon,
   XIcon,
 } from "lucide-react";
-import UnauthorizedPage from "@/components/UnauthorizedPage";
 import { Button } from "@/components/ui/button";
 import DeleteSubtationDialog, {
   SubstationMapDialog,
@@ -169,7 +164,7 @@ export default async function Page({ params }: Props) {
 
           <DialogContent className="max-h-[90vh] max-w-[90vw] overflow-hidden border-none bg-transparent p-0 shadow-none">
             <DialogClose asChild>
-              <Button className="absolute right-4  z-10 rounded-full border border-secondary bg-secondary p-2 text-foreground transition-all duration-300 hover:border-foreground hover:bg-foreground/70 hover:text-secondary">
+              <Button className="absolute right-4 z-10 rounded-full border border-secondary bg-secondary p-2 text-foreground transition-all duration-300 hover:border-foreground hover:bg-foreground/70 hover:text-secondary">
                 <XIcon />
               </Button>
             </DialogClose>

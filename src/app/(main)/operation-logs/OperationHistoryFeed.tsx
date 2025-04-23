@@ -23,7 +23,7 @@ export default function OperationHistoryFeed() {
       } `}
     >
       <motion.div variants={fadeIn("down", "spring", 0.2, 0.8)}>
-        <div className="flex w-full items-center justify-between">
+        <div className="flex w-full flex-col items-center justify-center gap-y-2 sm:flex-row sm:justify-between sm:gap-y-0">
           <Button
             variant={"ghost"}
             className="items-center text-2xl font-bold hover:bg-secondary"

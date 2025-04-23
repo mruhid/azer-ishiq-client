@@ -1,3 +1,12 @@
+import {
+  LogIn,
+  FileText,
+  Bell,
+  Lightbulb,
+  Calculator,
+  Zap,
+} from "lucide-react";
+
 export const exploreWorlds = [
   {
     id: "world-1",
@@ -40,4 +49,48 @@ export const startingFeatures = [
   "Managing electricity distribution networks across Azerbaijan",
   "Introducing digital services for efficient energy consumption",
   "Supporting renewable energy projects for a greener future",
+];
+
+export const serviceItems = [
+  {
+    title: "Şəxsi kabinet",
+    description:
+      "Şəxsi kabinetiniz vasitəsilə öz sərfiyatlarınızdan, aktlarınızdan, ödənişlərinizdən xəbərdar olun",
+    icon: LogIn,
+    src: "/",
+  },
+  {
+    title: "Təklif və şikayətlər",
+    description: "Elektron qaydada müraciət etmək üçün klikləyin",
+    icon: FileText,
+    src: "/",
+  },
+  {
+    title: "E-müraciətin statusu",
+    description:
+      "Elektron müraciətinizin statusu, mərhələsi haqqında ətraflı məlumat əldə edin",
+    icon: Bell,
+    src: null,
+  },
+  {
+    title: "Elektron işıq portalı",
+    description:
+      '"Azərişıq" ASC tərəfindən göstərilən xidmətlər üçün keçid edin',
+    icon: Lightbulb,
+    src: null,
+  },
+  {
+    title: "Qoşulma kalkulyatoru",
+    description:
+      "Elektrik şəbəkəsinə qoşulma xərclərini təqdim etdiyimiz kalkulyatorla hesablayın",
+    icon: Calculator,
+    src: null,
+  },
+  {
+    title: "Elektrik şəbəkəsinə qoşulma",
+    description:
+      "Elektrik şəbəkəsinə qoşulmaq üçün klikləyin və ilk pəncərədəki təlimatla davam edin",
+    icon: Zap,
+    src: "/subscriber/add",
+  },
 ];

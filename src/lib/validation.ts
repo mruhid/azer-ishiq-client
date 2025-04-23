@@ -99,34 +99,34 @@ export const upSubstationSchema = z.object({
   //   .min(5, "Address must be at least 5 characters")
   //   .nonempty("Address is required"),
 
-  image: z
-    .instanceof(File)
-    .nullable()
-    .refine((file) => {
-      if (!file) return true;
-      return file.size <= MAX_FILE_SIZE;
-    }, "Max image size is 2MB.")
-    .refine((file) => {
-      if (!file) return true;
-      return ACCEPTED_IMAGE_TYPES.includes(file.type);
-    }, "Only .jpg, .jpeg, .png, and .webp formats are supported."),
+  // image: z
+  //   .instanceof(File)
+  //   .nullable()
+  //   .refine((file) => {
+  //     if (!file) return true;
+  //     return file.size <= MAX_FILE_SIZE;
+  //   }, "Max image size is 2MB.")
+  //   .refine((file) => {
+  //     if (!file) return true;
+  //     return ACCEPTED_IMAGE_TYPES.includes(file.type);
+  //   }, "Only .jpg, .jpeg, .png, and .webp formats are supported."),
 });
 
 export type UpSubstationValues = z.infer<typeof upSubstationSchema>;
 
 export const NewSubstationSchema = z.object({
   name: z.string().min(1, "Substation name is required"), // Fix for required name field
-  image: z
-    .any()
-    .nullable()
-    .refine((file) => {
-      if (!file) return true; // No file uploaded is acceptable
-      return file.size <= MAX_FILE_SIZE;
-    }, `Max image size is 1MB.`)
-    .refine((file) => {
-      if (!file) return true; // No file uploaded is acceptable
-      return ACCEPTED_IMAGE_TYPES.includes(file.type);
-    }, "Only .jpg, .jpeg, .png, and .webp formats are supported."),
+  // image: z
+  //   .any()
+  //   .nullable()
+  //   .refine((file) => {
+  //     if (!file) return true; // No file uploaded is acceptable
+  //     return file.size <= MAX_FILE_SIZE;
+  //   }, `Max image size is 1MB.`)
+  //   .refine((file) => {
+  //     if (!file) return true; // No file uploaded is acceptable
+  //     return ACCEPTED_IMAGE_TYPES.includes(file.type);
+  //   }, "Only .jpg, .jpeg, .png, and .webp formats are supported."),
 });
 
 export type NewSubstationValues = z.infer<typeof NewSubstationSchema>;

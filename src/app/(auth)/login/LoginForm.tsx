@@ -50,7 +50,7 @@ export default function LoginForm() {
   async function onSubmit(values: LoginValues) {
     setError(undefined);
     startTransition(async () => {
-      const { success, error } = await login(values);
+      const { success, error, id, roles } = await login(values);
       if (error) {
         setError(error);
         if (error.split(" ")[0] == "OTP") {
@@ -65,7 +65,11 @@ export default function LoginForm() {
           title: "Welcome back",
           description: "Good to see you agin on AzerIshiq",
         });
-        router.push("/");
+        const url =
+          roles?.length === 1 && roles[0].toLowerCase() === "user"
+            ? `/user-account/${id}`
+            : `/`;
+        router.push(url);
       }
     });
   }

@@ -13,16 +13,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
+import { Skeleton } from "./ui/skeleton";
 import { Button } from "./ui/button";
 
 const UserInformationSideBar: React.FC = () => {
   const { session } = useSession();
   const { isOpen, setId, UserId, toggleSidebar } = useUserInformation();
   if (!isOpen || !UserId) return null;
-  console.log(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/${UserId}}`,
-    session,
-  );
+
   const {
     data: userData,
     isPending,
@@ -52,10 +50,10 @@ const UserInformationSideBar: React.FC = () => {
   });
 
   if (isPending) {
-    return <h1 className="w-[280px]">Loading</h1>;
+    return <UserCardSkeleton />;
   }
   if (isError) {
-    return <h1 className="w-[280px]">Error</h1>;
+    return <UserCardError />;
   }
 
   const date = new Date(userData.createdAt);
@@ -183,4 +181,118 @@ const InfoRow = ({
     <span className="font-medium">{value}</span>
   </div>
 );
+export function UserCardSkeleton() {
+  const { setId, toggleSidebar } = useUserInformation();
+
+  return (
+    <div className="fixed right-0 top-0 z-50 h-screen w-[280px] bg-card py-5 opacity-50 shadow-md md:sticky md:opacity-100">
+      <div className="mx-auto flex h-full w-full max-w-[260px] flex-col items-start justify-center rounded-xl bg-secondary py-2 shadow-md">
+        <div className="mt-4 flex w-full items-start justify-between px-2">
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-5 w-5 rounded-full bg-muted-foreground/60" />
+            <Skeleton className="h-5 w-20 bg-muted-foreground/60" />
+          </div>
+          <XIcon
+            onClick={() => {
+              toggleSidebar();
+              setId(0);
+            }}
+            className="rounded-full border border-secondary transition-all duration-300 hover:border-foreground/20"
+          />
+        </div>
+
+        <div className="my-2 w-full py-2">
+          <Skeleton className="mx-auto h-[130px] w-[130px] rounded-full bg-muted-foreground/60" />
+        </div>
+
+        <div className="flex w-full items-center justify-between px-2 py-2">
+          <div className="my-1 flex w-[120px] flex-col items-start justify-start gap-2">
+            <Skeleton className="h-4 w-[100px] bg-muted-foreground/60" />
+            <Skeleton className="h-10 w-full rounded-sm bg-muted-foreground/60" />
+          </div>
+          <div className="my-1 flex w-[120px] flex-col items-start justify-start gap-2">
+            <Skeleton className="h-4 w-[100px] bg-muted-foreground/60" />
+            <Skeleton className="h-10 w-full rounded-sm bg-muted-foreground/60" />
+          </div>
+        </div>
+
+        <section className="mx-auto mt-6 w-full space-y-4">
+          <Skeleton className="mx-2 h-4 w-20 bg-muted-foreground/60" />
+          <div className="mx-auto w-full max-w-[236px] space-y-3 rounded-md bg-card p-3 shadow-sm">
+            {[...Array(6)].map((_, idx) => (
+              <div key={idx} className="space-y-1">
+                <Skeleton className="h-3 w-20 bg-muted-foreground/60" />
+                <Skeleton className="h-4 w-full bg-muted-foreground/60" />
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}
+export function UserCardError() {
+  const { setId, toggleSidebar } = useUserInformation();
+  return (
+    <div className="fixed right-0 top-0 z-50 h-screen w-[280px] bg-card py-5 opacity-50 shadow-md md:sticky md:opacity-100">
+      <div className="mx-auto h-full w-full max-w-[260px] rounded-xl bg-secondary py-2 shadow-md">
+        <div className="mx-auto flex w-full max-w-[260px] flex-col items-start justify-center">
+          <div className="mt-4 flex w-full items-start justify-between px-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex cursor-pointer items-center gap-2">
+                    <Circle
+                      size={20}
+                      className={`rounded-full bg-red-600 text-red-600`}
+                    />
+                    <h2 className="text-lg font-semibold">Server Error</h2>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-start text-[12px]">
+                    Server did not response
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <XIcon
+              onClick={() => {
+                toggleSidebar();
+                setId(0);
+              }}
+              className="rounded-full border border-secondary transition-all duration-300 hover:border-foreground/20"
+            />
+          </div>
+
+          <div className="my-2 w-full py-2">
+            <UserAvatar
+              className="mx-auto shadow-md"
+              size={130}
+              avatarUrl={""}
+            />
+          </div>
+          <div className="my-2 w-full py-2">
+            <p className="mx-2 rounded-md border border-muted-foreground/60 bg-card py-2 text-center text-xl font-medium text-destructive">
+              Failed to load user data.
+            </p>
+            <p className="text-md mx-2 mt-2 rounded-md border border-muted-foreground/60 bg-card px-1 py-2 text-start font-medium text-destructive">
+              There may be some error on this server or due to the development
+              work of our engineers, please log in again after a while{" "}
+            </p>
+          </div>
+          <Button
+            onClick={() => {
+              toggleSidebar();
+              setId(0);
+            }}
+            className="w-full rounded-sm border border-transparent bg-primary text-white transition-all duration-300 hover:border-muted-foreground/70 hover:bg-secondary hover:text-primary"
+          >
+            Close
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
 export default UserInformationSideBar;

@@ -7,6 +7,7 @@ const secretKey = process.env.SECRET_KEY;
 const encodedKey = new TextEncoder().encode(secretKey);
 
 type SessionPayload = {
+  id: number;
   userName: string;
   email: string;
   roles: string[];
@@ -15,6 +16,7 @@ type SessionPayload = {
 };
 
 export type User = {
+  id: number;
   userName: string;
   email: string;
   roles: string[];
@@ -85,8 +87,12 @@ export const validateRequest = cache(
         return { user: null, session: null };
       }
 
-      const { userName, email, roles, token, refreshToken } = decryptSession;
-      return { user: { userName, email, roles, refreshToken }, session: token };
+      const { userName, email, roles, token, refreshToken, id } =
+        decryptSession;
+      return {
+        user: { userName, email, roles, refreshToken, id },
+        session: token,
+      };
     } catch (error) {
       console.error("Error parsing user session:", error);
       return { user: null, session: null };

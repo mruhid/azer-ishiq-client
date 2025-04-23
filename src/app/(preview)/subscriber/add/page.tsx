@@ -1,11 +1,15 @@
 import { Metadata } from "next";
 import AddSubscriberForm from "./AddSubscriberForm";
+import { validateRequest } from "@/lib/session";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Add subscriber",
 };
 
-export default function Page() {
+export default async function Page() {
+  const { user, session } = await validateRequest();
+  if (!user || !session) redirect("/login");
   return (
     <main className="mx-auto w-full min-w-0 max-w-[1000px] space-y-5 text-center">
       <AddSubscriberForm />
