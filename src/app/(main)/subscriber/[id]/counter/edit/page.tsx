@@ -1,11 +1,14 @@
 import { cache } from "react";
 import { Subscriber } from "@/lib/type";
 import { validateRequest } from "@/lib/session";
-import { sendRequest } from "@/lib/utils";
+import { sendRequest, CapitalizeFirstLetter } from "@/lib/utils";
 import { Metadata } from "next";
 import UnauthorizedPage from "@/components/UnauthorizedPage";
-import { notFound } from "next/navigation";
-import SubscriberContractFeed from "./SubscriberContractFeed";
+import { notFound, redirect } from "next/navigation";
+import SubscriberCounterFeed from "./SubscriberCounterFeed";
+import UpdateImg from "@/assets/updateGif.gif";
+import UserAvatar from "@/components/UserAvatar";
+
 const getSubscriber = cache(async (id: number): Promise<Subscriber | null> => {
   try {
     const { session } = await validateRequest();
@@ -34,7 +37,7 @@ export async function generateMetadata({
   const subs = await getSubscriber(id);
 
   return {
-    title: `(${subs ? `${subs.name} ${subs.surname}` : "Not-Found"})SB Contract`,
+    title: `(${subs ? `${CapitalizeFirstLetter(subs.name)} ${CapitalizeFirstLetter(subs.surname)}` : "Not-Found"})Edit Counter`,
   };
 }
 
@@ -46,18 +49,28 @@ export default async function Page({
   const { id } = await params;
   const { user: loggedInUser } = await validateRequest();
 
-//   if (!loggedInUser) {
-//     return <UnauthorizedPage />;
-//   }
+  if (!loggedInUser) {
+    return <UnauthorizedPage />;
+  }
 
   const subscriber = await getSubscriber(id);
-//   if (!subscriber) {
-//     return notFound();
-//   }
+  if (!subscriber) {
+    return notFound();
+  }
+  if (Number(subscriber.status) <= 3) {
+    redirect("/subscriber");
+  }
 
   return (
     <main className="mx-auto w-full min-w-0 max-w-[1080px] space-y-5 text-center">
-      <SubscriberContractFeed subscriber={subscriber} />
+      <div className="mx-2 flex items-center justify-around rounded-xl bg-primary py-2 text-center text-xl font-semibold">
+        <div className="px-2 text-start text-white">
+          <p>{CapitalizeFirstLetter(subscriber.name)} {CapitalizeFirstLetter(subscriber.surname)}</p>
+          <p className="text-[1rem]">You can update subscriber counter information on here</p>
+        </div>
+        <UserAvatar avatarUrl={UpdateImg} size={80} />
+      </div>
+      <SubscriberCounterFeed subscriber={subscriber} />
     </main>
   );
 }

@@ -158,17 +158,19 @@ export default function SubscriberStatusBar({
     <div className="grid w-full grid-cols-1 gap-2 p-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
       {list[status - 2].map((item, index) =>
         index < status ? (
-          <motion.div variants={fadeIn("rihht", "spring", index * 0.5, 0.75)}>
+          <motion.div
+            key={index}
+            variants={fadeIn("rihht", "spring", index * 0.5, 0.75)}
+          >
             <Link
               href={item.src}
-              key={index}
-              className={`flex w-full flex-col items-center justify-center py-3 px-1  ${item.color} ${index  < status ? `cursor-pointer` : `cursor-not-allowed`} rounded-md shadow-md`}
+              className={`flex w-full flex-col items-center justify-center px-1 py-3 ${item.color} ${index < status ? `cursor-pointer` : `cursor-not-allowed`} rounded-md shadow-md`}
             >
               <div className="flex items-center justify-center rounded-full bg-white p-1">
                 <item.icon size={32} className="text-black" />
               </div>
               <p
-                className={`mt-2 text-center text-sm font-bold ${index  < status ? `text-white` : `text-black`}`}
+                className={`mt-2 text-center text-sm font-bold ${index < status ? `text-white` : `text-black`}`}
               >
                 {item.name}
               </p>

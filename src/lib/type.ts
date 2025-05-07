@@ -10,6 +10,26 @@ export type SubstationProps = {
   images: SubsImg[];
 };
 
+export type TmDetailProps = {
+  id: number;
+  name: string;
+  substation: {
+    id: number;
+    name: string;
+    districtId: number;
+    district: {
+      id: number;
+      name: string;
+      regionId: number;
+      region: {
+        id: number;
+        name: string;
+      };
+    };
+  };
+  location: SubsLocation | null;
+};
+
 type SubsDistrict = {
   id: number;
   name: string;
@@ -113,6 +133,7 @@ export interface OperationLogsProps {
 
 export interface UserDataProps {
   userName: string;
+  fullName: string;
   email: string;
   phoneNumber: string;
   ipAddress: string;
@@ -146,7 +167,56 @@ export interface UserCells {
 }
 export interface UserManagementProps {
   items: UserCells[];
-  total: number;
+  totalCount: number;
   page?: number;
   pageSize?: number;
 }
+
+export interface MyStatusProps {
+  id: number;
+  fullName: string;
+  phoneNumber: string;
+  finCode: string;
+  populationStatus: string;
+  region: string;
+  district: string;
+  territory: string;
+  address: string;
+  ats: string;
+  subscriberCode: null | string;
+  requestStatus: string;
+}
+
+// Subscriber debt value
+export type DebtResponse = {
+  subscriberCode: string;
+  districtName: string;
+  name: string;
+  surname: string;
+  totalCurrentValue: number;
+  debt: number;
+};
+
+// FeedBack data
+
+export type FeedbackObject = {
+  id: number;
+  name: string;
+  surname: string;
+  phoneNumber: string;
+  email: string;
+  topic: number;
+  content: string;
+  isRead: boolean;
+  isReplied: boolean;
+  readAt: string;
+  repliedAt: string;
+  createdAt: string;
+};
+
+export type FeedBackProps = {
+  items: FeedbackObject[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+};

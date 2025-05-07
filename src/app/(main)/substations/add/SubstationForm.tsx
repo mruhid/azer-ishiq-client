@@ -131,7 +131,6 @@ export function SubstationForm({ Values, setValues }: SubstationFormProps) {
             <FormItem>
               <FormControl>
                 <div
-                  className="relative flex h-40 w-full cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-muted-foreground bg-secondary text-muted-foreground transition-all hover:border-primary hover:bg-secondary/70 hover:text-primary"
                   onDragOver={handleDragOver}
                   onDrop={handleDrop}
                 >
@@ -139,10 +138,9 @@ export function SubstationForm({ Values, setValues }: SubstationFormProps) {
                     type="file"
                     accept="image/jpeg, image/png,"
                     placeholder="Add substation image"
-                    className="absolute inset-0 cursor-pointer opacity-0"
+                    className=" cursor-pointer "
                     onChange={handleImageChange} // Update image change handler
                   />
-                  <Plus className="h-10 w-full" />
                 </div>
               </FormControl>
               <FormMessage />

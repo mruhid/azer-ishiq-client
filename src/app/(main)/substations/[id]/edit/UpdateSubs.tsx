@@ -25,7 +25,6 @@ import React, {
 import updateSubstation from "./action";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
-import SubstationSelect from "../../SubstationSelect";
 import EditSubstationSelect from "./EditSubstationSelect";
 
 const MapComponent = dynamic(() => import("@/components/MapComponents"), {

@@ -57,13 +57,13 @@ export const serviceItems = [
     description:
       "Şəxsi kabinetiniz vasitəsilə öz sərfiyatlarınızdan, aktlarınızdan, ödənişlərinizdən xəbərdar olun",
     icon: LogIn,
-    src: "/",
+    src: "/login",
   },
   {
     title: "Təklif və şikayətlər",
     description: "Elektron qaydada müraciət etmək üçün klikləyin",
     icon: FileText,
-    src: "/",
+    src: null,
   },
   {
     title: "E-müraciətin statusu",
@@ -93,4 +93,45 @@ export const serviceItems = [
     icon: Zap,
     src: "/subscriber/add",
   },
+];
+
+export const appealTopic = [
+  "Şikayyət",
+  "Təklif",
+  "Qəza",
+  "Sayğac quraşdırma",
+  "Sms sayğac quraşdırma",
+  "Qısa məlumat",
+  "Şəbəkəyə qoşulma",
+  "Məlumat dəyişikliyi",
+  "Onlayn ödəmə müraciəti",
+  "Insan qaynaqları",
+  "İstismar qaydaları",
+  "Digər",
+];
+export const engAppealTopic = [
+  "Complaint",
+  "Suggestion",
+  "Accident",
+  "Meter installation",
+  "Smart meter installation",
+  "Brief information",
+  "Network connection",
+  "Information update",
+  "Online payment request",
+  "Human resources",
+  "Operating rules",
+  "Other",
+];
+
+export const numberPrefix = [
+  "+99410",
+  "+99412",
+  "+99450",
+  "+99451",
+  "+99455",
+  "+99460",
+  "+99470",
+  "+99477",
+  "+99499",
 ];

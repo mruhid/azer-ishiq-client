@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { Subscriber } from "@/lib/type";
 import { validateRequest } from "@/lib/session";
-import { sendRequest } from "@/lib/utils";
+import { sendRequest, CapitalizeFirstLetter } from "@/lib/utils";
 import { Metadata } from "next";
 import UnauthorizedPage from "@/components/UnauthorizedPage";
 import { notFound } from "next/navigation";
@@ -34,7 +34,7 @@ export async function generateMetadata({
   const subs = await getSubscriber(id);
 
   return {
-    title: `(${subs ? `${subs.name} ${subs.surname}` : "Not-Found"})SB Counter`,
+    title: `(${subs ? `${CapitalizeFirstLetter(subs.name)} ${CapitalizeFirstLetter(subs.surname)}` : "Not-Found"})SB Counter`,
   };
 }
 

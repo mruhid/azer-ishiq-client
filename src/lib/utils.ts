@@ -87,3 +87,6 @@ export function formatDate(timestamp: string) {
 export function parseDate(dateString: string) {
   return parse(dateString, "dd/MM/yyyy", new Date());
 }
+export function CapitalizeFirstLetter(val: string) {
+  return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+}

@@ -37,7 +37,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { CalendarIcon, ChevronDown, Filter, SearchIcon } from "lucide-react";
+import {
+  CalendarIcon,
+  ChevronDown,
+  Filter,
+  SearchIcon,
+  Settings,
+} from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -88,16 +94,19 @@ export default function SubscriberDataTable() {
     data: subscriberData,
     isPending,
     isError,
-    error
+    error,
   } = useQuery<SubscribersProps>({
-    queryKey: [
-      "subscriber-table-feed",
-      pageNumber,
-      region,
-      district,
-      territory,
-      street,
-    ],
+    queryKey: region
+      ? [
+          "subscriber-table-feed",
+          pageNumber,
+          region,
+          district,
+          territory,
+          street,
+        ]
+      : ["subscriber-table-feed", pageNumber],
+
     queryFn: async (): Promise<SubscribersProps> => {
       const url = new URL(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/subscriber/filtered`,
@@ -141,7 +150,9 @@ export default function SubscriberDataTable() {
       };
     },
 
-    staleTime: Infinity,
+    staleTime: 5000,
+    refetchInterval: 5000,
+    refetchOnWindowFocus: false,
   });
 
   const { open } = useSidebar();
@@ -243,7 +254,7 @@ export default function SubscriberDataTable() {
                 isActive ? "bg-green-700" : "bg-destructive"
               }`;
 
-              return value < maxStatus ? (
+              return value < maxStatus - 1 ? (
                 <Link
                   className={className}
                   key={i}
@@ -271,6 +282,26 @@ export default function SubscriberDataTable() {
             : "Non-Country"}
         </div>
       ),
+    },
+    {
+      accessorKey: "update",
+      header: ({ column }) => (
+        <div className="flex flex-col justify-start gap-y-2">
+          <p className="text-sm font-bold capitalize">Update</p>
+        </div>
+      ),
+      cell: ({ row }) =>
+        Number(row.original.status) >= 3 ? (
+          <div className="flex w-full items-center justify-center">
+            <Link href={`subscriber/${row.original.id}/counter/edit`}>
+              <Button size="icon" variant="outline" className="group">
+                <Settings className="transition-transform duration-300 group-hover:rotate-90" />
+              </Button>
+            </Link>
+          </div>
+        ) : (
+          ""
+        ),
     },
   ];
   const table = useReactTable({
@@ -709,6 +740,12 @@ export function SubscriberSelect({
     setSelectedDistrict("");
     setSelectedTerritory("");
     setSelectedTerritory("");
+    setSubscriberFilderData({
+      regionId: null,
+      districtId: null,
+      territoryId: null,
+      streetId: null,
+    });
 
     setTimeout(() => {
       document

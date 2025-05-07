@@ -2,12 +2,16 @@
 import { navVariants } from "@/lib/motion";
 import styles from "@/lib/styles";
 import { motion } from "framer-motion";
-import { Menu, Moon, Sun } from "lucide-react";
+import { Menu, Moon, Settings, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
+import { useSession } from "../SessionProvider";
+import { Button } from "@/components/ui/button";
 
 export default function Navbar() {
   const { theme, setTheme } = useTheme();
+  const { user } = useSession();
+  const role = user?.roles.some((f) => f.toLowerCase() === "admin");
 
   return (
     <header className="sticky top-0 z-10">
@@ -18,56 +22,58 @@ export default function Navbar() {
         className={`${styles.xPaddings} relative bg-secondary py-6`}
       >
         <div
-          className={`${styles.innerWidth} mx-auto flex justify-between gap-8`}
+          className={`${styles.innerWidth} mx-auto flex flex-wrap items-center justify-between gap-8`}
         >
-          <div className="flex items-start justify-center gap-2">
+          <div className="flex items-center gap-2">
             <img
               src="/assets/withoutBGAzerisiq.png"
               alt="Logo"
-              className={`h-[34px] w-[34px] object-contain`}
+              className="h-[34px] w-[34px] object-contain"
             />
-            <h2 className="text-[24px] font-semibold leading-[30px] text-foreground">
-              Azerishiq ASC
-            </h2>
+            <Link href="/service">
+              <h2 className="text-[24px] font-semibold text-foreground">
+                Azerishiq ASC
+              </h2>
+            </Link>
           </div>
-          <div className="flex items-center justify-center gap-6">
+
+          <nav className="flex flex-wrap items-center gap-6">
             {[
-              { href: "/service", label: "Servis" },
+              { href: "/service", label: "Xidmətlər" },
               { href: "/about-us", label: "Haqqımızda" },
               { href: "/developers", label: "Mühəndislər" },
-            ].map((item, index) => (
+            ].map(({ href, label }) => (
               <Link
-                key={index}
-                href={item.href}
-                className="group relative text-lg font-medium text-foreground transition-colors duration-200 hover:text-primary"
+                key={href}
+                href={href}
+                className="group relative text-lg font-medium text-foreground transition-colors hover:text-primary"
               >
-                {item.label}
+                {label}
                 <span className="absolute bottom-0 left-0 h-[2px] w-0 bg-primary transition-all duration-300 ease-in-out group-hover:w-full" />
               </Link>
             ))}
-          </div>
+          </nav>
 
-          <div className="flex items-center justify-center gap-2">
-            <h2 className="text-[24px] font-semibold leading-[30px] text-foreground opacity-0">
-              Azerishiq ASC
-            </h2>
-            <Menu size={30} />
-
-            {theme === "dark" ? (
-              <div
-                onClick={() => setTheme("light")}
-                className="cursor-pointer rounded-full bg-card p-3 text-foreground transition-colors hover:text-primary"
-              >
-                <Sun size={20} />
-              </div>
-            ) : (
-              <div
-                onClick={() => setTheme("dark")}
-                className="cursor-pointer rounded-full bg-card p-3 text-foreground transition-colors hover:text-primary"
-              >
-                <Moon size={20} />
-              </div>
+          {/* Theme and Mobile Menu */}
+          <div className="flex items-center gap-3">
+            {/* Conditionally show Dashboard button */}
+            {user && role && (
+              <Button className="border" asChild variant="ghost">
+                <Link href="/">
+                  {" "}
+                  <Settings className="mr-4 transition-transform duration-300 group-hover:rotate-90" />
+                  Dashboard
+                </Link>
+              </Button>
             )}
+            <Menu size={30} className="text-foreground" />
+
+            <div
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="cursor-pointer rounded-full bg-card p-3 text-foreground transition-colors hover:text-primary"
+            >
+              {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+            </div>
           </div>
         </div>
       </motion.nav>

@@ -1,6 +1,5 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
-import kyInstance from "@/lib/ky";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Dispatch,
   SetStateAction,
@@ -20,13 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  FileScan,
-  ReceiptText,
-  Unplug,
-  UserCheckIcon,
-  Zap,
-} from "lucide-react";
+
 import {
   DistrictsResponse,
   RegionsResponse,
@@ -35,9 +28,8 @@ import {
 } from "@/app/(main)/RegionFilter";
 import { Subscriber } from "@/lib/type";
 import { useSession } from "@/app/(main)/SessionProvider";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import LoadingButton from "@/components/LoadingButton";
-import Link from "next/link";
 import sbTmApply from "./action";
 import SubscriberStatusBar from "../SubscriberStatusBar";
 import { fadeIn, staggerContainer } from "@/lib/motion";
@@ -58,7 +50,10 @@ export default function SubscriberTmFeed({
       className="mx-2"
     >
       {/* <SubscriberStatus id={subscriber.id} /> */}
-      <SubscriberStatusBar id={subscriber.id} status={Number(subscriber.status)+1} />
+      <SubscriberStatusBar
+        id={subscriber.id}
+        status={Number(subscriber.status) + 1}
+      />
       <motion.div
         variants={fadeIn("up", "spring", 0.2, 1.5)}
         className="mx-auto mt-2 flex flex-col items-start justify-center gap-y-2 rounded-xl border border-muted-foreground/60 bg-card py-2 shadow-md"
@@ -78,6 +73,8 @@ export function SubscriberFilter({
   setSubsValue,
 }: SubscriberFilter) {
   const [isPending, startTransition] = useTransition();
+  const queryClient = useQueryClient();
+
   const { session } = useSession();
   const [districtState, setDistrictState] = useState<DistrictsResponse | null>(
     null,
@@ -247,11 +244,14 @@ export function SubscriberFilter({
           variant: "destructive",
         });
       } else if (success) {
+        await queryClient.invalidateQueries({
+          queryKey: ["subscriber-table-feed"],
+        });
         toast({
           title: "Successful Operation",
           description: "Subscriber code creating successfully",
         });
-        router.push(`/subscriber/${subsValue.id}/sb-contract`);
+        router.push(`/subscriber/`);
       }
     });
   }
@@ -263,7 +263,6 @@ export function SubscriberFilter({
           <p className="text-sm font-bold">Region</p>
           <Select
             value={selectedRegion || "No result"}
-            readOnly
             // onValueChange={(value) => {
             //   setSelectedRegion(value);
             //   setSelectedDistrict(null);
@@ -322,7 +321,6 @@ export function SubscriberFilter({
           <p className="text-sm font-bold">District</p>
           <Select
             value={selectedDistrict || "No result"}
-            readOnly
 
             // onValueChange={(value) => {
             //   setSelectedDistrict(value);
@@ -454,7 +452,7 @@ export function SubscriberFilter({
           <LoadingButton
             loading={isPending}
             onClick={onApply}
-            disabled={Number(subsValue.status)>3}
+            disabled={Number(subsValue.status) > 3}
             className="mt-4 w-full rounded-sm border border-transparent bg-primary capitalize text-white transition-all duration-300 hover:scale-100 hover:border-muted-foreground/70 hover:bg-secondary hover:text-primary"
           >
             Apply
@@ -462,84 +460,5 @@ export function SubscriberFilter({
         </div>
       </div>
     </>
-  );
-}
-
-type listProps = {
-  name: string;
-  src: string;
-  icon: React.ElementType;
-  color: string;
-};
-export function SubscriberStatus({ id }: { id: number }) {
-  const status = 5;
-  const list: listProps[] = [
-    {
-      name: "Application acceptance",
-      src: "/subscriber",
-      color: "bg-green-800",
-      icon: ReceiptText,
-    },
-    {
-      name: "Generate code",
-      color: "bg-green-700",
-      src: `/subscriber/${id}/code-for-subscriber`,
-      icon: FileScan,
-    },
-    {
-      name: "Electric meter",
-      color: "bg-green-600",
-      src: `/subscriber/${id}/sb-counter`,
-      icon: Zap,
-    },
-    {
-      name: "TM connection",
-      color: "bg-green-500",
-      src: `/subscriber/${id}/sb-tm`,
-      icon: Unplug,
-    },
-    {
-      name: "The contract",
-      color: "bg-gray-300",
-      src: "/subscriber/${id}/sb-contract",
-      icon: UserCheckIcon,
-    },
-  ];
-
-  return (
-    <div className="grid w-full grid-cols-1 gap-2 p-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-      {list.map((item, index) =>
-        index + 1 < status ? (
-          <Link
-            href={item.src}
-            key={index}
-            className={`flex w-full flex-col items-center justify-center p-1 ${item.color} ${index + 1 < status ? `cursor-pointer` : `cursor-not-allowed`} rounded-sm shadow-md`}
-          >
-            <div className="flex items-center justify-center rounded-full bg-white p-1">
-              <item.icon size={32} className="text-black" />
-            </div>
-            <p
-              className={`mt-2 text-center text-sm font-bold ${index + 1 < status ? `text-white` : `text-black`}`}
-            >
-              {item.name}
-            </p>
-          </Link>
-        ) : (
-          <div
-            key={index}
-            className={`flex w-full flex-col items-center justify-center p-1 ${item.color} ${index + 1 < status ? `cursor-pointer` : `cursor-not-allowed`} rounded-sm shadow-md`}
-          >
-            <div className="flex items-center justify-center rounded-full bg-white p-1">
-              <item.icon size={32} className="text-black" />
-            </div>
-            <p
-              className={`mt-2 text-center text-sm font-bold ${index + 1 < status ? `text-white` : `text-black`}`}
-            >
-              {item.name}
-            </p>
-          </div>
-        ),
-      )}
-    </div>
   );
 }

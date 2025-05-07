@@ -111,7 +111,7 @@ export function NavMenu() {
                   </Link>
                 </NavigationMenuLink>
               </li>
-              <ListItem href="/roles" title="Roles">
+              <ListItem href="/rules" title="Rules">
                 This panel allows Azerİshig employees to monitor the Azerbaijani
                 electricity network and manage operational tasks efficiently.
               </ListItem>

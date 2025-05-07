@@ -94,7 +94,7 @@ export default function AddSubscriberForm() {
         setError(error);
       } else if (success) {
         await queryClient.invalidateQueries({
-          queryKey: ["subscriber-table-feed"],
+          queryKey: ["my-subscriber-status"],
         });
         toast({
           title: "Successful Operation",

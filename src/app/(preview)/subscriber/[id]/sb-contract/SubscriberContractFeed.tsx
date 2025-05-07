@@ -1,6 +1,6 @@
 "use client";
 import { useToast } from "@/components/ui/use-toast";
-import { Subscriber } from "@/lib/type";
+import { MyStatusProps, Subscriber } from "@/lib/type";
 import {
   FileScan,
   ReceiptText,
@@ -11,7 +11,6 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import SubscriberStatusBar from "../SubscriberStatusBar";
 import {
   Card,
   CardContent,
@@ -28,22 +27,24 @@ import { motion, AnimatePresence } from "framer-motion";
 import { fadeIn, slideIn, staggerContainer } from "@/lib/motion";
 import { TypingText } from "@/components/TextEffects";
 import sbContractApply from "./action";
-import { useQueryClient } from "@tanstack/react-query";
 import LoadingButton from "@/components/LoadingButton";
+import { useSession } from "@/app/(preview)/SessionProvider";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function SubscriberContractFeed({
   subscriber,
 }: {
-  subscriber: Subscriber;
+  subscriber: MyStatusProps;
 }) {
   const [isPending, startTransition] = useTransition();
-  const queryClient = useQueryClient();
+  const { user } = useSession();
   const { toast } = useToast();
   const router = useRouter();
   const [isChecked, setIsChecked] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const queryClient = useQueryClient();
 
-  const contractText = `This Electricity Service Agreement (the "Agreement") is made and entered into between Azerişıq OJSC ("Provider") and the subscriber ("${subscriber.name} ${subscriber.surname}") identified in this contract. By accepting this contract, the Customer agrees to the following terms:
+  const contractText = `This Electricity Service Agreement (the "Agreement") is made and entered into between Azerişıq OJSC ("Provider") and the subscriber ("${subscriber.fullName}") identified in this contract. By accepting this contract, the Customer agrees to the following terms:
   
   1. **Service Provision:** The Provider agrees to supply electricity to the Customer’s premises based on the approved application.
   2. **Billing & Payments:** The Customer shall pay for electricity based on metered consumption, billed monthly. Late payments may result in service interruption.
@@ -65,13 +66,13 @@ export default function SubscriberContractFeed({
         });
       } else if (success) {
         await queryClient.invalidateQueries({
-          queryKey: ["subscriber-table-feed"],
+          queryKey: ["my-subscriber-status"],
         });
         toast({
           title: "Successful Operation",
           description: "Subscriber contract accepting is successfully",
         });
-        router.push(`/subscriber`);
+        router.push(`/user-account/${user?.id}`);
       }
     });
   }
@@ -84,7 +85,6 @@ export default function SubscriberContractFeed({
       viewport={{ once: false, amount: 0.25 }}
       className="mx-2"
     >
-      <SubscriberStatusBar id={subscriber.id} status={5} />
       <motion.div variants={fadeIn("up", "spring", 0.2, 1.5)}>
         <Card
           className={`mx-auto mt-2 w-full border-muted-foreground/60 bg-card shadow-md transition-all`}
@@ -103,7 +103,11 @@ export default function SubscriberContractFeed({
           </CardHeader>
           <CardContent>
             {!isExpanded ? (
-              <Button variant={'ghost'}  className="w-full border border-muted-foreground/50" onClick={() => setIsExpanded(true)}>
+              <Button
+                variant={"ghost"}
+                className="w-full border border-muted-foreground/50"
+                onClick={() => setIsExpanded(true)}
+              >
                 Read Agreement
               </Button>
             ) : null}
@@ -116,7 +120,7 @@ export default function SubscriberContractFeed({
                   exit={{ opacity: 0, height: 0 }}
                   transition={{ duration: 1, ease: "easeInOut" }}
                 >
-                  <ScrollArea className="h-64  border p-2 text-start text-sm text-muted-foreground">
+                  <ScrollArea className="h-64 border p-2 text-start text-sm text-muted-foreground">
                     <pre className="whitespace-pre-wrap">{contractText}</pre>
                   </ScrollArea>
                   <div className="items-top mt-4 flex space-x-2 text-start">
@@ -141,7 +145,9 @@ export default function SubscriberContractFeed({
                     loading={isPending}
                     className="mt-4 w-full border border-transparent bg-primary text-white transition-all duration-300 hover:scale-100 hover:border-muted-foreground/70 hover:bg-secondary hover:text-primary"
                     onClick={onSubmit}
-                    disabled={isPending || !isChecked || subscriber.status==5}
+                    disabled={
+                      isPending || !isChecked || subscriber.requestStatus == 5
+                    }
                   >
                     Accept & Proceed
                   </LoadingButton>
@@ -152,84 +158,5 @@ export default function SubscriberContractFeed({
         </Card>
       </motion.div>
     </motion.div>
-  );
-}
-
-type listProps = {
-  name: string;
-  src: string;
-  icon: React.ElementType;
-  color: string;
-};
-export function SubscriberStatus({ id }: { id: number }) {
-  const status = 4;
-  const list: listProps[] = [
-    {
-      name: "Application acceptance",
-      src: "/subscriber",
-      color: "bg-green-800",
-      icon: ReceiptText,
-    },
-    {
-      name: "Generate code",
-      color: "bg-green-700",
-      src: `/subscriber/${id}/code-for-subscriber`,
-      icon: FileScan,
-    },
-    {
-      name: "Electric meter",
-      color: "bg-green-500",
-      src: `/subscriber/${id}/sb-counter`,
-      icon: Zap,
-    },
-    {
-      name: "TM connection",
-      color: "bg-gray-300",
-      src: `/subscriber/${id}/sb-tm`,
-      icon: Unplug,
-    },
-    {
-      name: "The contract",
-      color: "bg-gray-300",
-      src: "/",
-      icon: UserCheckIcon,
-    },
-  ];
-
-  return (
-    <div className="grid w-full grid-cols-1 gap-2 p-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-      {list.map((item, index) =>
-        index + 1 < status ? (
-          <Link
-            href={item.src}
-            key={index}
-            className={`flex w-full flex-col items-center justify-center p-1 ${item.color} ${index + 1 < status ? `cursor-pointer` : `cursor-not-allowed`} rounded-sm shadow-md`}
-          >
-            <div className="flex items-center justify-center rounded-full bg-white p-1">
-              <item.icon size={32} className="text-black" />
-            </div>
-            <p
-              className={`mt-2 text-center text-sm font-bold ${index + 1 < status ? `text-white` : `text-black`}`}
-            >
-              {item.name}
-            </p>
-          </Link>
-        ) : (
-          <div
-            key={index}
-            className={`flex w-full flex-col items-center justify-center p-1 ${item.color} ${index + 1 < status ? `cursor-pointer` : `cursor-not-allowed`} rounded-sm shadow-md`}
-          >
-            <div className="flex items-center justify-center rounded-full bg-white p-1">
-              <item.icon size={32} className="text-black" />
-            </div>
-            <p
-              className={`mt-2 text-center text-sm font-bold ${index + 1 < status ? `text-white` : `text-black`}`}
-            >
-              {item.name}
-            </p>
-          </div>
-        ),
-      )}
-    </div>
   );
 }

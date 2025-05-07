@@ -16,7 +16,6 @@ import {
 import { Search, TimerReset } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 
 import { Input } from "@/components/ui/input";
 import {
@@ -30,7 +29,7 @@ import {
 import { OperationCells, OperationLogsProps } from "@/lib/type";
 import { useSession } from "../SessionProvider";
 import { useQuery } from "@tanstack/react-query";
-import DataTableLoading from "@/components/DataTableLoading";
+import { SubscriberTableLoading } from "@/components/DataTableLoading";
 import { PaginationBox } from "@/components/PaginationBox";
 import { useUserInformation } from "../UserInformationContext";
 import {
@@ -39,16 +38,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Roboto_Flex } from "next/font/google";
+import { format, formatDate } from "date-fns";
+
 import { fetchQueryFN } from "../fetchQueryFN";
 import { SelectLayout } from "@/components/FilterElementLayout";
 
@@ -91,7 +82,7 @@ export const columns: ColumnDef<OperationCells>[] = [
     header: () => <div className="hidden lg:block">Time Stamp</div>,
     cell: ({ row }) => (
       <div className="hidden py-2 lg:block">
-        {new Date(row.getValue("timestamp")).toLocaleString()}
+        {formatDate(row.getValue("timestamp"), "MMM d, yyyy")}
       </div>
     ),
   },
@@ -126,7 +117,7 @@ type FilterType = {
   to: string;
   action: boolean;
 };
-type Role = {
+export type Role = {
   id: string;
   name: string;
 };
@@ -234,7 +225,7 @@ export default function OperationLogsDataTable() {
     );
   }
   if (isPending) {
-    return <DataTableLoading />;
+    return <SubscriberTableLoading />;
   }
 
   const handleUserData = (id: number) => {
@@ -281,43 +272,27 @@ export default function OperationLogsDataTable() {
             className="w-full bg-card"
           />
         </div>
-        <div className="flex w-full flex-col items-start justify-start gap-y-1 md:w-36">
-          <p className="ml-1 text-sm font-bold">User Role</p>
-          <Select
-            value={filterData.userRole}
-            onValueChange={(value) =>
-              setFilteredData((prev) => ({
-                ...prev,
-                userRole: value === "all" ? "" : value,
-              }))
-            }
-          >
-            <SelectTrigger className="font-norma w-full rounded-md bg-card text-sm">
-              <SelectValue placeholder={"Select a roles"} />
-            </SelectTrigger>
-            <SelectContent className="rounded-md bg-card text-sm font-normal">
-              <SelectItem value="all">All</SelectItem>
-              {roleLoading ? (
-                <div className="mx-auto space-y-2">
-                  <Skeleton className="mx-auto h-10 w-32 rounded-md bg-muted-foreground" />
-                </div>
-              ) : (
-                ""
-              )}
-              {RoleError ? (
-                <SelectItem disabled value="error">
-                  Error fetching role
-                </SelectItem>
-              ) : (
-                roles?.map((role) => (
-                  <SelectItem key={role.id} value={role.name}>
-                    {role.name}
-                  </SelectItem>
-                ))
-              )}
-            </SelectContent>
-          </Select>
-        </div>
+        <SelectLayout
+          title="User Role"
+          placeholder="Select a roles"
+          value={filterData.userRole}
+          isLoading={roleLoading}
+          isError={RoleError}
+          onChange={(value) =>
+            setFilteredData((prev) => ({
+              ...prev,
+              userRole: value === "all" ? "" : value,
+            }))
+          }
+          selectData={[
+            { id: "all", name: "All" },
+            ...(roles || []).map((role) => ({
+              id: role.name,
+              name: role.name,
+            })),
+          ]}
+        />
+
         <SelectLayout
           title="Entry Names"
           placeholder="Select an entry"
@@ -338,43 +313,7 @@ export default function OperationLogsDataTable() {
             })),
           ]}
         />
-        {/* <div className="flex flex-col items-start justify-start gap-y-1">
-          <p className="ml-1 text-sm font-bold">Entry Names</p>
-          <Select
-            value={filterData.entryName}
-            onValueChange={(value) =>
-              setFilteredData((prev) => ({
-                ...prev,
-                entryName: value === "all" ? "" : value,
-              }))
-            }
-          >
-            <SelectTrigger className="font-norma w-36 rounded-md bg-card text-sm">
-              <SelectValue placeholder={"Select a entris"} />
-            </SelectTrigger>
-            <SelectContent className="rounded-md bg-card text-sm font-normal">
-              <SelectItem value="all">All</SelectItem>
-              {entryLoading ? (
-                <div className="mx-auto space-y-2">
-                  <Skeleton className="mx-auto h-10 w-32 rounded-md bg-muted-foreground" />
-                </div>
-              ) : (
-                ""
-              )}
-              {entryError ? (
-                <SelectItem disabled value="error">
-                  Error fetching entries
-                </SelectItem>
-              ) : (
-                entryNames?.map((role, i) => (
-                  <SelectItem key={i} value={role}>
-                    {role}
-                  </SelectItem>
-                ))
-              )}
-            </SelectContent>
-          </Select>
-        </div>{" "} */}
+
         <div className="flex w-full flex-col items-start justify-start gap-y-1 md:w-[18rem]">
           <p className="ml-1 text-sm font-bold">From-To Date Picker</p>
           <div className="flex w-full flex-col gap-2 md:flex-row">
@@ -475,29 +414,6 @@ export default function OperationLogsDataTable() {
             </Button>
           </div>
         </div>
-        {/* <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="flex items-center gap-2">
-              <span>Columns</span>
-              <ChevronDown className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => (
-                <DropdownMenuCheckboxItem
-                  key={column.id}
-                  className="capitalize"
-                  checked={column.getIsVisible()}
-                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                >
-                  {column.id}
-                </DropdownMenuCheckboxItem>
-              ))}
-          </DropdownMenuContent>
-        </DropdownMenu> */}
       </div>
 
       <div className="overflow-hidden rounded-xl border border-muted shadow-sm">

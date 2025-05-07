@@ -19,7 +19,7 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import { signUp } from "./action";
 import { motion, AnimatePresence } from "framer-motion";
-import LImgae from "@/assets/robotLoading.gif";
+import LImgae from "@/assets/updateGif.gif";
 import Image from "next/image";
 
 export default function SignUpForm() {

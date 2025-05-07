@@ -3,20 +3,19 @@ import LoadingButton from "@/components/LoadingButton";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { Subscriber } from "@/lib/type";
-import {
-  FileScan,
-  ReceiptText,
-  Unplug,
-  UserCheckIcon,
-  Zap,
-} from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import sbCounterApply from "./action";
 import SubscriberStatusBar from "../SubscriberStatusBar";
 import { motion, AnimatePresence } from "framer-motion";
 import { fadeIn, staggerContainer } from "@/lib/motion";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export type CounterValuesProps = {
   number: string;
@@ -24,6 +23,7 @@ export type CounterValuesProps = {
   coefficient: null | number;
   volt: string;
   type: string;
+  phase: number | null;
 };
 export default function SubscriberCounterFeed({
   subscriber,
@@ -39,6 +39,7 @@ export default function SubscriberCounterFeed({
     coefficient: null,
     volt: "",
     type: "",
+    phase: null,
   });
   async function onSubmit() {
     if (
@@ -86,90 +87,125 @@ export default function SubscriberCounterFeed({
     >
       {/* <SubscriberStatus id={subscriber.id} /> */}
 
-      <SubscriberStatusBar id={subscriber.id} status={Number(subscriber.status)+1} />
+      <SubscriberStatusBar
+        id={subscriber.id}
+        status={Number(subscriber.status) + 1}
+      />
 
       <motion.div
         variants={fadeIn("up", "spring", 0.2, 1.5)}
-        className="mx-auto flex mt-2 flex-col items-start justify-center gap-y-2 rounded-xl border border-muted-foreground/60 bg-card p-2 shadow-md"
+        className="mx-auto mt-2 flex flex-col items-start justify-center gap-y-2 rounded-xl border border-muted-foreground/60 bg-card p-2 shadow-md"
       >
         <div className="mx-auto flex w-full max-w-[900px] flex-wrap items-start justify-center gap-2 lg:flex-nowrap lg:justify-between">
-          <div className="flex flex-col items-start justify-start gap-y-1">
-            <p className="text-sm font-bold">Number</p>
-            <Input
-              className="w-40 rounded-sm border border-muted-foreground bg-secondary shadow-sm"
-              placeholder="01234567"
-              value={counterValues.number || ""}
-              onChange={(e) =>
-                setCounterValues((prev) => ({
-                  ...prev,
-                  number: e.target.value,
-                }))
-              }
-            />
+          <div className="flex flex-col items-start justify-start gap-y-2">
+            <div className="flex flex-col items-start justify-start gap-y-1">
+              <p className="text-sm font-bold">Number</p>
+              <Input
+                className="w-48 rounded-sm border border-muted-foreground bg-secondary shadow-sm"
+                placeholder="01234567"
+                value={counterValues.number || ""}
+                onChange={(e) =>
+                  setCounterValues((prev) => ({
+                    ...prev,
+                    number: e.target.value,
+                  }))
+                }
+              />
+            </div>
+            <div className="flex flex-col items-start justify-start gap-y-1">
+              <p className="text-sm font-bold">Stamp Code</p>
+              <Input
+                className="w-48 rounded-sm border border-muted-foreground bg-secondary shadow-sm"
+                placeholder="111-222-333"
+                value={counterValues.stampCode || ""}
+                onChange={(e) =>
+                  setCounterValues((prev) => ({
+                    ...prev,
+                    stampCode: e.target.value,
+                  }))
+                }
+              />
+            </div>
           </div>
-          <div className="flex flex-col items-start justify-start gap-y-1">
-            <p className="text-sm font-bold">Stamp Code</p>
-            <Input
-              className="w-40 rounded-sm border border-muted-foreground bg-secondary shadow-sm"
-              placeholder="111-222-333"
-              value={counterValues.stampCode || ""}
-              onChange={(e) =>
-                setCounterValues((prev) => ({
-                  ...prev,
-                  stampCode: e.target.value,
-                }))
-              }
-            />
+          <div className="flex flex-col items-start justify-start gap-y-2">
+            <div className="flex flex-col items-start justify-start gap-y-1">
+              <p className="text-sm font-bold">Coefficient</p>
+              <Select
+                value={String(counterValues.coefficient || "")}
+                onValueChange={(value) =>
+                  setCounterValues((prev) => ({
+                    ...prev,
+                    coefficient: Number(value),
+                  }))
+                }
+              >
+                <SelectTrigger className="w-48 rounded-sm border border-muted-foreground bg-secondary shadow-sm">
+                  <SelectValue placeholder="Select coefficient" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="200">200 kVt-dan yuxarı</SelectItem>
+                  <SelectItem value="100">200 kVt-a qədər</SelectItem>
+                  <SelectItem value="50">Orta gərginlik</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex flex-col items-start justify-start gap-y-1">
+              <p className="text-sm font-bold">Volt size</p>
+              <Input
+                className="w-48 rounded-sm border border-muted-foreground bg-secondary shadow-sm"
+                placeholder="120V"
+                value={String(counterValues.volt) || ""}
+                onChange={(e) =>
+                  setCounterValues((prev) => ({
+                    ...prev,
+                    volt: e.target.value,
+                  }))
+                }
+              />
+            </div>
           </div>
-          <div className="flex flex-col items-start justify-start gap-y-1">
-            <p className="text-sm font-bold">Coefficient </p>
-            <Input
-              type="number"
-              className="w-40 rounded-sm border border-muted-foreground bg-secondary shadow-sm"
-              placeholder="Write coefficient"
-              value={counterValues.coefficient || ""}
-              onChange={(e) =>
-                setCounterValues((prev) => ({
-                  ...prev,
-                  coefficient: Number(e.target.value),
-                }))
-              }
-            />
-          </div>
-          <div className="flex flex-col items-start justify-start gap-y-1">
-            <p className="text-sm font-bold">Volt size</p>
-            <Input
-              className="w-40 rounded-sm border border-muted-foreground bg-secondary shadow-sm"
-              placeholder="120V"
-              value={String(counterValues.volt) || ""}
-              onChange={(e) =>
-                setCounterValues((prev) => ({
-                  ...prev,
-                  volt: e.target.value,
-                }))
-              }
-            />
-          </div>
-          <div className="flex flex-col items-start justify-start gap-y-1">
-            <p className="text-sm font-bold">Counter type</p>
-            <Input
-              className="w-40 rounded-sm border border-muted-foreground bg-secondary shadow-sm"
-              placeholder="Write type"
-              value={String(counterValues.type) || ""}
-              onChange={(e) =>
-                setCounterValues((prev) => ({
-                  ...prev,
-                  type: e.target.value,
-                }))
-              }
-            />
+          <div className="flex flex-col items-start justify-start gap-y-2">
+            <div className="flex flex-col items-start justify-start gap-y-1">
+              <p className="text-sm font-bold">Counter type</p>
+              <Input
+                className="w-48 rounded-sm border border-muted-foreground bg-secondary shadow-sm"
+                placeholder="Write type"
+                value={String(counterValues.type) || ""}
+                onChange={(e) =>
+                  setCounterValues((prev) => ({
+                    ...prev,
+                    type: e.target.value,
+                  }))
+                }
+              />
+            </div>
+            <div className="flex flex-col items-start justify-start gap-y-1">
+              <p className="text-sm font-bold">Phase</p>
+              <Select
+                value={String(counterValues.phase || "")}
+                onValueChange={(value) =>
+                  setCounterValues((prev) => ({
+                    ...prev,
+                    phase: Number(value),
+                  }))
+                }
+              >
+                <SelectTrigger className="w-48 rounded-sm border border-muted-foreground bg-secondary shadow-sm">
+                  <SelectValue placeholder="Select phase" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">1 phase</SelectItem>
+                  <SelectItem value="100">3 phase</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
         <div className="mx-auto flex w-full flex-wrap items-start justify-center gap-2 lg:flex-nowrap">
           <LoadingButton
             loading={isPending}
             onClick={onSubmit}
-            disabled={Number(subscriber.status)>2}
+            disabled={Number(subscriber.status) > 2}
             className="mt-4 w-full max-w-[900px] rounded-sm border border-transparent bg-primary capitalize text-white transition-all duration-300 hover:scale-100 hover:border-muted-foreground/70 hover:bg-secondary hover:text-primary"
           >
             Apply
@@ -177,84 +213,5 @@ export default function SubscriberCounterFeed({
         </div>
       </motion.div>
     </motion.div>
-  );
-}
-
-type listProps = {
-  name: string;
-  src: string;
-  icon: React.ElementType;
-  color: string;
-};
-export function SubscriberStatus({ id }: { id: number }) {
-  const status = 4;
-  const list: listProps[] = [
-    {
-      name: "Application acceptance",
-      src: "/subscriber",
-      color: "bg-green-800",
-      icon: ReceiptText,
-    },
-    {
-      name: "Generate code",
-      color: "bg-green-700",
-      src: `/subscriber/${id}/code-for-subscriber`,
-      icon: FileScan,
-    },
-    {
-      name: "Electric meter",
-      color: "bg-green-500",
-      src: `/subscriber/${id}/sb-counter`,
-      icon: Zap,
-    },
-    {
-      name: "TM connection",
-      color: "bg-gray-300",
-      src: `/subscriber/${id}/sb-tm`,
-      icon: Unplug,
-    },
-    {
-      name: "The contract",
-      color: "bg-gray-300",
-      src: "/",
-      icon: UserCheckIcon,
-    },
-  ];
-
-  return (
-    <div className="grid w-full grid-cols-1 gap-2 p-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-      {list.map((item, index) =>
-        index + 1 < status ? (
-          <Link
-            href={item.src}
-            key={index}
-            className={`flex w-full flex-col items-center justify-center p-1 ${item.color} ${index + 1 < status ? `cursor-pointer` : `cursor-not-allowed`} rounded-sm shadow-md`}
-          >
-            <div className="flex items-center justify-center rounded-full bg-white p-1">
-              <item.icon size={32} className="text-black" />
-            </div>
-            <p
-              className={`mt-2 text-center text-sm font-bold ${index + 1 < status ? `text-white` : `text-black`}`}
-            >
-              {item.name}
-            </p>
-          </Link>
-        ) : (
-          <div
-            key={index}
-            className={`flex w-full flex-col items-center justify-center p-1 ${item.color} ${index + 1 < status ? `cursor-pointer` : `cursor-not-allowed`} rounded-sm shadow-md`}
-          >
-            <div className="flex items-center justify-center rounded-full bg-white p-1">
-              <item.icon size={32} className="text-black" />
-            </div>
-            <p
-              className={`mt-2 text-center text-sm font-bold ${index + 1 < status ? `text-white` : `text-black`}`}
-            >
-              {item.name}
-            </p>
-          </div>
-        ),
-      )}
-    </div>
   );
 }

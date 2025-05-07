@@ -17,7 +17,7 @@ export default function Navbar() {
         variants={navVariants}
         initial="hidden"
         whileInView="show"
-        className="sticky top-0 z-10 mr-6  w-full bg-secondary border-0 shadow-none"
+        className="sticky top-0 z-10 mr-6  pb-2 w-full bg-secondary border-0 shadow-none"
       >
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-center gap-x-5 px-4 py-1">
           <motion.div
@@ -33,7 +33,7 @@ export default function Navbar() {
             </div>
             <div className="flex items-center justify-center sm:ms-auto">
               <SearchField />
-              <UserButton className="ml-4" />
+              <UserButton className="ml-4 mr-6" />
             </div>
           </motion.div>
           <div className="hidden sm:flex lg:hidden">

@@ -7,26 +7,31 @@ import { Input } from "@/components/ui/input";
 import { UserCells, UserManagementProps } from "@/lib/type";
 import { useSession } from "../SessionProvider";
 import { useQuery } from "@tanstack/react-query";
-import DataTableLoading from "@/components/DataTableLoading";
+import { SubscriberTableLoading } from "@/components/DataTableLoading";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useToggleUserBlockedMutation } from "./mutation";
+import { format, formatDate } from "date-fns";
+import { useChangeUserRoles, useToggleUserBlockedMutation } from "./mutation";
 import { fetchQueryFN } from "../fetchQueryFN";
 import DataTableLayout from "@/components/DataTableLayout";
 import { ColumnDef } from "@tanstack/react-table";
 import { SelectLayout } from "@/components/FilterElementLayout";
+
+import { Role } from "../operation-logs/OperationLogsDataTable";
+import LoadingButton from "@/components/LoadingButton";
+import { logout } from "@/app/(auth)/action";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import UserAvatar from "@/components/UserAvatar";
+import Link from "next/link";
 
 type FilterType = {
   user: string;
@@ -41,6 +46,21 @@ type FilterType = {
 
 export default function UsersDataTable() {
   const mutation = useToggleUserBlockedMutation();
+  const roleMutation = useChangeUserRoles();
+  const { session, user } = useSession();
+
+  const {
+    data: roles,
+    isPending: roleLoading,
+    isError: RoleError,
+  } = useQuery<Role[]>({
+    queryKey: ["roles"],
+    queryFn: fetchQueryFN<Role[]>(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/roles`,
+      session,
+    ),
+    staleTime: Infinity,
+  });
   const columns: ColumnDef<UserCells>[] = [
     {
       id: "ID",
@@ -51,25 +71,180 @@ export default function UsersDataTable() {
       accessorKey: "userName",
       header: () => <div>User Name</div>,
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("userName")}</div>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="capitalize">{row.getValue("userName")}</div>
+            </TooltipTrigger>
+            <TooltipContent className="border px-4 py-1">
+              <div className="gapy-2 w-full flex flex-col items-center justify-center">
+                <div className="flex items-start justify-center gap-3">
+                  <UserAvatar
+                    className="border border-primary/50"
+                    avatarUrl={""}
+                    size={50}
+                  />
+                  <div className="flex flex-col items-start justify-start gap-y-3">
+                    <div className="flex flex-col ">
+                      <p className="text-lg font-medium capitalize">
+                        {row.original.userName}
+                      </p>
+                      <p className="text-md font-normal text-muted-foreground">
+                        {row.original.email}
+                      </p>
+                    </div>
+
+                    <p></p>
+                  </div>
+                </div>
+                <Link className="w-full" href={`/users/${row.original.id}/`}>
+                  <Button className="w-full rounded-md border border-primary bg-primary text-white transition-all duration-300 hover:bg-slate-200 hover:text-primary">
+                    See Profile
+                  </Button>
+                </Link>
+              </div>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       ),
     },
     {
       accessorKey: "userRoles",
       header: () => <div className="hidden lg:block">User Roles</div>,
-      cell: ({ row }) => (
-        <div className="hidden capitalize lg:block">
-          {row.original.userRoles
-            .slice()
-            .sort((a, b) => a.localeCompare(b))
-            .map((item, index) => (
-              <span key={index}>
-                {item}
-                {index < row.original.userRoles.length - 1 ? ", " : ""}
-              </span>
-            ))}
-        </div>
-      ),
+      cell: ({ row }) => {
+        const [selectedRoles, setSelectedRoles] = React.useState<string[]>(
+          row.original.userRoles.map((a) => a.toLowerCase()),
+        );
+        const [isOpen, setIsOpen] = React.useState<boolean>(false);
+        const rolesLevel = ["user", "tester", "operator", "admin"];
+        const forbiddenRoles = [""];
+        const userId = row.original.id;
+
+        const currentUserHighestRole = user?.roles
+          ?.filter(
+            (role: string) => !forbiddenRoles.includes(role.toLowerCase()),
+          )
+          .slice()
+          .sort(
+            (a: string, b: string) =>
+              rolesLevel.indexOf(a.toLowerCase()) -
+              rolesLevel.indexOf(b.toLowerCase()),
+          )
+          .pop();
+
+        const allowedRoles = rolesLevel.filter((role) => {
+          if (!currentUserHighestRole) return false;
+          return (
+            rolesLevel.indexOf(role) <=
+            rolesLevel.indexOf(currentUserHighestRole.toLowerCase())
+          );
+        });
+        const handleSaveRoles = () => {
+          roleMutation.mutate(
+            { id: userId, roles: selectedRoles },
+            {
+              onSuccess: () => {
+                setIsOpen(false);
+                if (userId == user.id) {
+                  logout();
+                }
+              },
+            },
+          );
+        };
+
+        const handleCheckboxChange = (role: string) => {
+          setSelectedRoles((prevRoles) =>
+            prevRoles.includes(role)
+              ? prevRoles.filter((r) => r !== role)
+              : [...prevRoles, role],
+          );
+        };
+        return (
+          <Popover open={isOpen} onOpenChange={setIsOpen}>
+            <PopoverTrigger asChild>
+              <div className="hidden items-center gap-x-2 rounded-xl py-1 md:flex">
+                <div className="size-5 rounded-full bg-primary"></div>
+                <div className="hidden capitalize md:block">
+                  {row.original.userRoles
+                    .slice()
+                    .sort((a, b) => a.localeCompare(b))
+                    .map((item, index) => (
+                      <span key={index}>
+                        {item}
+                        {index < row.original.userRoles.length - 1 ? "/" : ""}
+                      </span>
+                    ))}
+                </div>
+              </div>
+            </PopoverTrigger>
+
+            <PopoverContent
+              align="start"
+              side="bottom"
+              className="w-60 rounded-lg"
+            >
+              <div>
+                <div className="mb-2 text-sm font-semibold">Select Roles</div>
+
+                {roleLoading ? (
+                  <div className="p-2 text-sm text-muted-foreground">
+                    Loading roles...
+                  </div>
+                ) : RoleError ? (
+                  <div className="p-2 text-sm text-destructive">
+                    Failed to load roles
+                  </div>
+                ) : (
+                  <div>
+                    {roles
+                      ?.filter(
+                        (item) =>
+                          !forbiddenRoles.includes(item.name.toLowerCase()) &&
+                          allowedRoles.includes(item.name.toLowerCase()),
+                      )
+                      .map((item) => (
+                        <div
+                          key={item.id}
+                          className="mb-2 flex w-full items-center justify-between"
+                        >
+                          <label
+                            htmlFor={item.id}
+                            className="text-sm capitalize"
+                          >
+                            {item.name}
+                          </label>
+                          <input
+                            type="checkbox"
+                            id={item.id}
+                            value={item.name.toLowerCase()}
+                            checked={selectedRoles.includes(
+                              item.name.toLowerCase(),
+                            )}
+                            onChange={() =>
+                              handleCheckboxChange(item.name.toLowerCase())
+                            }
+                            className="mr-2 size-4 rounded-sm"
+                          />
+                        </div>
+                      ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex justify-end">
+                <LoadingButton
+                  loading={roleMutation.isPending}
+                  className="w-full rounded-lg border border-transparent bg-primary text-white transition-all duration-300 hover:scale-100 hover:border-muted-foreground/70 hover:bg-secondary hover:text-primary"
+                  onClick={handleSaveRoles}
+                >
+                  Save
+                </LoadingButton>
+              </div>
+            </PopoverContent>
+          </Popover>
+        );
+      },
     },
 
     {
@@ -84,11 +259,7 @@ export default function UsersDataTable() {
       header: () => <div className="hidden lg:block">Created At</div>,
       cell: ({ row }) => (
         <div className="hidden py-2 lg:block">
-          {new Date(row.getValue("createdAt")).toLocaleString("en-US", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-          })}
+          {formatDate(row.getValue("createdAt"), "MMM d, yyyy")}
         </div>
       ),
     },
@@ -132,7 +303,16 @@ export default function UsersDataTable() {
         const userId = row.original.id;
 
         const handleToggle = async () => {
-          mutation.mutate({ id: userId, check: !isBlocked });
+          mutation.mutate(
+            { id: userId, check: !isBlocked },
+            {
+              onSuccess: () => {
+                if (userId == user.id && !isBlocked) {
+                  logout();
+                }
+              },
+            },
+          );
         };
 
         return (
@@ -175,7 +355,6 @@ export default function UsersDataTable() {
   });
 
   const [pageNumber, setPageNumber] = React.useState<number>(1);
-  const { session } = useSession();
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/?page=${pageNumber}&pageSize=8${
     filterData.action
       ? `${filterData.userName ? `&userName=${filterData.userName}` : ""}` +
@@ -205,7 +384,9 @@ export default function UsersDataTable() {
         : []),
     ],
     queryFn: fetchQueryFN<UserManagementProps>(url, session),
-    staleTime: Infinity,
+    staleTime: 5000,
+    refetchInterval: 5000,
+    refetchOnWindowFocus: false,
   });
 
   if (isError) {
@@ -216,7 +397,7 @@ export default function UsersDataTable() {
     );
   }
   if (isPending) {
-    return <DataTableLoading />;
+    return <SubscriberTableLoading />;
   }
 
   const handleFilter = () => {
@@ -414,14 +595,13 @@ export default function UsersDataTable() {
             </Button>
           </div>
         </div>
-       
       </div>
 
       <DataTableLayout
         columns={columns}
         tableData={UsersData.items}
         pagination={{
-          total: UsersData.total,
+          total: UsersData.totalCount,
           page: pageNumber,
           setPageNumber,
           pageSize: 8,

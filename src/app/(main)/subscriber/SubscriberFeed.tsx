@@ -17,7 +17,7 @@ export default function SubscriberFeed() {
       viewport={{ once: false, amount: 0.25 }}
       className={`mx-auto w-full space-y-4 px-4 transition-all duration-300 sm:max-w-full ${
         open
-          ? "w-full md:max-w-[500px] lg:max-w-[750px] xl:max-w-[1200px] 2xl:max-w-[1200px]"
+          ? "w-full md:max-w-[500px] lg:max-w-[750px] xl:max-w-[1080px] 2xl:max-w-[1200px]"
           : "px-6 md:max-w-[1300px] lg:max-w-[1300px] xl:max-w-[1300px] 2xl:max-w-[1300px]"
       } `}
     >
@@ -32,7 +32,7 @@ export default function SubscriberFeed() {
           </Button>
           <Link href={"/subscriber/add"}>
             <Button className="h-12 w-full max-w-44 rounded-xl border border-transparent bg-primary capitalize text-white transition-all duration-300 hover:scale-100 hover:border-muted-foreground/70 hover:bg-secondary hover:text-primary">
-              Add subcriber
+              Add subscriber
             </Button>
           </Link>
         </div>

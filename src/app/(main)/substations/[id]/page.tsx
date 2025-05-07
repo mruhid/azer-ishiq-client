@@ -85,12 +85,12 @@ export default async function Page({ params }: Props) {
   if (!substation) return notFound();
 
   return (
-    <main className="mx-auto flex min-h-screen flex-col-reverse flex-wrap-reverse items-center justify-center gap-6 p-4 md:flex-row md:justify-around md:gap-0 md:px-10 lg:flex-nowrap">
+    <main className="mx-auto w-full max-w-[1000px] flex min-h-screen flex-col-reverse flex-wrap-reverse items-center justify-center gap-6 p-4 md:flex-row md:justify-around md:gap-0 md:px-10 lg:flex-nowrap">
       {/* Left Section: Info & Actions */}
       <div className="space-y-4">
         <h1 className="text-center text-4xl font-bold leading-tight text-foreground md:text-start">
           Smart Way to <br />
-          <span className="text-blue-600">Find a Modern Substation</span>
+          <span className="text-blue-600">Find Substation</span>
         </h1>
         <p className="max-w-md text-muted-foreground">
           Substation details and location.

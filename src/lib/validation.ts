@@ -1,6 +1,16 @@
 import { z } from "zod";
 
 const requiredString = z.string().trim().min(1, "Required");
+const photo = z
+  .custom<File | undefined>()
+  .refine(
+    (file) => !file || (file instanceof File && file.type.startsWith("image/")),
+    "Must be an image file",
+  )
+  .refine(
+    (file) => !file || file.size <= 1024 * 1024 * 4,
+    "File must be lass than 4MB",
+  );
 
 export const signUpSchema = z
   .object({
@@ -68,17 +78,17 @@ export const substationSchema = z.object({
     .min(5, "Address must be at least 5 characters")
     .nonempty("Address is required"),
 
-  // image: z
-  //   .instanceof(File)
-  //   .nullable()
-  //   .refine((file) => {
-  //     if (!file) return true;
-  //     return file.size <= MAX_FILE_SIZE;
-  //   }, "Max image size is 2MB.")
-  //   .refine((file) => {
-  //     if (!file) return true;
-  //     return ACCEPTED_IMAGE_TYPES.includes(file.type);
-  //   }, "Only .jpg, .jpeg, .png, and .webp formats are supported."),
+  image: z
+    .instanceof(File)
+    .nullable()
+    .refine((file) => {
+      if (!file) return true;
+      return file.size <= MAX_FILE_SIZE;
+    }, "Max image size is 2MB.")
+    .refine((file) => {
+      if (!file) return true;
+      return ACCEPTED_IMAGE_TYPES.includes(file.type);
+    }, "Only .jpg, .jpeg, .png, and .webp formats are supported."),
 });
 
 export type SubstationValues = z.infer<typeof substationSchema>;
@@ -90,43 +100,44 @@ export const upSubstationSchema = z.object({
   regionId: requiredString,
 
   districtId: requiredString,
-
+  substationId: requiredString.optional(),
   latitude: requiredString,
-
   longitude: requiredString,
-  // address: z
-  //   .string()
-  //   .min(5, "Address must be at least 5 characters")
-  //   .nonempty("Address is required"),
+  address: z
+    .string()
+    .min(5, "Address must be at least 5 characters")
+    .nonempty("Address is required")
+    .optional(),
 
-  // image: z
-  //   .instanceof(File)
-  //   .nullable()
-  //   .refine((file) => {
-  //     if (!file) return true;
-  //     return file.size <= MAX_FILE_SIZE;
-  //   }, "Max image size is 2MB.")
-  //   .refine((file) => {
-  //     if (!file) return true;
-  //     return ACCEPTED_IMAGE_TYPES.includes(file.type);
-  //   }, "Only .jpg, .jpeg, .png, and .webp formats are supported."),
+  image: z
+    .instanceof(File)
+    .nullable()
+    .optional()
+    .refine((file) => {
+      if (!file) return true;
+      return file.size <= MAX_FILE_SIZE;
+    }, "Max image size is 2MB.")
+    .refine((file) => {
+      if (!file) return true;
+      return ACCEPTED_IMAGE_TYPES.includes(file.type);
+    }, "Only .jpg, .jpeg, .png, and .webp formats are supported."),
 });
 
 export type UpSubstationValues = z.infer<typeof upSubstationSchema>;
 
 export const NewSubstationSchema = z.object({
   name: z.string().min(1, "Substation name is required"), // Fix for required name field
-  // image: z
-  //   .any()
-  //   .nullable()
-  //   .refine((file) => {
-  //     if (!file) return true; // No file uploaded is acceptable
-  //     return file.size <= MAX_FILE_SIZE;
-  //   }, `Max image size is 1MB.`)
-  //   .refine((file) => {
-  //     if (!file) return true; // No file uploaded is acceptable
-  //     return ACCEPTED_IMAGE_TYPES.includes(file.type);
-  //   }, "Only .jpg, .jpeg, .png, and .webp formats are supported."),
+  image: z
+    .any()
+    .nullable()
+    .refine((file) => {
+      if (!file) return true; // No file uploaded is acceptable
+      return file.size <= MAX_FILE_SIZE;
+    }, `Max image size is 1MB.`)
+    .refine((file) => {
+      if (!file) return true; // No file uploaded is acceptable
+      return ACCEPTED_IMAGE_TYPES.includes(file.type);
+    }, "Only .jpg, .jpeg, .png, and .webp formats are supported."),
 });
 
 export type NewSubstationValues = z.infer<typeof NewSubstationSchema>;
@@ -163,7 +174,7 @@ export const subscriberSchema = z.object({
     .string()
     .regex(
       /^\+994(50|51|55|70|77|99)\d{7}$/,
-      "Invalid Azerbaijani mobile number,bunber should start '+994'",
+      "Invalid Azerbaijani mobile number,number should start '+994'",
     ),
   regionId: z.number().optional(),
   districtId: z.number().optional(),
@@ -172,7 +183,10 @@ export const subscriberSchema = z.object({
 
   populationStatus: z.string().or(z.number().min(1).max(2)),
   building: z.string().min(1, "Subscriber building is required"),
-  apartment: z.string().min(1, "Subscriber apartment is required"),
+  apartment: z
+    .string()
+    .min(1, "Subscriber apartment is required")
+    .max(3, "Max 3"),
 });
 
 export type SubscriberValues = z.infer<typeof subscriberSchema>;
@@ -185,3 +199,17 @@ export const otpVerifySchema = z.object({
 });
 
 export type OtpVerifyValues = z.infer<typeof otpVerifySchema>;
+
+export const feedbackSchema = z.object({
+  name: z.string().min(1, "Ad formatı yanlışdır"),
+  surname: z.string().min(1, "Soyad formatı yanlışdır"),
+  phoneNumber: z
+    .string()
+    .regex(/^\d{7}$/, "Mobil nömrə 7 simvoldan ibarət olmalıdır"),
+  email: requiredString.email("Düzgün olmayan email ünvanl"),
+  topic: z.string().or(z.number()),
+  content: z.string().min(20, "Mövzu bölməsində ən az 20 simvol olmalıdır"),
+  prefix: z.string().optional(),
+});
+
+export type FeedbackValues = z.infer<typeof feedbackSchema>;

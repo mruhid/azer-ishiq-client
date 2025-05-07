@@ -1,5 +1,4 @@
 import UnauthorizedPage from "@/components/UnauthorizedPage";
-import kyInstance from "@/lib/ky";
 import { validateRequest } from "@/lib/session";
 import { SubstationProps } from "@/lib/type";
 import { Metadata } from "next";

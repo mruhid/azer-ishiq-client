@@ -45,6 +45,7 @@ const UserInformationSideBar: React.FC = () => {
 
       return response.json();
     },
+    retry: false,
 
     staleTime: Infinity,
   });
@@ -88,7 +89,9 @@ const UserInformationSideBar: React.FC = () => {
                     size={20}
                     className={`rounded-full ${userData.isBlocked ? "bg-red-600 text-red-600" : "bg-green-600 text-green-600"} `}
                   />
-                  <h2 className="text-lg font-semibold">{userData.userName}</h2>
+                  <h2 className="text-lg font-semibold capitalize">
+                    {userData.userName}
+                  </h2>
                 </div>
               </TooltipTrigger>
               <TooltipContent>
@@ -152,12 +155,15 @@ const UserInformationSideBar: React.FC = () => {
             <InfoRow label="Username" value={userData.userName} />
             <InfoRow
               label="Role"
-              value={userData.userRoles.map((item, index) => (
-                <span key={index}>
-                  {item}
-                  {index < userData.userRoles.length - 1 ? ", " : ""}
-                </span>
-              ))}
+              value={userData.userRoles
+                .slice(0,3)
+                .sort((a, b) => a.localeCompare(b))
+                .map((item, index) => (
+                  <span key={index}>
+                    {item}
+                    {index < userData.userRoles.length - 1 ? ", " : ""}
+                  </span>
+                ))}
             />
             <InfoRow label="IP Address" value={userData.ipAddress} />
             <InfoRow label="Registered" value={formatted} />
@@ -176,7 +182,7 @@ const InfoRow = ({
   label: string;
   value: string | ReactNode;
 }) => (
-  <div className="flex justify-between text-sm">
+  <div className="flex justify-between text-sm capitalize">
     <span className="text-muted-foreground">{label}</span>
     <span className="font-medium">{value}</span>
   </div>

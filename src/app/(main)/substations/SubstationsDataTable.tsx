@@ -1,15 +1,10 @@
 "use client";
-
 import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
   VisibilityState,
-  flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import { ChevronDown, MoreHorizontal } from "lucide-react";
@@ -23,85 +18,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { PaginationBox } from "@/components/PaginationBox";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "../SessionProvider";
 import DataTableLoading from "@/components/DataTableLoading";
-import { useToast } from "@/components/ui/use-toast";
 import { SubstationDataTableProps, SubstationItemsProps } from "@/lib/type";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { SubstationTableMapDialog } from "./[id]/SubstationDialogs";
 import { fetchQueryFN } from "../fetchQueryFN";
-
-export const columns: ColumnDef<SubstationItemsProps>[] = [
-  { id: "ID", header: "ID", cell: ({ row }) => <div>{row.index + 1}</div> },
-  {
-    accessorKey: "name",
-    header: "Name",
-    cell: ({ row }) => <div>{row.getValue("name")}</div>,
-  },
-  {
-    accessorKey: "latitude",
-    header: "Location",
-    cell: ({ row }) => (
-      <div>
-        <SubstationTableMapDialog
-          ids={{
-            subsId: Number(row.original.id),
-            regionId: Number(row.original.regionId),
-            districtId: Number(row.original.districtId),
-          }}
-          initialCoords={
-            row.original.longitude !== "The longitude is not specified"
-              ? {
-                  lat: row.getValue("latitude"),
-                  lng: Number(row.original.longitude),
-                }
-              : null
-          }
-        />
-      </div>
-    ),
-  },
-  {
-    id: "actions",
-    header: () => <div>Actions</div>,
-    enableHiding: false,
-    cell: ({ row }) => {
-      const subsId = row.original.id;
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="ml-auto h-8 w-8 p-0">
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            className="rounded-xl border border-muted-foreground/40 bg-secondary backdrop-blur-md"
-            align="center"
-          >
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>
-              <Link href={`/substations/${subsId}`} className="hover:underline">
-                See this Substation
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>View img</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-  },
-];
+import DataTableLayout from "@/components/DataTableLayout";
 
 export default function SubstationDataTable() {
   return (
@@ -112,6 +37,69 @@ export default function SubstationDataTable() {
 }
 
 export function DefaultTable() {
+  const columns: ColumnDef<SubstationItemsProps>[] = [
+    { id: "ID", header: "ID", cell: ({ row }) => <div>{row.index + 1}</div> },
+    {
+      accessorKey: "name",
+      header: "Name",
+      cell: ({ row }) => <div>{row.getValue("name")}</div>,
+    },
+    {
+      accessorKey: "latitude",
+      header: "Location",
+      cell: ({ row }) => (
+        <div>
+          <SubstationTableMapDialog
+            ids={{
+              subsId: Number(row.original.id),
+              regionId: Number(row.original.regionId),
+              districtId: Number(row.original.districtId),
+            }}
+            initialCoords={
+              row.original.longitude || row.original.latitude
+                ? {
+                    lat: row.getValue("latitude"),
+                    lng: Number(row.original.longitude),
+                  }
+                : null
+            }
+          />
+        </div>
+      ),
+    },
+    {
+      id: "actions",
+      header: () => <div>Actions</div>,
+      enableHiding: false,
+      cell: ({ row }) => {
+        const subsId = row.original.id;
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="ml-auto h-8 w-8 p-0">
+                <MoreHorizontal />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              className="rounded-xl border border-muted-foreground/40 bg-secondary backdrop-blur-md"
+              align="center"
+            >
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem>
+                <Link
+                  href={`/substations/${subsId}`}
+                  className="hover:underline"
+                >
+                  See this Substation
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>View img</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
   const searchParams = useSearchParams();
   const region = searchParams.get("region");
   const district = searchParams.get("district");
@@ -123,7 +111,6 @@ export function DefaultTable() {
   const { session } = useSession();
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
-  const { toast } = useToast();
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/substation/filtered?page=${pageNumber}&pageSize=8${
     region ? `&regionId=${region}` : ""
   }${district ? `&districtId=${district}` : ""}`;
@@ -143,10 +130,6 @@ export function DefaultTable() {
     columns,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
     state: {
       columnFilters,
       columnVisibility,
@@ -210,69 +193,19 @@ export function DefaultTable() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="m-2 rounded-xl border border-muted-foreground bg-secondary backdrop-blur-md">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow
-                className="border-b border-muted-foreground/40"
-                key={headerGroup.id}
-              >
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  className="border-b border-muted-foreground/40"
-                  key={row.id}
-                  data-state={row.getIsSelected()}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-20 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      {Math.ceil(substationData.totalCount / substationData.pageSize) ? (
-        <PaginationBox
-          page={pageNumber}
-          setPageNumber={setPageNumber}
-          size={Math.ceil(substationData.totalCount / substationData.pageSize)}
+      <div className="px-1">
+        <DataTableLayout
+          columns={columns}
+          layout="fancy"
+          tableData={substationData.items}
+          pagination={{
+            total: substationData.totalCount,
+            page: pageNumber,
+            setPageNumber,
+            pageSize: 8,
+          }}
         />
-      ) : (
-        ""
-      )}
+      </div>
     </div>
   );
 }

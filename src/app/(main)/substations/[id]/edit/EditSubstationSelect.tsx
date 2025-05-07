@@ -12,8 +12,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
-import kyInstance from "@/lib/ky";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "@/app/(main)/SessionProvider";
 
@@ -36,7 +34,6 @@ export default function EditSubstationSelect() {
   return (
     <div className="mx-auto flex w-full flex-col items-center justify-between rounded-2xl border border-muted-foreground/40 bg-card/70 p-2 shadow-lg backdrop-blur-md md:flex-row">
       <FilterSelect />
-    
     </div>
   );
 }
@@ -131,7 +128,7 @@ export function FilterSelect() {
   const districtValue = validDistrict ? selectedDistrict : "";
 
   return (
-    <div className="w-full flex flex-col flex-wrap items-center justify-center sm:justify-around gap-4 sm:gap-0 py-2 sm:flex-row">
+    <div className="flex w-full flex-col flex-wrap items-center justify-center gap-4 py-2 sm:flex-row sm:justify-around sm:gap-0">
       {/* Region Select */}
       <Select value={selectedRegion} onValueChange={handleRegionChange}>
         <SelectTrigger className="h-12 w-48 rounded-2xl border border-muted-foreground bg-secondary">

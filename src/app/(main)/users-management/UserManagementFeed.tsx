@@ -17,7 +17,7 @@ export default function UserManagementFeed() {
       viewport={{ once: false, amount: 0.25 }}
       className={`mx-auto w-full space-y-4 px-4 transition-all duration-300 sm:max-w-full ${
         open
-          ? "w-full md:max-w-[500px] lg:max-w-[750px] xl:max-w-[1200px] 2xl:max-w-[1200px]"
+          ? "w-full md:max-w-[500px] lg:max-w-[750px] xl:max-w-[1050px] 2xl:max-w-[1200px]"
           : "px-6 md:max-w-[1300px] lg:max-w-[1300px] xl:max-w-[1300px] 2xl:max-w-[1300px]"
       } `}
     >

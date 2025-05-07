@@ -14,7 +14,7 @@ export default async function Layout({
 }) {
   const session = await validateRequest();
 
-  if (!session.user) redirect("/login");
+  if (!session.user) redirect("/service");
   if (
     session.user.roles.length === 1 &&
     session.user.roles[0].toLowerCase() === "user"
