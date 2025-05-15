@@ -195,7 +195,7 @@ export default function SubscriberCounterFeed({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="1">1 phase</SelectItem>
-                  <SelectItem value="100">3 phase</SelectItem>
+                  <SelectItem value="3">3 phase</SelectItem>
                 </SelectContent>
               </Select>
             </div>

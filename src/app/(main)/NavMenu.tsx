@@ -15,11 +15,12 @@ import {
 } from "@/components/ui/navigation-menu";
 import UserAvatar from "@/components/UserAvatar";
 import { useSession } from "./SessionProvider";
+import BC from "@/assets/withoutBGAzerisiq.png";
 
 export function NavMenu() {
   const { user } = useSession();
   const components: { title: string; href: string; description: string }[] =
-    user.roles.length == 1 && user.roles[0] === "user"
+    !user.roles.some((item) => item.toLowerCase() === "admin")
       ? [
           {
             title: "Substations",
@@ -78,6 +79,17 @@ export function NavMenu() {
             description:
               "This page is for adding a new subscriber, which is linked with some tm appartment. ",
           },
+          {
+            title: "Feedbacks",
+            href: "/user-feedback",
+            description: "You can see the messages by sending users.",
+          },
+          {
+            title: "Feedback Statistics",
+            href: "/user-feedback/statistics",
+            description:
+              "This page is for looking the statistics of feedbacks. ",
+          },
         ];
 
   return (
@@ -97,7 +109,7 @@ export function NavMenu() {
                   >
                     <UserAvatar
                       className="bg-secondary/40"
-                      avatarUrl={"/assets/withoutBGAzerisiq.png"}
+                      avatarUrl={BC}
                       size={80}
                     />
                     <div className="mb-2 mt-4 text-lg font-medium text-primary">
@@ -122,7 +134,7 @@ export function NavMenu() {
                 distribution, AzeriSig plays a vital role in ensuring the
                 efficient operation of the national electricity grid.
               </ListItem>
-              <ListItem href="/engineer" title="Engineers">
+              <ListItem href="/engineers" title="Engineers">
                 This site is developed using .NET for backend services and
                 Next.js for the frontend, ensuring a fast, scalable, and
                 responsive user experience. It integrates modern web

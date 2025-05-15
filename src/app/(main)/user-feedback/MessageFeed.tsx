@@ -12,7 +12,7 @@ import { AlertCircle, Loader2 } from "lucide-react";
 export default function MessageFeed({ type }: { type: string }) {
   const { session } = useSession();
   const [pageNumber, setPageNumber] = useState<number>(1);
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/ElectronicAppeal?Page=1&PageSize=10${type !== "default" ? `&IsRead=${type === "read"}` : ""} `;
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/ElectronicAppeal?Page=${pageNumber}&PageSize=10${type !== "default" ? `&IsRead=${type === "read"}` : ""} `;
 
   const {
     data: messages,
@@ -54,19 +54,21 @@ export default function MessageFeed({ type }: { type: string }) {
           />
         ))
       ) : (
-        <div className="flex h-20 w-full items-center gap-2 justify-center rounded-md border">
+        <div className="flex h-20 w-full items-center justify-center gap-2 rounded-md border">
           <AlertCircle />
           <p className="text-xl font-semibold">No result</p>
         </div>
       )}
       {Math.ceil(messages.totalCount / messages.pageSize) > 1 &&
       messages.items.length > 0 ? (
-        <PaginationBox
-          totalPage={messages.totalCount}
-          page={messages.page}
-          setPageNumber={setPageNumber}
-          size={Math.ceil(messages.totalCount / messages.pageSize)}
-        />
+        <div className="mx-2 w-full">
+          <PaginationBox
+            totalPage={messages.totalCount}
+            page={pageNumber}
+            setPageNumber={setPageNumber}
+            size={Math.ceil(messages.totalCount / messages.pageSize)}
+          />
+        </div>
       ) : null}
     </div>
   );

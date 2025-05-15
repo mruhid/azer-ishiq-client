@@ -8,8 +8,8 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
-  const { user, session } = await validateRequest();
-  if (!user || !session) redirect("/login");
+  const { user } = await validateRequest();
+  if (!user) redirect("/login");
   return (
     <main className="mx-auto w-full min-w-0 max-w-[1000px] space-y-5 text-center">
       <AddSubscriberForm />

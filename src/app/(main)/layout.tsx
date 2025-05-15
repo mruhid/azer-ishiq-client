@@ -28,7 +28,7 @@ export default async function Layout({
             <SideBar />
             <div className="flex flex-1 flex-col bg-secondary">
               <Navbar />
-              <main className="flex flex-1 flex-col items-center bg-gradient-to-br from-secondary/50 via-secondary to-background py-4 text-foreground">
+              <main className="flex flex-1 flex-col items-center bg-gradient-to-br from-secondary/50 via-secondary to-background text-foreground">
                 <div className="w-full">{children}</div>
               </main>
             </div>

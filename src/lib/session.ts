@@ -99,3 +99,59 @@ export const validateRequest = cache(
     }
   },
 );
+
+// routes with role-based access
+export const routePermissions: Record<string, string[] | "all"> = {
+  "/tm/add": ["admin"],
+  "/substations/add": ["admin"],
+  "/user-feedback": ["admin"],
+  "/user-feedback/statistics": ["admin"],
+  "/[userId]": ["admin"], // dynamic number route
+  "/users/[id]": ["admin",],
+  "/": ["operator"], // multiple roles
+};
+function matchDynamicRoute(route: string, pattern: string): boolean {
+  const regexPattern = pattern.replace(/\[.*?\]/g, "[^/]+");
+  const regex = new RegExp(`^${regexPattern}$`);
+  return regex.test(route);
+}
+function getNormalizedPattern(route: string): string | null {
+  const patterns = Object.keys(routePermissions);
+
+  for (const pattern of patterns) {
+    if (matchDynamicRoute(route, pattern)) {
+      return pattern;
+    }
+  }
+
+  return null;
+}
+const roleHierarchy = ["user", "tester", "operator", "admin"];
+
+export async function hasAccessToRoute(route: string): Promise<boolean> {
+  const { user } = await validateRequest();
+  if (!user) return false;
+
+  const userRoles = user.roles.map((r) => r.toLowerCase());
+
+  // 👑 If user is admin, allow everything
+  if (userRoles.includes("admin")) return true;
+
+  const matchedPattern = getNormalizedPattern(route);
+  if (!matchedPattern) return false;
+
+  const allowedRoles = routePermissions[matchedPattern];
+  if (allowedRoles === "all") return true;
+
+  // 🧠 Get the highest role index for the user
+  const highestUserRank = Math.max(
+    ...userRoles.map((role) => roleHierarchy.indexOf(role)),
+  );
+
+  // 🧠 Get the minimum allowed role index for this route
+  const minimumRequiredRank = Math.min(
+    ...allowedRoles.map((role) => roleHierarchy.indexOf(role)),
+  );
+
+  return highestUserRank >= minimumRequiredRank;
+}

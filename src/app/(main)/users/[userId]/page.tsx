@@ -1,6 +1,7 @@
 "use server";
 import ProfileLayout from "@/components/profile/ProfileLayout";
-import { validateRequest } from "@/lib/session";
+import UnauthorizedPage from "@/components/UnauthorizedPage";
+import { hasAccessToRoute, validateRequest } from "@/lib/session";
 import { UserDataProps } from "@/lib/type";
 import { sendRequest } from "@/lib/utils";
 import { Metadata } from "next";
@@ -37,6 +38,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function Page({ params }: Props) {
+  const route = `/${params.userId}`;
+
+  const hasAccess = await hasAccessToRoute(route);
+  if (!hasAccess) {
+    return <UnauthorizedPage />;
+  }
   const user = await getUser(params.userId);
   const { user: loggedInUser, session } = await validateRequest();
   if (!loggedInUser || !session) redirect("/login");

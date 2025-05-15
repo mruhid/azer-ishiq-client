@@ -90,3 +90,18 @@ export function parseDate(dateString: string) {
 export function CapitalizeFirstLetter(val: string) {
   return String(val).charAt(0).toUpperCase() + String(val).slice(1);
 }
+
+export const playNotificationSound = (side: boolean) => {
+  const audio1 = new Audio("/sounds/firstSideSound.mp3");
+  const audio2 = new Audio("/sounds/secondSideSound.mp3");
+  if (side) {
+    audio1.play().catch((e) => {
+      console.log("First side audio play failed:", e);
+    });
+    return;
+  }
+  audio2.play().catch((e) => {
+    console.log("Second side audio play failed:", e);
+    return;
+  });
+};

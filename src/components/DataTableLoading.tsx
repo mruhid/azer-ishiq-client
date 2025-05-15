@@ -28,40 +28,29 @@ export default function DataTableLoading() {
 }
 export function SubscriberTableLoading() {
   return (
-    <div className="w-full rounded-xl border border-muted-foreground/80 bg-card p-2">
-      <div className="flex items-center justify-between px-1">
-        <div className="space-y-4">
-          <div className="m-2 text-xl font-bold">Table Loading</div>
-        </div>
-        <div className="space-y-4">
-          <Skeleton className="m-2 h-12 w-48 rounded-xl bg-muted-foreground" />
-        </div>
+    <div className="w-full rounded-xl border border-muted-foreground/80 bg-card p-4">
+      {/* Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="text-xl font-bold">Table Loading</div>
+        <Skeleton className="h-10 w-full rounded-xl bg-muted-foreground sm:w-48" />
       </div>
 
-      <div className="m-2">
-        <div className="mb-2 flex w-full items-center justify-between">
-          <div className="space-y-4">
-            <Skeleton className="my-2 h-12 w-48 rounded-xl bg-muted-foreground" />
-          </div>
-          <div className="space-y-4">
-            <Skeleton className="m-2 h-12 w-48 rounded-xl bg-muted-foreground" />
-          </div>{" "}
-          <div className="space-y-4">
-            <Skeleton className="m-2 h-12 w-48 rounded-xl bg-muted-foreground" />
-          </div>{" "}
-          <div className="space-y-4">
-            <Skeleton className="my-2 h-12 w-48 rounded-xl bg-muted-foreground" />
-          </div>
-        </div>
-        <div className="w-full space-y-2">
-          <Skeleton className="h-[17rem] w-full rounded-xl bg-muted-foreground" />
-        </div>
+      {/* Top Filters or Action Row */}
+      <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:justify-between">
+        <Skeleton className="h-10 w-full rounded-xl bg-muted-foreground sm:w-48" />
+        <Skeleton className="h-10 w-full rounded-xl bg-muted-foreground sm:w-48" />
+        <Skeleton className="h-10 hidden sm:block w-full rounded-xl bg-muted-foreground sm:w-48" />
+        <Skeleton className="h-10 hidden sm:block w-full rounded-xl bg-muted-foreground sm:w-48" />
       </div>
 
-      <div>
-        <div className="space-y-2">
-          <Skeleton className="mx-auto h-10 w-52 rounded-xl bg-muted-foreground" />
-        </div>
+      {/* Table Skeleton */}
+      <div className="mt-6 w-full">
+        <Skeleton className="h-[17rem] w-full rounded-xl bg-muted-foreground" />
+      </div>
+
+      {/* Bottom Pagination or Action */}
+      <div className="mt-6 flex justify-center">
+        <Skeleton className="h-10 w-48 rounded-xl bg-muted-foreground" />
       </div>
     </div>
   );

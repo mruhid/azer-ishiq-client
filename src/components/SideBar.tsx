@@ -4,6 +4,7 @@ import {
   Building2,
   Cable,
   ChevronDown,
+  MailCheck,
   UserCheck2,
   UserCheck2Icon,
   UserCircle2Icon,
@@ -108,6 +109,23 @@ export default function SideBar() {
           src: "/operation-logs",
           icon: UserCircle2Icon,
           altMenu: null,
+        },
+        {
+          name: "User Appeals",
+          src: null,
+          icon: MailCheck,
+          altMenu: [
+            {
+              name: "All Messages",
+              src: "/user-feedback",
+              icon: null,
+            },
+            {
+              name: "Statistics",
+              src: "/user-feedback/statistics  ",
+              icon: null,
+            },
+          ],
         },
       ]
     : [

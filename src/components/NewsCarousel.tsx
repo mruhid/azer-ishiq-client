@@ -28,7 +28,7 @@ export default function NewsCarousel() {
             transition: "transform 0.8s ease-in-out",
           }}
         >
-          {exploreWorlds.map((item, index) => (
+          {exploreWorlds[1].map((item, index) => (
             <CarouselItem key={index} className="mx-auto w-full">
               <AnimatePresence mode="wait">
                 <motion.div

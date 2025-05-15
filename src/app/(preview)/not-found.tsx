@@ -39,7 +39,7 @@ export default function NotFound() {
           The page you're looking for doesn't exist on Azerishiq.
         </p>
         <Link
-          href="/"
+          href="/service"
           className="mt-6 inline-block rounded-full border border-primary/90 px-6 py-3 text-lg transition-all hover:bg-primary/90 hover:text-secondary"
         >
           Back To Home

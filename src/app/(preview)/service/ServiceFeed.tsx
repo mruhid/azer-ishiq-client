@@ -2,8 +2,10 @@
 import { useToast } from "@/components/ui/use-toast";
 import { serviceItems } from "@/lib/constant";
 import Link from "next/link";
+import { useSession } from "../SessionProvider";
 
 export default function ServiceFeed() {
+  const { user } = useSession();
   const { toast } = useToast();
   const showToast = () => {
     toast({
@@ -18,7 +20,11 @@ export default function ServiceFeed() {
         item.src ? (
           <Link
             key={i}
-            href={item.src}
+            href={
+              item.src === "/subscriber/add"
+                ? `${!user ? `/login` : `/subscriber/add`}`
+                : item.src
+            }
             className="flex h-[250px] cursor-pointer flex-col items-start justify-start gap-2 rounded-xl border border-muted-foreground/20 bg-secondary p-5 shadow-md transition hover:border-foreground hover:shadow-lg"
           >
             <div className="rounded-md p-2 text-yellow-600">

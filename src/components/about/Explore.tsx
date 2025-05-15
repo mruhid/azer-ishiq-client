@@ -30,7 +30,7 @@ const Explore = () => {
           textStyle={"text-center"}
         />
         <div className="mt-[50px] flex min-h-[70vh] flex-col gap-5 lg:flex-row">
-          {exploreWorlds.map((world, index) => (
+          {exploreWorlds[0].map((world, index) => (
             <ExploreCard
               key={world.id}
               {...world}

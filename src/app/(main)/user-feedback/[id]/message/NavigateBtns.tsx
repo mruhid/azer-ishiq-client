@@ -9,7 +9,7 @@ export default function NavigateBtns() {
   const router = useRouter();
 
   return (
-    <div className="mx-auto w-full max-w-[1000px]">
+    <div className="mx-auto w-full max-w-[1000px] px-2">
       <div
         title="go back"
         onClick={async () => {

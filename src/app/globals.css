@@ -10,13 +10,13 @@ body {
   :root {
     --background: 220 20% 94%;
     --foreground: 220 13% 8%;
-    --card:  0 0% 98%;
+    --card: 0 0% 98%;
     --card-foreground: 220 13% 8%;
     --popover: 0 0% 100%;
     --popover-foreground: 220 13% 8%;
     --primary: 221 87% 55%;
     --primary-foreground: 0 0% 100%;
-    --secondary:0 0% 100%;
+    --secondary: 0 0% 100%;
     --secondary-foreground: 220 15% 20%;
     --muted: 220 16% 92%;
     --muted-foreground: 220 10% 45%;
@@ -30,11 +30,11 @@ body {
     --radius: 0.5rem;
 
     /* Updated Chart Colors */
-    --chart-1: 14 78% 57%;
-    --chart-2: 170 55% 45%;
-    --chart-3: 200 40% 30%;
-    --chart-4: 42 80% 65%;
-    --chart-5: 28 85% 63%;
+    --chart-1: 221.2 83.2% 53.3%;
+    --chart-2: 212 95% 68%;
+    --chart-3: 216 92% 60%;
+    --chart-4: 210 98% 78%;
+    --chart-5: 212 97% 87%;
 
     /* Sidebar */
     --sidebar-background: 0 0% 98%;
@@ -69,11 +69,11 @@ body {
     --ring: 220 80% 60%;
 
     /* Updated Chart Colors */
-    --chart-1: 220 75% 55%;
-    --chart-2: 160 65% 50%;
-    --chart-3: 30 85% 50%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --chart-1: 221.2 83.2% 53.3%;
+    --chart-2: 212 95% 68%;
+    --chart-3: 216 92% 60%;
+    --chart-4: 210 98% 78%;
+    --chart-5: 212 97% 87%;
 
     /* Sidebar */
     --sidebar-background: 240 5.9% 10%;
@@ -168,4 +168,21 @@ body {
     rgba(255, 255, 255, 0.04) 0%,
     rgba(255, 255, 255, 0) 100%
   );
+}
+
+.scrollbar-custom::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 9999px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

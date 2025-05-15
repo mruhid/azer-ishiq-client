@@ -220,3 +220,22 @@ export type FeedBackProps = {
   page: number;
   pageSize: number;
 };
+
+export type FeedbackStatisticsProps = {
+  totalAppeals: number;
+  readAppeals: number;
+  unreadAppeals: number;
+  repliedAppeals: number;
+  notRepliedAppeals: number;
+  byTopic: {
+    Qeza: number;
+    Sikayet: number;
+    InsanQaynaqlari: number;
+    OnlaynOdemeMuracieti: number;
+    QisaMelumat: number;
+  };
+  monthlyAppeals: {
+    "2025-04": number;
+    "2025-05": number;
+  };
+};

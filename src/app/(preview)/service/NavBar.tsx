@@ -2,11 +2,12 @@
 import { navVariants } from "@/lib/motion";
 import styles from "@/lib/styles";
 import { motion } from "framer-motion";
-import { Menu, Moon, Settings, Sun } from "lucide-react";
+import {  Moon, Settings, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useSession } from "../SessionProvider";
 import { Button } from "@/components/ui/button";
+import SideMenuBar from "../SideMenuBar";
 
 export default function Navbar() {
   const { theme, setTheme } = useTheme();
@@ -37,7 +38,7 @@ export default function Navbar() {
             </Link>
           </div>
 
-          <nav className="flex flex-wrap items-center gap-6">
+          <nav className="hidden lg:flex flex-wrap items-center gap-6">
             {[
               { href: "/service", label: "Xidmətlər" },
               { href: "/about-us", label: "Haqqımızda" },
@@ -66,7 +67,7 @@ export default function Navbar() {
                 </Link>
               </Button>
             )}
-            <Menu size={30} className="text-foreground" />
+            <SideMenuBar />
 
             <div
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}

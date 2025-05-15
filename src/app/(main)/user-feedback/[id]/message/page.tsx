@@ -65,7 +65,7 @@ export default async function Page({
   return (
     <>
       <NavigateBtns />
-      <main className="mx-auto flex min-h-screen w-full max-w-[1000px] items-start justify-start gap-4">
+      <main className="mx-auto flex min-h-screen w-full max-w-[1000px] items-start justify-start gap-4 px-2">
         <UserAvatar
           className="border border-primary/50"
           avatarUrl={""}

@@ -36,9 +36,7 @@ export default function Navbar() {
               <UserButton className="ml-4 mr-6" />
             </div>
           </motion.div>
-          <div className="hidden sm:flex lg:hidden">
-            <NavMenu />
-          </div>
+          
         </div>
       </motion.header>
     </>
