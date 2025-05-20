@@ -19,7 +19,7 @@ export default async function Layout({
     session.user.roles.length === 1 &&
     session.user.roles[0].toLowerCase() === "user"
   )
-    redirect(`/user-account/${session.user.id}`);
+    redirect(`/user-account/me`);
   return (
     <SessionProvider value={session}>
       <UserInformationProvider>
@@ -28,7 +28,7 @@ export default async function Layout({
             <SideBar />
             <div className="flex flex-1 flex-col bg-secondary">
               <Navbar />
-              <main className="flex flex-1 flex-col items-center bg-gradient-to-br from-secondary/50 via-secondary to-background text-foreground">
+              <main className="flex flex-1 flex-col items-center bg-secondary pb-2 text-foreground">
                 <div className="w-full">{children}</div>
               </main>
             </div>

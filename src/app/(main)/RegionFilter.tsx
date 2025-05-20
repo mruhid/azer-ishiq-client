@@ -159,8 +159,9 @@ export function FilterSelect() {
     // if (selectedTm) {
     //   newSearchParams.set("tm", selectedTm);
     // }
+    const newUrl = `${window.location.pathname}?${newSearchParams.toString()}`;
 
-    router.push(`${pathname}?${newSearchParams.toString()}`);
+    window.history.pushState(null, "", newUrl);
 
     setTimeout(() => {
       document
@@ -170,9 +171,8 @@ export function FilterSelect() {
   };
 
   const handleClearSearch = () => {
-    const newSearchParams = new URLSearchParams();
-
-    router.push(`${pathname}?${newSearchParams.toString()}`);
+    const newUrl = window.location.pathname;
+    window.history.pushState(null, "", newUrl);
 
     setSelectedRegion("");
     setSelectedDistrict("");

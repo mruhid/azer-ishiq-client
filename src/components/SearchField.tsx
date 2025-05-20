@@ -16,7 +16,12 @@ export default function SearchField() {
   }
 
   return (
-    <form onSubmit={handleSubmit} method="GET" action="/search">
+    <form
+      onSubmit={handleSubmit}
+      className="hidden sm:flex"
+      method="GET"
+      action="/search"
+    >
       <div className="relative">
         <SearchIcon className="absolute left-3 top-1/2 size-5 -translate-y-1/2 transform text-muted-foreground" />
         <Input

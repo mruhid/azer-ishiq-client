@@ -79,10 +79,13 @@ export default function LoginForm() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className="mx-auto max-w-md rounded-lg p-6"
+      className="mx-auto w-full max-w-md rounded-lg p-6"
     >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="w-full space-y-3"
+        >
           {error &&
             (error.split(".")[0] === "Account locked" ? (
               <>
@@ -176,7 +179,7 @@ export default function LoginForm() {
           <AnimatePresence>
             {isPending && (
               <motion.div
-                className="fixed inset-0 flex h-screen items-center justify-center backdrop-blur-sm"
+                className="fixed inset-0 hidden h-screen items-center justify-center backdrop-blur-sm md:flex"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}

@@ -68,18 +68,6 @@ export function NavMenu() {
           },
 
           {
-            title: "Subscribers",
-            href: "/subscriber",
-            description:
-              "You can see the subscribers by filtering on this page.",
-          },
-          {
-            title: "Add Subscriber",
-            href: "/subscriber/add",
-            description:
-              "This page is for adding a new subscriber, which is linked with some tm appartment. ",
-          },
-          {
             title: "Feedbacks",
             href: "/user-feedback",
             description: "You can see the messages by sending users.",
@@ -89,6 +77,12 @@ export function NavMenu() {
             href: "/user-feedback/statistics",
             description:
               "This page is for looking the statistics of feedbacks. ",
+          },
+          {
+            title: "Subscribers",
+            href: "/subscriber",
+            description:
+              "You can see the subscribers by filtering on this page.",
           },
         ];
 

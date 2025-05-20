@@ -6,18 +6,17 @@ const nextConfig = {
     },
   },
   images: {
-    domains: [process.env.NEXT_PUBLIC_IMAGE_HOST], // Allow dynamic hostname from .env
+    domains: [process.env.NEXT_PUBLIC_IMAGE_HOST],
     remotePatterns: [
       {
         protocol: "http",
         hostname: process.env.NEXT_PUBLIC_IMAGE_HOST,
         port: "5252",
-        pathname: "/api/image/**", // Adjust to match your API path
+        pathname: "/api/image/**",
       },
     ],
   },
   reactStrictMode: true,
-  swcMinify: true,
 };
 
 export default nextConfig;

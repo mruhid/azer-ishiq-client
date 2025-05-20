@@ -65,7 +65,11 @@ export default function UsersDataTable() {
     {
       id: "ID",
       header: () => <div className="hidden sm:block">ID</div>,
-      cell: ({ row }) => <div className="hidden sm:block">{row.index + 1}</div>,
+      cell: ({ row }) => (
+        <div className="hidden sm:block">
+          {row.index + 1 + (pageNumber - 1) * 8}
+        </div>
+      ),
     },
     {
       accessorKey: "userName",
@@ -77,7 +81,7 @@ export default function UsersDataTable() {
               <div className="capitalize">{row.getValue("userName")}</div>
             </TooltipTrigger>
             <TooltipContent className="border px-4 py-1">
-              <div className="gapy-2 w-full flex flex-col items-center justify-center">
+              <div className="gapy-2 flex w-full flex-col items-center justify-center">
                 <div className="flex items-start justify-center gap-3">
                   <UserAvatar
                     className="border border-primary/50"
@@ -85,7 +89,7 @@ export default function UsersDataTable() {
                     size={50}
                   />
                   <div className="flex flex-col items-start justify-start gap-y-3">
-                    <div className="flex flex-col ">
+                    <div className="flex flex-col">
                       <p className="text-lg font-medium capitalize">
                         {row.original.userName}
                       </p>

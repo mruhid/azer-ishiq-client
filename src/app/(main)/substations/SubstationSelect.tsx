@@ -13,7 +13,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import kyInstance from "@/lib/ky";
 import { toast } from "@/components/ui/use-toast";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "../SessionProvider";
@@ -132,7 +131,8 @@ export function FilterSelect() {
       newSearchParams.set("district", selectedDistrict);
     }
 
-    router.push(`${pathname}?${newSearchParams.toString()}`);
+    const newUrl = `${pathname}?${newSearchParams.toString()}`;
+    window.history.pushState(null, "", newUrl);
 
     setTimeout(() => {
       document
@@ -142,13 +142,11 @@ export function FilterSelect() {
   };
 
   const handleClearSearch = () => {
-    const newSearchParams = new URLSearchParams();
-
-    router.push(`${pathname}?${newSearchParams.toString()}`);
+    const newUrl = window.location.pathname;
+    window.history.pushState(null, "", newUrl);
 
     setSelectedRegion("");
     setSelectedDistrict("");
-    setSelectedSubstation("");
 
     setTimeout(() => {
       document
@@ -199,7 +197,7 @@ export function FilterSelect() {
   }
   return (
     <div className="flex w-full flex-col items-center justify-center gap-2 md:flex-row md:justify-between md:gap-0">
-      <div className="w-full flex flex-col flex-wrap items-center justify-center gap-4 py-2 md:flex-row">
+      <div className="flex w-full flex-col flex-wrap items-center justify-center gap-4 py-2 md:flex-row">
         <Select
           value={selectedRegion || ""}
           onValueChange={(value) => {
@@ -210,12 +208,12 @@ export function FilterSelect() {
             handleRegionChange(value);
           }}
         >
-          <SelectTrigger className="h-12 w-full md:w-44 rounded-2xl border border-muted-foreground bg-secondary">
+          <SelectTrigger className="h-12 w-full rounded-2xl border border-muted-foreground bg-secondary md:w-44">
             <SelectValue
               placeholder={
                 isFetchingRegions ? (
                   <div className="mx-auto w-full space-y-2">
-                    <Skeleton className="mx-auto h-9  w-[136px] rounded-xl bg-muted-foreground" />
+                    <Skeleton className="mx-auto h-9 w-[136px] rounded-xl bg-muted-foreground" />
                   </div>
                 ) : (
                   "Select a region"
@@ -254,7 +252,7 @@ export function FilterSelect() {
             fetchSubstations(parseInt(value));
           }}
         >
-          <SelectTrigger className="h-12  w-full md:w-44 rounded-2xl border border-muted-foreground bg-secondary">
+          <SelectTrigger className="h-12 w-full rounded-2xl border border-muted-foreground bg-secondary md:w-44">
             <SelectValue
               placeholder={
                 isFetchingRegions ? (
@@ -291,7 +289,7 @@ export function FilterSelect() {
             setSelectedSubstation(value);
           }}
         >
-          <SelectTrigger className="h-12 w-full md:w-44 rounded-2xl border border-muted-foreground bg-secondary">
+          <SelectTrigger className="h-12 w-full rounded-2xl border border-muted-foreground bg-secondary md:w-44">
             <SelectValue
               placeholder={
                 isFetchingRegions ? (
@@ -322,7 +320,7 @@ export function FilterSelect() {
           </SelectContent>
         </Select>
       </div>
-      <div className="mx-auto my-2 flex w-full md:w-48 items-center  justify-center">
+      <div className="mx-auto my-2 flex w-full items-center justify-center md:w-48">
         {" "}
         <Button
           onClick={handleClearSearch}
@@ -332,7 +330,7 @@ export function FilterSelect() {
           Reset
         </Button>
       </div>
-      <div className="mx-auto my-2 flex w-full md:w-48 items-center ml-0 md:ml-4 justify-center">
+      <div className="mx-auto my-2 ml-0 flex w-full items-center justify-center md:ml-4 md:w-48">
         {" "}
         <Button
           disabled={!selectedRegion}

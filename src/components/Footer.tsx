@@ -2,7 +2,7 @@ import { Github, Linkedin, Mail, Phone } from "lucide-react";
 
 export default function Footer() {
   return (
-    <div className="relative bottom-0">
+    <div className="relative bottom-0 mt-2">
       <footer className="w-full bg-gray-900 px-6 py-8 text-white">
         <div className="mx-auto flex max-w-6xl flex-col gap-10 md:flex-row md:items-start md:justify-between">
           <div className="flex flex-col items-start justify-start gap-y-3">

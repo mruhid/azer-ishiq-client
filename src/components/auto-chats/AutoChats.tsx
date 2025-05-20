@@ -83,7 +83,7 @@ export default function AutoChat() {
           <MessageCircle size={24} />
         </div>
       </SheetTrigger>
-      <SheetContent className="flex w-[250px] flex-col bg-secondary sm:w-[300px]">
+      <SheetContent className="flex w-[350px] flex-col bg-secondary ">
         <SheetHeader>
           <SheetTitle className="border-b pb-2">
             <div className="flex w-full items-center gap-3">

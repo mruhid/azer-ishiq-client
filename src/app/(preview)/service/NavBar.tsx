@@ -2,7 +2,7 @@
 import { navVariants } from "@/lib/motion";
 import styles from "@/lib/styles";
 import { motion } from "framer-motion";
-import {  Moon, Settings, Sun } from "lucide-react";
+import { Moon, Settings, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useSession } from "../SessionProvider";
@@ -38,11 +38,12 @@ export default function Navbar() {
             </Link>
           </div>
 
-          <nav className="hidden lg:flex flex-wrap items-center gap-6">
+          <nav className="hidden flex-wrap items-center gap-6 lg:flex">
             {[
               { href: "/service", label: "Xidmətlər" },
               { href: "/about-us", label: "Haqqımızda" },
               { href: "/developers", label: "Mühəndislər" },
+              { href: "/feedback", label: "Istək və şikayətlər" },
             ].map(({ href, label }) => (
               <Link
                 key={href}

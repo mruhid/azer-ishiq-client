@@ -26,7 +26,7 @@ import { useSession } from "../SessionProvider";
 import { SubscriberTableLoading } from "@/components/DataTableLoading";
 import { Input } from "@/components/ui/input";
 import { PaginationBox } from "@/components/PaginationBox";
-import { toast, useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import {
   DistrictsResponse,
   RegionObject,
@@ -35,15 +35,9 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import {
-  CalendarIcon,
-  ChevronDown,
-  Filter,
-  SearchIcon,
-  Settings,
-} from "lucide-react";
+import { CalendarIcon, ChevronDown, Filter, Settings } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -640,7 +634,6 @@ export function SubscriberSelect({
   const [territoryState, setTerritoryState] =
     useState<TerritoryResponse | null>(null);
   const [streetState, setStreetState] = useState<StreetResponse | null>(null);
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = new URLSearchParams(useSearchParams());
   const initialRegion = searchParams.get("region") || "";
@@ -722,8 +715,8 @@ export function SubscriberSelect({
       newSearchParams.set("street", selectedStreet);
     }
 
-    router.push(`${pathname}?${newSearchParams.toString()}`);
-
+    const newUrl = `${pathname}?${newSearchParams.toString()}`;
+    window.history.pushState(null, "", newUrl);
     setTimeout(() => {
       document
         .getElementById("data-table")
@@ -732,9 +725,8 @@ export function SubscriberSelect({
   };
 
   const handleClearSearch = () => {
-    const newSearchParams = new URLSearchParams();
-
-    router.push(`${pathname}?${newSearchParams.toString()}`);
+    const newUrl = window.location.pathname;
+    window.history.pushState(null, "", newUrl);
 
     setSelectedRegion("");
     setSelectedDistrict("");
@@ -753,6 +745,7 @@ export function SubscriberSelect({
         ?.scrollIntoView({ behavior: "smooth" });
     }, 500);
   };
+
   const handleRegionChange = (value: string) => {
     const Id = parseInt(value, 10);
     if (Id) {

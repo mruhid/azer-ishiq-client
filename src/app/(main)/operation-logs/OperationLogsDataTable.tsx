@@ -43,71 +43,6 @@ import { format, formatDate } from "date-fns";
 import { fetchQueryFN } from "../fetchQueryFN";
 import { SelectLayout } from "@/components/FilterElementLayout";
 
-export const columns: ColumnDef<OperationCells>[] = [
-  { id: "ID", header: "ID", cell: ({ row }) => <div>{row.index + 1}</div> },
-  {
-    accessorKey: "userName",
-    header: "User Name",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("userName")}</div>
-    ),
-  },
-  {
-    accessorKey: "userRoles",
-    header: () => <div className="hidden md:block">User Roles</div>,
-    cell: ({ row }) => (
-      <div className="hidden capitalize md:block">
-        {row.original.userRoles
-          .slice()
-          .sort((a, b) => a.localeCompare(b))
-          .map((item, index) => (
-            <span key={index}>
-              {item}
-              {index < row.original.userRoles.length - 1 ? ", " : ""}
-            </span>
-          ))}
-      </div>
-    ),
-  },
-
-  {
-    accessorKey: "entryName",
-    header: "Entity Name",
-    cell: ({ row }) => (
-      <div className="lowercase">{row.getValue("entryName")}</div>
-    ),
-  },
-  {
-    accessorKey: "timestamp",
-    header: () => <div className="hidden lg:block">Time Stamp</div>,
-    cell: ({ row }) => (
-      <div className="hidden py-2 lg:block">
-        {formatDate(row.getValue("timestamp"), "MMM d, yyyy")}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "action",
-    header: () => <div className="mr-auto">Operation</div>,
-    cell: ({ row }) => {
-      const value = row.original.action;
-
-      const bgColor =
-        value === "Delete"
-          ? "bg-destructive"
-          : value === "Edit"
-            ? "bg-primary"
-            : "bg-green-600";
-
-      return (
-        <div className={`rounded-full py-1 text-left font-medium capitalize`}>
-          {value}
-        </div>
-      );
-    },
-  },
-];
-
 type FilterType = {
   user: string;
   entryName: string;
@@ -141,6 +76,76 @@ export default function OperationLogsDataTable() {
   const [pageNumber, setPageNumber] = React.useState<number>(1);
   const { session } = useSession();
   const { isOpen, UserId, setId, toggleSidebar } = useUserInformation();
+
+  const columns: ColumnDef<OperationCells>[] = [
+    {
+      id: "ID",
+      header: "ID",
+      cell: ({ row }) => <div>{row.index + 1 + (pageNumber - 1) * 8}</div>,
+    },
+    {
+      accessorKey: "userName",
+      header: "User Name",
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("userName")}</div>
+      ),
+    },
+    {
+      accessorKey: "userRoles",
+      header: () => <div className="hidden md:block">User Roles</div>,
+      cell: ({ row }) => (
+        <div className="hidden capitalize md:block">
+          {row.original.userRoles
+            .slice()
+            .sort((a, b) => a.localeCompare(b))
+            .map((item, index) => (
+              <span key={index}>
+                {item}
+                {index < row.original.userRoles.length - 1 ? ", " : ""}
+              </span>
+            ))}
+        </div>
+      ),
+    },
+
+    {
+      accessorKey: "entryName",
+      header: "Entity Name",
+      cell: ({ row }) => (
+        <div className="lowercase">{row.getValue("entryName")}</div>
+      ),
+    },
+    {
+      accessorKey: "timestamp",
+      header: () => <div className="hidden lg:block">Time Stamp</div>,
+      cell: ({ row }) => (
+        <div className="hidden py-2 lg:block">
+          {formatDate(row.getValue("timestamp"), "MMM d, yyyy")}
+        </div>
+      ),
+    },
+    {
+      accessorKey: "action",
+      header: () => <div className="mr-auto">Operation</div>,
+      cell: ({ row }) => {
+        const value = row.original.action;
+
+        const bgColor =
+          value === "Delete"
+            ? "bg-destructive"
+            : value === "Edit"
+              ? "bg-primary"
+              : "bg-green-600";
+
+        return (
+          <div className={`rounded-full py-1 text-left font-medium capitalize`}>
+            {value}
+          </div>
+        );
+      },
+    },
+  ];
+
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/log/filtered?page=${pageNumber}&pageSize=8${
     filterData.action
       ? `${filterData.userName ? `&userNameSearch=${filterData.userName}` : ""}` +

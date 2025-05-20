@@ -1,10 +1,14 @@
 "use client";
 
 import {
+  BookCheck,
   Building2,
   Cable,
   ChevronDown,
+  Code2,
   MailCheck,
+  MessageCircle,
+  Settings2Icon,
   UserCheck2,
   UserCheck2Icon,
   UserCircle2Icon,
@@ -57,11 +61,6 @@ export default function SideBar() {
               src: "/subscriber",
               icon: null,
             },
-            {
-              name: "Add Subscriber",
-              src: "/subscriber/add",
-              icon: null,
-            },
           ],
         },
         {
@@ -108,6 +107,12 @@ export default function SideBar() {
           name: "Operation Logs",
           src: "/operation-logs",
           icon: UserCircle2Icon,
+          altMenu: null,
+        },
+        {
+          name: "Chat",
+          src: "/chat",
+          icon: MessageCircle,
           altMenu: null,
         },
         {
@@ -167,6 +172,33 @@ export default function SideBar() {
         },
       ];
 
+  const sidebarPages: MenuProps[] = [
+    {
+      name: "Profile",
+      src: `/users/${user.id}`,
+      icon: UserCircle2Icon,
+      altMenu: null,
+    },
+    {
+      name: "About Us",
+      src: "/about",
+      icon: BookCheck,
+      altMenu: null,
+    },
+    {
+      name: "Developers",
+      src: "/engineers",
+      icon: Code2,
+      altMenu: null,
+    },
+    {
+      name: "Service",
+      src: "/service",
+      icon: Settings2Icon,
+      altMenu: null,
+    },
+  ];
+
   return (
     <Sidebar>
       <SidebarHeader>
@@ -193,7 +225,7 @@ export default function SideBar() {
                     className="group/collapsible"
                   >
                     <SidebarMenuItem>
-                      <div className="flex w-full items-center justify-between rounded-xl px-2 py-1 transition-all hover:bg-white hover:text-primary">
+                      <div className="flex w-full cursor-pointer items-center justify-between rounded-xl px-2 py-1 transition-all hover:bg-white hover:text-primary">
                         <div className="flex items-center justify-center">
                           {menuItem.icon && (
                             <menuItem.icon size={24} className="mr-2" />
@@ -243,6 +275,30 @@ export default function SideBar() {
                   </Link>
                 ),
               )}
+            </SidebarMenu>
+          </SidebarGroupContent>
+          <SidebarGroupContent className="mt-2">
+            <h3 className="mb-2 ml-3 text-start text-sm text-blue-200">
+              Other Pages
+            </h3>
+            <SidebarMenu>
+              {sidebarPages.map((menuItem) => (
+                <Link
+                  key={menuItem.name}
+                  href={menuItem.src ? menuItem.src : "/"}
+                >
+                  <div className="flex w-full cursor-pointer items-center justify-between rounded-xl px-2 py-1 transition-all hover:bg-white hover:text-primary">
+                    <div className="flex h-10 w-full items-center justify-center">
+                      {menuItem.icon && (
+                        <menuItem.icon size={24} className="mr-2" />
+                      )}
+                      <h4 className="w-full text-sm font-semibold">
+                        {menuItem.name}
+                      </h4>
+                    </div>
+                  </div>
+                </Link>
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarContent>

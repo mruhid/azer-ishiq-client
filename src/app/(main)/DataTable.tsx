@@ -36,8 +36,14 @@ export default function DataTable() {
 }
 
 export function DefaultTable() {
+  const [pageNumber, setPageNumber] = React.useState<number>(1);
+  
   const columns: ColumnDef<Tmitem>[] = [
-    { id: "ID", header: "ID", cell: ({ row }) => <div>{row.index + 1}</div> },
+    {
+      id: "ID",
+      header: "ID",
+      cell: ({ row }) => <div>{row.index + 1 + (pageNumber - 1) * 8}</div>,
+    },
     {
       accessorKey: "name",
       header: "Name",
@@ -83,7 +89,6 @@ export function DefaultTable() {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   );
-  const [pageNumber, setPageNumber] = React.useState<number>(1);
   const { session } = useSession();
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -164,19 +169,18 @@ export function DefaultTable() {
         </DropdownMenu>
       </div>
       <div className="px-1">
-      <DataTableLayout
-        columns={columns}
-        layout="fancy"
-        tableData={tmData.items}
-        pagination={{
-          total: tmData.totalCount,
-          page: pageNumber,
-          setPageNumber,
-          pageSize: 8,
-        }}
-      />
+        <DataTableLayout
+          columns={columns}
+          layout="fancy"
+          tableData={tmData.items}
+          pagination={{
+            total: tmData.totalCount,
+            page: pageNumber,
+            setPageNumber,
+            pageSize: 8,
+          }}
+        />
       </div>
-     
     </div>
   );
 }

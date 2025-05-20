@@ -37,8 +37,14 @@ export default function SubstationDataTable() {
 }
 
 export function DefaultTable() {
+  const [pageNumber, setPageNumber] = React.useState<number>(1);
+
   const columns: ColumnDef<SubstationItemsProps>[] = [
-    { id: "ID", header: "ID", cell: ({ row }) => <div>{row.index + 1}</div> },
+    {
+      id: "ID",
+      header: "ID",
+      cell: ({ row }) => <div>{row.index + 1 + (pageNumber - 1) * 8}</div>,
+    },
     {
       accessorKey: "name",
       header: "Name",
@@ -107,7 +113,6 @@ export function DefaultTable() {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   );
-  const [pageNumber, setPageNumber] = React.useState<number>(1);
   const { session } = useSession();
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});

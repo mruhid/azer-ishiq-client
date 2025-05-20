@@ -20,7 +20,7 @@ export default function StatusBar({
   session,
   dashboard,
 }: {
-  userId: number;
+  userId: number | string;
   session: string;
   dashboard: boolean;
 }) {

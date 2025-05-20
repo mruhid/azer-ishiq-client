@@ -3,7 +3,17 @@
 import { useSession } from "@/app/(main)/SessionProvider";
 import { cn } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
-import { Check, LogOutIcon, Monitor, Moon, Sun, UserIcon } from "lucide-react";
+import {
+  Check,
+  LogOutIcon,
+  MessageCircleCodeIcon,
+  Monitor,
+  Moon,
+  Settings2,
+  Sun,
+  UserCheckIcon,
+  UserIcon,
+} from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import {
@@ -61,6 +71,24 @@ export default function UserButton({ className }: UserButtonProps) {
           <DropdownMenuItem className="rounded-lg py-2 transition-all hover:bg-primary/10">
             <UserIcon className="mr-2 size-4" />
             Profile
+          </DropdownMenuItem>
+        </Link>
+        <Link href={`/chat`}>
+          <DropdownMenuItem className="rounded-lg py-2 transition-all hover:bg-primary/10">
+            <MessageCircleCodeIcon className="mr-2 size-4" />
+            Messages
+          </DropdownMenuItem>
+        </Link>
+        <Link href={`/user-feedback`}>
+          <DropdownMenuItem className="rounded-lg py-2 transition-all hover:bg-primary/10">
+            <UserCheckIcon className="mr-2 size-4" />
+            User feedback
+          </DropdownMenuItem>
+        </Link>
+        <Link href={`/service`}>
+          <DropdownMenuItem className="rounded-lg py-2 transition-all hover:bg-primary/10">
+            <Settings2 className="mr-2 size-4" />
+            Service
           </DropdownMenuItem>
         </Link>
 

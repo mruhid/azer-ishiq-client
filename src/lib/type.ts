@@ -159,7 +159,7 @@ export interface UserCells {
   email: string;
   phoneNumber: string;
   ipAddress: string;
-  isBlocked: false;
+  isBlocked: boolean;
   createdAt: string;
   userRoles: string[];
   failedAttempts: number;

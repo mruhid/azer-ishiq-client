@@ -7,59 +7,27 @@ import {
   MinusCircle,
   PictureInPicture,
 } from "lucide-react";
-import { sendRequest } from "@/lib/utils";
-import { FeedBackProps } from "@/lib/type";
 import { validateRequest } from "@/lib/session";
 import UnauthorizedPage from "@/components/UnauthorizedPage";
-import { cache } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-const getMessage = cache(async (): Promise<FeedBackProps | null> => {
-  try {
-    const { session } = await validateRequest();
-    if (!session) {
-      console.warn("Session not found");
-      return null;
-    }
-
-    const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/ElectronicAppeal`;
-    const user = await sendRequest<FeedBackProps>(url, "GET", session);
-    if (!user) {
-      return null;
-    }
-    return user;
-  } catch (error) {
-    console.error("Error fetching messages:", error);
-    return null;
-  }
-});
-
-export async function generateMetadata() {
-  const { session, user } = await validateRequest();
+export const metadata: Metadata = {
+  title: "User messages",
+};
+export default async function Page() {
+  const { session } = await validateRequest();
   if (!session) {
     return <UnauthorizedPage />;
   }
-  const messages = await getMessage();
-  return {
-    title: messages
-      ? `(${messages.items.filter((f) => !f.isRead).length || "All messages are readed"})User Messages
-    `
-      : "No messages",
-  };
-}
-export default async function Page() {
-  const messages = await getMessage();
+
   return (
     <div className="w-full px-2">
-      <main className="mx-auto border w-full max-w-[1000px] space-y-5 rounded-xl bg-card/50 px-2 py-4">
+      <main className="mx-auto w-full max-w-[1000px] space-y-5 rounded-xl border bg-card/50 px-2 py-4">
         <div className="flex w-full items-center justify-between">
           <h1 className="text-2xl font-semibold text-primary">
             Feedback messages
           </h1>
           <div className="flex items-center justify-center gap-x-1">
-            <p className="text-2xl font-semibold text-primary">
-              {messages?.items.length ? `(${messages?.items.length})` : ""}
-            </p>
             <MailCheckIcon size={40} className="text-primary" />
           </div>
         </div>
@@ -83,12 +51,6 @@ export default async function Page() {
               className="h-16 rounded-none border-b-[3px] border-secondary bg-secondary text-muted-foreground shadow-sm hover:bg-muted-foreground/10 data-[state=active]:border-primary data-[state=active]:bg-secondary data-[state=active]:text-primary data-[state=active]:shadow-md"
             >
               <MinusCircle className="mr-4" /> Did not read
-              {messages &&
-                messages.items.filter((f) => !f.isRead).length !== 0 && (
-                  <div className="ml-1 flex h-[20px] w-[50px] items-center justify-center rounded-full bg-red-400 text-white">
-                    <p>{messages.items.filter((f) => !f.isRead).length}</p>
-                  </div>
-                )}
             </TabsTrigger>
           </TabsList>
 

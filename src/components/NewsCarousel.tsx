@@ -17,7 +17,7 @@ export default function NewsCarousel() {
   }, []);
 
   return (
-    <div className="w-full bg-[#e0e4ec] px-4 md:px-10 lg:px-20">
+    <div className="w-full max-w-[380px] mx-auto bg-[#e0e4ec] px-4 sm:max-w-7xl md:px-10 lg:px-20">
       <Carousel
         className="mx-auto w-full max-w-[400px] md:max-w-[600px] lg:max-w-[1000px]"
         opts={{ align: "start" }}

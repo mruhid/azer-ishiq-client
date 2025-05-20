@@ -12,13 +12,13 @@ export default function ProfileLayout({
 }: {
   user: UserDataProps;
   session: string;
-  userId: number;
+  userId: number | string;
   isAdmin: boolean;
   loggedInUserId: number;
   dashboard?: boolean;
 }) {
   const profileStyle =
-    userId == loggedInUserId
+    userId == loggedInUserId || userId == "me"
       ? `grid  grid-cols-1 gap-6 md:grid-cols-2`
       : `grid mx-auto grid-cols-1 max-w-[500px]`;
   return (
@@ -33,7 +33,7 @@ export default function ProfileLayout({
         />
         {/* Accounts */}
         <div className="col-span-1 ml-2">
-          {userId == loggedInUserId ? (
+          {userId == loggedInUserId || userId == "me" ? (
             <StatusBar
               dashboard={dashboard ? true : false}
               session={session}

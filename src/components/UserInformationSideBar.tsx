@@ -120,10 +120,13 @@ const UserInformationSideBar: React.FC = () => {
               +
               {userData.phoneNumber ? userData.phoneNumber : "Number not found"}
             </p>
-            <div className="flex h-[40px] w-full cursor-pointer items-center justify-center gap-3 rounded-sm border border-primary bg-primary capitalize text-white transition-all duration-300 hover:scale-100 hover:border-muted-foreground/70 hover:bg-secondary hover:text-primary">
+            <a
+              href={`tel:${userData.phoneNumber}`}
+              className="flex h-[40px] w-full cursor-pointer items-center justify-center gap-3 rounded-sm border border-primary bg-primary capitalize text-white transition-all duration-300 hover:scale-100 hover:border-muted-foreground/70 hover:bg-secondary hover:text-primary"
+            >
               <PhoneIcon />
               <p>Call</p>
-            </div>
+            </a>
           </div>
           <div className="my-1 flex w-[120px] flex-col items-start justify-start">
             <TooltipProvider>
@@ -139,10 +142,13 @@ const UserInformationSideBar: React.FC = () => {
               </Tooltip>
             </TooltipProvider>
 
-            <div className="flex h-[40px] w-full cursor-pointer items-center justify-center gap-3 rounded-sm border border-primary bg-card capitalize text-primary transition-all duration-300 hover:scale-100 hover:border-muted-foreground/70 hover:bg-primary hover:text-white">
+            <a
+              href={`mailto:${userData.email}`}
+              className="flex h-[40px] w-full cursor-pointer items-center justify-center gap-3 rounded-sm border border-primary bg-card capitalize text-primary transition-all duration-300 hover:scale-100 hover:border-muted-foreground/70 hover:bg-primary hover:text-white"
+            >
               <Mail />
               <p>Email</p>
-            </div>
+            </a>
           </div>
         </div>
 
@@ -156,7 +162,7 @@ const UserInformationSideBar: React.FC = () => {
             <InfoRow
               label="Role"
               value={userData.userRoles
-                .slice(0,3)
+                .slice(0, 3)
                 .sort((a, b) => a.localeCompare(b))
                 .map((item, index) => (
                   <span key={index}>

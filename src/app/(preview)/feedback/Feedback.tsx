@@ -32,7 +32,7 @@ import ApplyFeedback from "./action";
 
 export default function Feedback() {
   return (
-    <div className="grid w-full grid-cols-2 gap-4">
+    <div className="grid w-full grid-cols-1 gap-4 p-2 md:grid-cols-2">
       <ContactUs />
       <FeedBackForm />
     </div>
@@ -121,16 +121,16 @@ export function FeedBackForm() {
 
   async function onSubmit(data: FeedbackValues) {
     const newValues = {
-      name:data.name,
+      name: data.name,
       surname: data.surname,
-      phoneNumber:data.prefix+data.phoneNumber,
+      phoneNumber: data.prefix + data.phoneNumber,
       email: data.email,
-      topic:Number(data.topic),
-      content:data.content,
+      topic: Number(data.topic),
+      content: data.content,
     };
     setError(undefined);
     startTransition(async () => {
-      const { success, error,  } = await ApplyFeedback(newValues);
+      const { success, error } = await ApplyFeedback(newValues);
       if (error) {
         setError(error);
       } else if (true) {
@@ -148,7 +148,7 @@ export function FeedBackForm() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.1 }}
-      className="mx-auto max-w-xl rounded-md border p-8 shadow-lg"
+      className="mx-auto w-full max-w-xl rounded-md border p-8 shadow-lg"
     >
       <h2 className="mb-6 text-start text-2xl font-bold">Elektron müraciəti</h2>
       <Form {...form}>

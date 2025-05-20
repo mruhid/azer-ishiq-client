@@ -73,9 +73,9 @@ export default function MessageBox({
           <button title="Archive">
             <Archive size={20} />
           </button>
-          <button title="Delete">
+          {/* <button title="Delete">
             <Trash2 size={20} />
-          </button>
+          </button> */}
           <button title="Open">
             <Mail size={20} />
           </button>

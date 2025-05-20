@@ -14,7 +14,7 @@ export default async function UserProfileLayout({
   dashboard,
 }: {
   userInfo: UserDataProps;
-  userId: number;
+  userId: number | string;
   isAdmin: boolean;
   dashboard: boolean;
 }) {
@@ -91,7 +91,7 @@ export default async function UserProfileLayout({
         </div>
       )}
 
-      {Number(userId) === Number(loggedInUser?.id) ? (
+      {Number(userId) === Number(loggedInUser?.id) || userId === "me" ? (
         <LogoutBtn />
       ) : (
         <Link href={`mailto:${userInfo.email}`} target="_blank">

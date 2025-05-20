@@ -56,6 +56,12 @@ export default function SidebarMenu() {
                 Mühəndislər
               </Link>
               <Link
+                href="/feedback"
+                className="text-lg font-medium transition hover:text-primary"
+              >
+                Istək və şikayətlər
+              </Link>
+              <Link
                 href={`/user-account/${user.id}`}
                 className="text-lg font-medium transition hover:text-primary"
               >
@@ -98,6 +104,12 @@ export default function SidebarMenu() {
                 className="text-lg font-medium transition hover:text-primary"
               >
                 Mühəndislər
+              </Link>
+              <Link
+                href="/feedback"
+                className="text-lg font-medium transition hover:text-primary"
+              >
+                Istək və şikayətlər
               </Link>
               <Link
                 href="/login"

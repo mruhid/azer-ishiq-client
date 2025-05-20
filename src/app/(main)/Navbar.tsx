@@ -5,8 +5,9 @@ import Link from "next/link";
 import { navVariants, textVariant } from "@/lib/motion";
 import { motion } from "framer-motion";
 import { NavMenu } from "./NavMenu";
-import { MenuIcon } from "lucide-react";
+import { BellIcon, MenuIcon } from "lucide-react";
 import { useSidebar } from "@/components/ui/sidebar";
+import NotificationBell from "./NotificationBell";
 
 export default function Navbar() {
   const { toggleSidebar } = useSidebar();
@@ -17,7 +18,7 @@ export default function Navbar() {
         variants={navVariants}
         initial="hidden"
         whileInView="show"
-        className="sticky top-0 z-10 mr-6  pb-2 w-full bg-secondary border-0 shadow-none"
+        className="sticky top-0 z-10 mr-6 w-full border-0 bg-secondary pb-2 shadow-none"
       >
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-center gap-x-5 px-4 py-1">
           <motion.div
@@ -32,11 +33,11 @@ export default function Navbar() {
               <NavMenu />
             </div>
             <div className="flex items-center justify-center sm:ms-auto">
+              <NotificationBell />
               <SearchField />
               <UserButton className="ml-4 mr-6" />
             </div>
           </motion.div>
-          
         </div>
       </motion.header>
     </>
