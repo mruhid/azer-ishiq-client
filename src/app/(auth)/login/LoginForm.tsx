@@ -63,7 +63,7 @@ export default function LoginForm() {
       } else if (success) {
         toast({
           title: "Welcome back",
-          description: "Good to see you agin on AzerIshiq",
+          description: "Good to see you again on AzerIshiq",
         });
         const url =
           roles?.length === 1 && roles[0].toLowerCase() === "user"

@@ -157,7 +157,7 @@ export function NavMenu() {
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <Link href="/terms-of-use" legacyBehavior passHref>
+          <Link href="/documentation" legacyBehavior passHref>
             <NavigationMenuLink
               className={`${navigationMenuTriggerStyle()} bg-secondary transition-all hover:bg-card`}
             >

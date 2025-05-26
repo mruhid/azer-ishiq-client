@@ -159,7 +159,7 @@ export function FeedBackForm() {
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Ad, soyad</FormLabel>
+                  <FormLabel>Ad</FormLabel>
                   <FormControl>
                     <Input
                       autoComplete="off"

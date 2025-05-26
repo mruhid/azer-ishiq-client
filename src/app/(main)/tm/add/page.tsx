@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { validateRequest } from "@/lib/session";
+import { hasAccessToRoute, validateRequest } from "@/lib/session";
 import AddTMFeed from "./AddTMFeed";
 import UnauthorizedPage from "@/components/UnauthorizedPage";
 export const metadata: Metadata = {
@@ -7,7 +7,11 @@ export const metadata: Metadata = {
 };
 export default async function Page() {
   const { user } = await validateRequest();
-  if (user?.roles[user?.roles.length] == "User") {
+  if (!user) {
+    return <UnauthorizedPage />;
+  }
+  const hasAccsees = await hasAccessToRoute("/tm/add");
+  if (!hasAccsees) {
     return <UnauthorizedPage />;
   }
 

@@ -102,28 +102,28 @@ export const serviceItems = [
     title: "Təklif və şikayətlər",
     description: "Elektron qaydada müraciət etmək üçün klikləyin",
     icon: FileText,
-    src: null,
+    src: "/feedback",
   },
   {
     title: "E-müraciətin statusu",
     description:
-      "Elektron müraciətinizin statusu, mərhələsi haqqında ətraflı məlumat əldə edin",
+      "Elektron müraciətinizin statusu, mərhələsi haqqında ətraflı məlumat üçün profilinizə nəzər yetirin",
     icon: Bell,
-    src: null,
+    src: "/login",
   },
   {
     title: "Elektron işıq portalı",
     description:
       '"Azərişıq" ASC tərəfindən göstərilən xidmətlər üçün keçid edin',
     icon: Lightbulb,
-    src: null,
+    src: "/electricity-portal",
   },
   {
     title: "Qoşulma kalkulyatoru",
     description:
       "Elektrik şəbəkəsinə qoşulma xərclərini təqdim etdiyimiz kalkulyatorla hesablayın",
     icon: Calculator,
-    src: null,
+    src: "/connection-calculator",
   },
   {
     title: "Elektrik şəbəkəsinə qoşulma",

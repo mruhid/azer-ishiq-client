@@ -7,8 +7,6 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
-  SheetFooter,
-  SheetClose,
 } from "@/components/ui/sheet";
 import { useSession } from "./SessionProvider";
 import { logout } from "../(auth)/action";
@@ -62,6 +60,12 @@ export default function SidebarMenu() {
                 Istək və şikayətlər
               </Link>
               <Link
+                href="/about-us/documentation"
+                className="text-lg font-medium transition hover:text-primary"
+              >
+                Istifadə qaydaları
+              </Link>
+              <Link
                 href={`/user-account/${user.id}`}
                 className="text-lg font-medium transition hover:text-primary"
               >
@@ -112,6 +116,12 @@ export default function SidebarMenu() {
                 Istək və şikayətlər
               </Link>
               <Link
+                href="/about-us/documentation"
+                className="text-lg font-medium transition hover:text-primary"
+              >
+                Istifadə qaydaları
+              </Link>
+              <Link
                 href="/login"
                 className="text-lg font-medium transition hover:text-primary"
               >
@@ -126,14 +136,6 @@ export default function SidebarMenu() {
             </div>
           </>
         )}
-
-        <SheetFooter className="mt-10">
-          <SheetClose asChild>
-            <Button variant="outline" className="w-full">
-              Bağla
-            </Button>
-          </SheetClose>
-        </SheetFooter>
       </SheetContent>
     </Sheet>
   );

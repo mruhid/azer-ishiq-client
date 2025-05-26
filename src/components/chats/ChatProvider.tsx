@@ -121,7 +121,7 @@ export default function ChatProvider() {
     connection.on("ReceiveMessage", (message: Message) => {
       const { senderId, text, sentAt } = message;
       const currentSelected = selectedUserRef.current;
-
+      console.log("receive message", message);
       if (senderId === currentSelected?.id) {
         playNotificationSound(false);
 
@@ -153,6 +153,7 @@ export default function ChatProvider() {
 
     connection.on("LoadMessages", (msgs: Message[]) => {
       setMessages(msgs);
+      console.log(msgs);
     });
 
     connection.on("UserOnline", (userId: number) => {
@@ -285,7 +286,7 @@ export default function ChatProvider() {
                 </div>
 
                 {/* User info and unread count */}
-                <div className="flex w-full items-center justify-between rounded-lg py-2 transition hover:bg-muted">
+                <div className="flex w-full items-center justify-between rounded-lg py-2 transition">
                   {/* User Info + Status */}
                   <div className="flex items-center gap-2">
                     <span className="font-medium capitalize text-foreground">
@@ -361,27 +362,29 @@ export default function ChatProvider() {
                     </div>
 
                     {/* Messages in that group */}
-                    {msgs.map((msg, index) => (
-                      <div
-                        key={index}
-                        className={`relative my-2 max-w-[300px] rounded-2xl px-4 py-2 shadow ${
-                          msg.senderId === user?.id
-                            ? "ml-auto rounded-br-none bg-green-700 text-white"
-                            : "mr-auto rounded-bl-none border border-muted-foreground/30 bg-card text-foreground"
-                        }`}
-                      >
-                        {/* Message text */}
-                        <div className="break-words text-sm">{msg.text}</div>
+                    {msgs.map((msg, index) => {
+                      return (
+                        <div
+                          key={index}
+                          className={`relative my-2 max-w-[300px] rounded-2xl px-4 py-2 shadow ${
+                            msg.senderId == user?.id
+                              ? "ml-auto rounded-br-none bg-green-700 text-white"
+                              : "mr-auto rounded-bl-none border border-muted-foreground/30 bg-card text-foreground"
+                          }`}
+                        >
+                          {/* Message text */}
+                          <div className="break-words text-sm">{msg.text}</div>
 
-                        {/* Timestamp */}
-                        <div className="mt-1 flex items-center justify-end gap-1 text-[10px] opacity-70">
-                          {new Date(msg.sentAt).toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
+                          {/* Timestamp */}
+                          <div className="mt-1 flex items-center justify-end gap-1 text-[10px] opacity-70">
+                            {new Date(msg.sentAt).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 ),
               )

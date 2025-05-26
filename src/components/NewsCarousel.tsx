@@ -17,7 +17,7 @@ export default function NewsCarousel() {
   }, []);
 
   return (
-    <div className="w-full max-w-[380px] mx-auto bg-[#e0e4ec] px-4 sm:max-w-7xl md:px-10 lg:px-20">
+    <div className="w-full max-w-[380px] border rounded-lg mx-auto bg-accent px-4 sm:max-w-7xl md:px-10 lg:px-20">
       <Carousel
         className="mx-auto w-full max-w-[400px] md:max-w-[600px] lg:max-w-[1000px]"
         opts={{ align: "start" }}
@@ -41,10 +41,10 @@ export default function NewsCarousel() {
                 >
                   {/* Text Section */}
                   <div className="flex flex-col items-start justify-start gap-y-6 md:w-full lg:w-1/2">
-                    <h2 className="text-2xl font-semibold text-gray-800 md:text-3xl">
+                    <h2 className="text-2xl font-semibold text-foreground md:text-3xl">
                       {item.title}
                     </h2>
-                    <p className="text-md leading-relaxed text-gray-600 md:text-base">
+                    <p className="text-md leading-relaxed text-muted-foreground md:text-base">
                       {item.description.length > 250
                         ? item.description.slice(0, 250) + "..."
                         : item.description}
