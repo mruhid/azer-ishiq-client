@@ -30,11 +30,7 @@ export default function SubscriberFeed() {
             <UserCheck2Icon size={30} className="mr-2 text-primary" />{" "}
             Subscribers
           </Button>
-          <Link href={"/subscriber/add"}>
-            <Button className="h-12 w-full max-w-44 rounded-xl border border-transparent bg-primary capitalize text-white transition-all duration-300 hover:scale-100 hover:border-muted-foreground/70 hover:bg-secondary hover:text-primary">
-              Add subscriber
-            </Button>
-          </Link>
+         
         </div>
       </motion.div>
       <SubscriberDataTable />

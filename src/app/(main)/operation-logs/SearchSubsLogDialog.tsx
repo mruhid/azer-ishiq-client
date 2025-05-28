@@ -58,7 +58,7 @@ export default function SearchSubsDialog() {
       <DialogTrigger asChild>
         <Button className="ml-0 w-full rounded-sm border border-transparent bg-primary text-white transition-all duration-300 hover:border-muted-foreground/70 hover:bg-secondary hover:text-primary sm:ml-4 sm:w-[300px]">
           <SearchCheck className="mr-2 h-4 w-4" />
-          Search log by subscriber's code
+          Search log by subscriber&apos;s code
         </Button>
       </DialogTrigger>
 
@@ -86,7 +86,7 @@ export default function SearchSubsDialog() {
         {subCode && isPending && <SubsLoading />}
         {subCode && isError && (
           <p className="mt-4 text-center font-semibold text-destructive">
-            Invalid subscriber's code,please try correct one
+            Invalid subscriber&apos;s code,please try correct one
           </p>
         )}
 

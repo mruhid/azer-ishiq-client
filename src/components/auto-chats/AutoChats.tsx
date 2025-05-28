@@ -17,7 +17,7 @@ import { useEffect, useRef, useState } from "react";
 import UserAvatar from "../UserAvatar";
 import { bootChatResponse } from "./bootChatResponse";
 import Link from "next/link";
-import { playNotificationSound } from "@/lib/utils";
+import { cn, playNotificationSound } from "@/lib/utils";
 
 export default function AutoChat() {
   const [messages, setMessages] = useState([
@@ -33,7 +33,7 @@ export default function AutoChat() {
   const [options, setOptions] = useState(Object.keys(bootChatResponse));
   const [newMessage, setNewMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
   const handleSeeServices = () => {
     setMessages((prev) => [
       ...prev,
@@ -79,11 +79,18 @@ export default function AutoChat() {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <div className="fixed bottom-28 right-5 z-50 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-primary text-white shadow-lg transition hover:bg-primary/90">
+        <div
+          className={cn(
+            "fixed bottom-6 right-5 z-50 flex cursor-pointer items-center gap-2 rounded-full bg-primary px-4 py-2 text-white shadow-lg transition-all hover:scale-105 hover:bg-primary/90 active:scale-95",
+            isMobile ? "h-12 w-12 justify-center p-0" : "",
+          )}
+          aria-label="Chat"
+        >
           <MessageCircle size={24} />
+          {!isMobile && <span className="font-medium">Auoto chat</span>}
         </div>
       </SheetTrigger>
-      <SheetContent className="flex w-[350px] flex-col bg-secondary ">
+      <SheetContent className="flex w-[350px] flex-col bg-secondary">
         <SheetHeader>
           <SheetTitle className="border-b pb-2">
             <div className="flex w-full items-center gap-3">
@@ -105,7 +112,7 @@ export default function AutoChat() {
               <div
                 className={`max-w-[200px] whitespace-pre-wrap rounded-lg p-2 text-sm ${
                   msg.from === "user"
-                    ? "self-end bg-foreground font-medium text-secondary max-w-[200px] "
+                    ? "max-w-[200px] self-end bg-foreground font-medium text-secondary"
                     : "self-start bg-muted-foreground/10 font-medium text-foreground shadow-sm"
                 }`}
               >

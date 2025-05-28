@@ -1,6 +1,5 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
-import kyInstance from "@/lib/ky";
 import {
   Dispatch,
   SetStateAction,
@@ -56,7 +55,10 @@ export default function CreatingSubsCodeFeed({
       viewport={{ once: false, amount: 0.25 }}
       className="mx-2"
     >
-      <SubscriberStatusBar id={subscriber.id} status={Number(subscriber.status)+1} />
+      <SubscriberStatusBar
+        id={subscriber.id}
+        status={Number(subscriber.status) + 1}
+      />
       {/* <SubscriberStatus id={subscriber.id} /> */}
       <motion.div
         variants={fadeIn("up", "spring", 0.2, 1.5)}
@@ -239,7 +241,7 @@ export function SubscriberFilter({
       apartment: value,
     }));
   };
-  console.log(subsValue.status)
+  console.log(subsValue.status);
 
   async function onApply() {
     const newValues = {
@@ -534,7 +536,7 @@ export function SubscriberFilter({
         <div className="flex w-full flex-col items-start justify-start gap-y-1">
           <LoadingButton
             loading={isPending}
-            disabled={Number(subsValue.status)>1}
+            disabled={Number(subsValue.status) > 1}
             onClick={onApply}
             className="mt-4 w-full rounded-sm border border-transparent bg-primary capitalize text-white transition-all duration-300 hover:scale-100 hover:border-muted-foreground/70 hover:bg-secondary hover:text-primary"
           >

@@ -146,7 +146,7 @@ export default function SubscriberContractFeed({
                     className="mt-4 w-full border border-transparent bg-primary text-white transition-all duration-300 hover:scale-100 hover:border-muted-foreground/70 hover:bg-secondary hover:text-primary"
                     onClick={onSubmit}
                     disabled={
-                      isPending || !isChecked || subscriber.requestStatus == 5
+                      isPending || !isChecked || Number(subscriber.requestStatus) == 5
                     }
                   >
                     Accept & Proceed

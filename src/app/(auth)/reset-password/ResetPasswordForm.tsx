@@ -5,33 +5,25 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { PasswordInput } from "@/components/PasswordInput";
 import { resetPasswordSchema, ResetPasswordValues } from "@/lib/validation";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
+
 import { useToast } from "@/components/ui/use-toast";
 import LoadingButton from "@/components/LoadingButton";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { resetPassword } from "./action";
 
 export default function ResetPasswordForm() {
   const [error, setError] = useState<string>();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const token = searchParams.get("t") || "";
+  const email = searchParams.get("email") || "";
 
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
@@ -45,8 +37,15 @@ export default function ResetPasswordForm() {
 
   async function onSubmit(values: ResetPasswordValues) {
     setError(undefined);
+    const data = {
+      newPassword: values,
+      auth: {
+        token,
+        email,
+      },
+    };
     startTransition(async () => {
-      const { success, error } = await resetPassword(values);
+      const { success, error } = await resetPassword(data);
       if (error) {
         setError(error);
         return;

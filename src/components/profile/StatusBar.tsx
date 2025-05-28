@@ -60,25 +60,27 @@ export default function StatusBar({
               </div>
             </div>
           ))
-        ) : (
+        ) : myStatus && myStatus.length > 0 ? (
           myStatus.map((a, i) => (
             <div
               key={i}
               className="relative flex items-start gap-3 rounded p-3"
             >
-              {/* Circle Number */}
               <div className="text-md absolute -left-4 top-1/2 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full bg-primary text-white shadow-md">
                 {i + 1}
               </div>
 
-              {/* Main Content */}
               <MyStatusLevels dasboard={dashboard} data={a} />
             </div>
           ))
+        ) : (
+          <h1 className="py-3 text-xl font-semibold text-destructive">
+            {dashboard ? "" : "Müraciət tapılmadı"}
+          </h1>
         )
       ) : (
         <h1 className="py-3 text-xl font-semibold text-destructive">
-          {dashboard ? "" : "Application not found"}
+          {dashboard ? "" : "Müraciət tapılmadı"}
         </h1>
       )}
     </div>

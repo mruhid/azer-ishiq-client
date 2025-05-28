@@ -32,7 +32,7 @@ export default async function Layout({
     session.user.roles.length === 1 &&
     session.user.roles[0].toLowerCase() === "user"
   ) {
-    return redirect(`/user-account/${session.user.id}`);
+    return redirect(`/user-account/me`);
   }
   redirect("/");
 }

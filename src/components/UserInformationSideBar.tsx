@@ -79,7 +79,7 @@ const UserInformationSideBar: React.FC = () => {
         right: { duration: 0.5 },
       }}
     >
-      <div className="mx-auto flex h-full w-full max-w-[260px] flex-col items-start justify-center rounded-xl bg-secondary shadow-md">
+      <div className="mx-auto flex h-full w-full max-w-[260px] flex-col items-start gap-y-2 rounded-xl bg-secondary py-4 space-y-2 shadow-md">
         <div className="flex w-full items-start justify-between px-2">
           <TooltipProvider>
             <Tooltip>

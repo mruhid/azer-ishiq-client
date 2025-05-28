@@ -3,7 +3,7 @@ import { Skeleton } from "./ui/skeleton";
 export default function DataTableLoading() {
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between space-x-4 py-4">
+      <div className="hidden items-center justify-between space-x-4 py-4 sm:flex">
         <div className="space-y-4">
           <Skeleton className="m-2 h-10 w-[13rem] rounded-xl bg-muted-foreground" />
         </div>
@@ -39,8 +39,8 @@ export function SubscriberTableLoading() {
       <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:justify-between">
         <Skeleton className="h-10 w-full rounded-xl bg-muted-foreground sm:w-48" />
         <Skeleton className="h-10 w-full rounded-xl bg-muted-foreground sm:w-48" />
-        <Skeleton className="h-10 hidden sm:block w-full rounded-xl bg-muted-foreground sm:w-48" />
-        <Skeleton className="h-10 hidden sm:block w-full rounded-xl bg-muted-foreground sm:w-48" />
+        <Skeleton className="hidden h-10 w-full rounded-xl bg-muted-foreground sm:block sm:w-48" />
+        <Skeleton className="hidden h-10 w-full rounded-xl bg-muted-foreground sm:block sm:w-48" />
       </div>
 
       {/* Table Skeleton */}

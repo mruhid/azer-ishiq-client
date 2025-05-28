@@ -28,9 +28,10 @@ export async function otpVerify(
       };
     }
 
-    const { userName, email, roles, token, refreshToken } = data;
+    const { userName, id, email, roles, token, refreshToken } = data;
 
     const session = await encrypt({
+      id,
       userName,
       email,
       roles,
@@ -41,7 +42,6 @@ export async function otpVerify(
     const cookiesStore = await cookies();
     cookiesStore.set("user", session, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       path: "/",
       maxAge: 60 * 60, // 1 hour

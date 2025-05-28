@@ -59,6 +59,7 @@ function getFormattedDateLabel(dateStr: string): string {
 export default function ChatProvider() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [messageLoading, setMessageLoading] = useState<boolean>(true);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [messageText, setMessageText] = useState("");
@@ -121,7 +122,6 @@ export default function ChatProvider() {
     connection.on("ReceiveMessage", (message: Message) => {
       const { senderId, text, sentAt } = message;
       const currentSelected = selectedUserRef.current;
-      console.log("receive message", message);
       if (senderId === currentSelected?.id) {
         playNotificationSound(false);
 
@@ -153,7 +153,7 @@ export default function ChatProvider() {
 
     connection.on("LoadMessages", (msgs: Message[]) => {
       setMessages(msgs);
-      console.log(msgs);
+      setMessageLoading(false);
     });
 
     connection.on("UserOnline", (userId: number) => {
@@ -255,15 +255,17 @@ export default function ChatProvider() {
       </div>
 
       <div className="scrollbar-custom rounded-b-x hidden h-full w-[350px] overflow-y-auto rounded-l-xl rounded-r-none border border-primary lg:flex">
-        <div className="grid w-full grid-cols-1">
+        <div className="flex w-full flex-col">
           <header className="sticky top-0 flex h-20 items-center gap-4 border-b bg-muted-foreground/40 p-4 backdrop-blur-xl">
-            <h1 className="text-xl font-semibold">Contact people</h1>
+            <div className="flex h-20 w-full items-center justify-center">
+              <h1 className="text-xl font-semibold">Contact People</h1>
+            </div>
           </header>
 
           {/* Loading State */}
           {loading ? (
             <div className="flex h-full w-full items-center justify-center">
-              <Loader2 className="size-15 animate-spin" />
+              <Loader2 className="size-14 animate-spin text-primary" />
             </div>
           ) : false ? (
             <div className="flex h-full w-full items-center justify-center">
@@ -271,7 +273,7 @@ export default function ChatProvider() {
                 An error occurred.
               </h1>
             </div>
-          ) : users && users.length > 0 ? (
+          ) : !loading && users && users.length > 0 ? (
             users.map((item, index) => (
               <div
                 key={index}
@@ -341,7 +343,7 @@ export default function ChatProvider() {
                 ) : (
                   <div className="flex items-center gap-x-1">
                     <p>Ofline</p>
-                    <div className="bg-red -600 h-3 w-3 rounded-full"></div>
+                    <div className="h-3 w-3 rounded-full bg-red-500"></div>
                   </div>
                 )}
               </div>
@@ -352,48 +354,58 @@ export default function ChatProvider() {
           {/* Messages */}
 
           <div className="flex-1 space-y-2 overflow-y-auto border-l border-primary bg-secondary p-4 lg:border-l-0">
-            {messages && messages.length > 0 ? (
-              Object.entries(groupMessagesByDate(messages)).map(
-                ([dateStr, msgs]) => (
-                  <div key={dateStr}>
-                    {/* Date Separator */}
-                    <div className="mx-auto my-4 w-fit rounded-full bg-gray-400 px-4 py-1 text-center text-xs font-semibold text-white shadow">
-                      {getFormattedDateLabel(dateStr)}
-                    </div>
+            {!messageLoading ? (
+              messages && messages.length > 0 ? (
+                Object.entries(groupMessagesByDate(messages)).map(
+                  ([dateStr, msgs]) => (
+                    <div key={dateStr}>
+                      {/* Date Separator */}
+                      <div className="mx-auto my-4 w-fit rounded-full bg-gray-400 px-4 py-1 text-center text-xs font-semibold text-white shadow">
+                        {getFormattedDateLabel(dateStr)}
+                      </div>
 
-                    {/* Messages in that group */}
-                    {msgs.map((msg, index) => {
-                      return (
-                        <div
-                          key={index}
-                          className={`relative my-2 max-w-[300px] rounded-2xl px-4 py-2 shadow ${
-                            msg.senderId == user?.id
-                              ? "ml-auto rounded-br-none bg-green-700 text-white"
-                              : "mr-auto rounded-bl-none border border-muted-foreground/30 bg-card text-foreground"
-                          }`}
-                        >
-                          {/* Message text */}
-                          <div className="break-words text-sm">{msg.text}</div>
+                      {/* Messages in that group */}
+                      {msgs.map((msg, index) => {
+                        return (
+                          <div
+                            key={index}
+                            className={`relative my-2 max-w-[300px] rounded-2xl px-4 py-2 shadow ${
+                              msg.senderId == user?.id
+                                ? "ml-auto rounded-br-none bg-green-700 text-white"
+                                : "mr-auto rounded-bl-none border border-muted-foreground/30 bg-card text-foreground"
+                            }`}
+                          >
+                            {/* Message text */}
+                            <div className="break-words text-sm">
+                              {msg.text}
+                            </div>
 
-                          {/* Timestamp */}
-                          <div className="mt-1 flex items-center justify-end gap-1 text-[10px] opacity-70">
-                            {new Date(msg.sentAt).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
+                            {/* Timestamp */}
+                            <div className="mt-1 flex items-center justify-end gap-1 text-[10px] opacity-70">
+                              {new Date(msg.sentAt).toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </div>
                           </div>
-                        </div>
-                      );
-                    })}
+                        );
+                      })}
+                    </div>
+                  ),
+                )
+              ) : (
+                <div className="mt-2 flex w-full items-center justify-center">
+                  <div className="flex items-center justify-center gap-x-2 rounded-xl bg-muted-foreground/50 px-6 py-3 text-sm text-foreground shadow-md backdrop-blur-2xl">
+                    <MailIcon />{" "}
+                    <p>
+                      No messages with this user yet. Start the conversation!
+                    </p>
                   </div>
-                ),
+                </div>
               )
             ) : (
-              <div className="mt-2 flex w-full items-center justify-center">
-                <div className="flex items-center justify-center gap-x-2 rounded-xl bg-muted-foreground/50 px-6 py-3 text-sm text-foreground shadow-md backdrop-blur-2xl">
-                  <MailIcon />{" "}
-                  <p>No messages with this user yet. Start the conversation!</p>
-                </div>
+              <div className="flex w-full items-center justify-center">
+                <Loader2 className="size-15 animate-spin" />
               </div>
             )}
 

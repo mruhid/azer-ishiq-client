@@ -530,7 +530,6 @@ export default function UsersDataTable() {
             }))
           }
           selectData={[
-            { id: "all", name: "All" },
             { id: "true", name: "Blocked users" },
             { id: "false", name: "Unblocked users" },
           ]}

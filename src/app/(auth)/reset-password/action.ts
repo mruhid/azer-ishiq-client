@@ -1,25 +1,20 @@
 "use server";
-import { cookies } from "next/headers";
 import { resetPasswordSchema, ResetPasswordValues } from "@/lib/validation";
-import { decryptForReset } from "@/lib/session";
 
+type ResetPaswordProps = {
+  newPassword: ResetPasswordValues;
+  auth: {
+    token: string;
+    email: string;
+  };
+};
 export async function resetPassword(
-  credentials: ResetPasswordValues,
+  credentials: ResetPaswordProps,
 ): Promise<{ success?: boolean; error?: string }> {
   try {
-    const { password } = resetPasswordSchema.parse(credentials);
+    const { password } = resetPasswordSchema.parse(credentials.newPassword);
 
-    const cookieStore = await cookies();
-    const resetCookie = cookieStore.get("reset")?.value;
-    if (!resetCookie) {
-      return { error: "Something went wrong reset operation.Try letter" };
-    }
-    const decryptSession = await decryptForReset(resetCookie);
-    if (!decryptSession) {
-      return { error: "Something went wrong reset operation.Try letter" };
-    }
-
-    const { t: Token, email: Email } = decryptSession;
+    const { token: Token, email: Email } = credentials.auth;
     if (!Email || !Token) {
       return {
         error: "Invalid reset link. Please try again.",
@@ -50,7 +45,6 @@ export async function resetPassword(
       };
     }
 
-    cookieStore.delete("reset");
     return { success: true };
   } catch (error: any) {
     console.error("Reset error:", error || error.message);

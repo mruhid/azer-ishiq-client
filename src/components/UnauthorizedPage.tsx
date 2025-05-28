@@ -19,7 +19,7 @@ export default function UnauthorizedPage() {
         <Monitor size={60} className="text-muted-foreground" />
       </motion.div>
       <div className="flex flex-col items-center justify-center p-2 text-primary shadow-sm">
-        <h1 className="text-2xl font-bold">YOU DON'T HAVE PERMITION</h1>
+        <h1 className="text-2xl font-bold">YOU DON&apos;T HAVE PERMITION</h1>
         <h2 className="mb-2 text-xl font-bold">TO VIEW THIS PAGE</h2>
         <div className="mx-auto mb-4 h-1 w-full bg-card" />
         <Link

@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import kyInstance from "@/lib/ky";
 import { useQuery } from "@tanstack/react-query";
 import { DistrictsResponse, RegionsResponse } from "../../RegionFilter";
 import MapSearchedPlaceInput from "@/components/MapSearchedPlaceInput";

@@ -149,7 +149,7 @@ export default function OperationLogsDataTable() {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/log/filtered?page=${pageNumber}&pageSize=8${
     filterData.action
       ? `${filterData.userName ? `&userNameSearch=${filterData.userName}` : ""}` +
-        `${filterData.entryName ? `&entryName=${filterData.entryName}` : ""}` +
+        `${filterData.entryName ? `&entityType=${filterData.entryName}` : ""}` +
         `${filterData.userRole ? `&userRole=${filterData.userRole}` : ""}` +
         `${filterData.from ? `&from=${filterData.from}` : ""}` +
         `${filterData.to ? `&to=${filterData.to}` : ""}`

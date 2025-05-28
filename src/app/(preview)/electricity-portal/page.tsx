@@ -14,9 +14,9 @@ export default function Page() {
         </div>
 
         <p className="mb-4 text-lg text-muted-foreground">
-          UGAT — Elektron işıq portalıdır və "Azərişıq" ASC tərəfindən təqdim
-          olunur. Bu portal vətəndaşlara elektrik enerjisi ilə bağlı xidmətlərə
-          rahat şəkildə çıxış imkanı yaradır.
+          UGAT — Elektron işıq portalıdır və &quot;Azərişıq&quot; ASC tərəfindən
+          təqdim olunur. Bu portal vətəndaşlara elektrik enerjisi ilə bağlı
+          xidmətlərə rahat şəkildə çıxış imkanı yaradır.
         </p>
 
         <h2 className="mb-2 mt-6 text-xl font-semibold">Portalın imkanları:</h2>

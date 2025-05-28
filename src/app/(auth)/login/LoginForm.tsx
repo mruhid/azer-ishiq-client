@@ -58,7 +58,6 @@ export default function LoginForm() {
         }
         toast({
           title: error,
-          variant: "destructive",
         });
       } else if (success) {
         toast({
@@ -67,7 +66,7 @@ export default function LoginForm() {
         });
         const url =
           roles?.length === 1 && roles[0].toLowerCase() === "user"
-            ? `/user-account/${id}`
+            ? `/user-account/me`
             : `/`;
         router.push(url);
       }
@@ -231,7 +230,7 @@ export function ForgotPasswordDialog({ email }: { email: string }) {
         toast({
           title: "Unsuccessful operation",
           description: result.error,
-          className: "bg-destructive",
+          variant: "destructive",
         });
       } else {
         toast({

@@ -7,8 +7,8 @@ type Lang = "en" | "az";
 
 export default function TermsOfUse({ lang = "en" }: { lang?: Lang }) {
   const repo = {
-    client: "sss",
-    server: "",
+    client: "https://github.com/mruhid/azer-ishiq-client.git",
+    server: "https://github.com/fryzcode/AzerIsiq",
   };
 
   const translations = {

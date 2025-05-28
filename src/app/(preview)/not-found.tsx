@@ -36,7 +36,7 @@ export default function NotFound() {
           PAGE NOT FOUND
         </h2>
         <p className="mt-4 text-muted-foreground">
-          The page you're looking for doesn't exist on Azerishiq.
+          The page you&apos;re looking for doesn&apos;t exist on Azerishiq.
         </p>
         <Link
           href="/service"

@@ -38,7 +38,7 @@ export default function Navbar() {
             </Link>
           </div>
 
-          <nav className="hidden flex-wrap items-center gap-6 lg:flex">
+          <nav className="hidden flex-wrap items-center gap-6 xl:flex">
             {[
               { href: "/service", label: "Xidmətlər" },
               { href: "/about-us", label: "Haqqımızda" },

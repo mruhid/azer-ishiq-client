@@ -48,7 +48,6 @@ export async function login(credentials: LoginValues): Promise<{
     const cookiesStore = await cookies();
     cookiesStore.set("user", session, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       path: "/",
       maxAge: 60 * 60, // 1 hour

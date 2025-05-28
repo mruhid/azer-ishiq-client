@@ -23,7 +23,7 @@ export default function Navbar() {
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-center gap-x-5 px-4 py-1">
           <motion.div
             variants={textVariant(1.1)}
-            className="mt-2 flex w-full items-center justify-between gap-x-4 py-2 pl-2 pr-12 lg:pr-0"
+            className="mt-2 flex w-full items-center justify-between gap-x-4 px-2 py-2"
           >
             <MenuIcon size={35} onClick={toggleSidebar} />
             <Link href="/" className="text-2xl font-bold text-primary">
@@ -35,7 +35,7 @@ export default function Navbar() {
             <div className="flex items-center justify-center sm:ms-auto">
               <NotificationBell />
               <SearchField />
-              <UserButton className="ml-4 mr-6" />
+              <UserButton className="ml-0 mr-0 sm:ml-4 md:mr-6" />
             </div>
           </motion.div>
         </div>
