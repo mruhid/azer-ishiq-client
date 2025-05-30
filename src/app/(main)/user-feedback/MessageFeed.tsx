@@ -8,6 +8,7 @@ import MessageBox from "@/components/MessageBox";
 import { useState } from "react";
 import { PaginationBox } from "@/components/PaginationBox";
 import { AlertCircle, Loader2 } from "lucide-react";
+import UnauthorizedPage from "@/components/UnauthorizedPage";
 
 export default function MessageFeed({ type }: { type: string }) {
   const { session } = useSession();
@@ -25,6 +26,7 @@ export default function MessageFeed({ type }: { type: string }) {
       type !== "default" ? type == "read" : "all",
     ],
     queryFn: fetchQueryFN<FeedBackProps>(url, session),
+    retry: 1,
     staleTime: Infinity,
   });
 
@@ -36,9 +38,7 @@ export default function MessageFeed({ type }: { type: string }) {
     );
   }
   if (isError) {
-    return (
-      <h1 className="mx-auto w-full text-2xl text-destructive">Server error</h1>
-    );
+    return <UnauthorizedPage />;
   }
   return (
     <div className="h-screen w-full">

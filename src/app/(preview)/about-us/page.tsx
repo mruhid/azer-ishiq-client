@@ -5,5 +5,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <AboutLayout />;
+  return <AboutLayout lang="az" />;
 }

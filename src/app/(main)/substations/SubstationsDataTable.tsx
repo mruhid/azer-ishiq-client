@@ -27,6 +27,7 @@ import { useSearchParams } from "next/navigation";
 import { SubstationTableMapDialog } from "./[id]/SubstationDialogs";
 import { fetchQueryFN } from "../fetchQueryFN";
 import DataTableLayout from "@/components/DataTableLayout";
+import UnauthorizedPage from "@/components/UnauthorizedPage";
 
 export default function SubstationDataTable() {
   return (
@@ -99,7 +100,6 @@ export function DefaultTable() {
                   See this Substation
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>View img</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         );
@@ -127,7 +127,9 @@ export function DefaultTable() {
   } = useQuery<SubstationDataTableProps>({
     queryKey: ["substations-table-feed", pageNumber, region, district],
     queryFn: fetchQueryFN<SubstationDataTableProps>(url, session),
-    staleTime: Infinity,
+    staleTime: 5000,
+    refetchInterval: 5000,
+    refetchOnWindowFocus: false,
   });
 
   const table = useReactTable({
@@ -141,11 +143,7 @@ export function DefaultTable() {
     },
   });
   if (isError) {
-    return (
-      <h1 className="px-2 py-4 text-center text-2xl font-semibold text-destructive">
-        {(error as Error).message}
-      </h1>
-    );
+    return <UnauthorizedPage />;
   }
 
   if (isPending) {

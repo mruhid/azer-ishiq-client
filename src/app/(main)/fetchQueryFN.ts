@@ -21,7 +21,7 @@ export const fetchData = async <T>({
       if (data?.Message === "Your account is blocked.") {
         logout();
       }
-      throw new Error(data?.Message || "Failed to fetch data");
+      throw new Error("Something went wrong,please try latter!");
     }
 
     return data as T;

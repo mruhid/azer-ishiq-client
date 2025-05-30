@@ -208,7 +208,7 @@ export default function SignUpForm() {
             <LoadingButton
               loading={isPending}
               type="submit"
-              className="w-full rounded-full bg-primary py-6 transition-all hover:bg-primary/70"
+              className="w-full rounded-full border border-transparent bg-foreground/90 py-6 text-secondary transition-all duration-300 hover:border-foreground hover:bg-secondary hover:text-primary"
             >
               Create account
             </LoadingButton>
@@ -218,23 +218,23 @@ export default function SignUpForm() {
           <AnimatePresence>
             {isPending && (
               <motion.div
-                className="fixed inset-0 flex h-screen items-center justify-center backdrop-blur-sm"
+                className="fixed inset-0 hidden items-center justify-center backdrop-blur-sm md:flex"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
               >
                 <motion.div
-                  className="flex flex-col items-center rounded-lg bg-muted-foreground/60"
+                  className="flex h-full items-center justify-center rounded-full"
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.8, opacity: 0 }}
                 >
                   <Image
                     src={LImgae}
-                    className="rounded-2xl"
+                    className="rounded-full"
                     alt="Loading"
-                    width={400}
-                    height={400}
+                    width={300}
+                    height={300}
                   />
                 </motion.div>
               </motion.div>

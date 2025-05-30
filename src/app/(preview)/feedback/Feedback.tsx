@@ -133,6 +133,10 @@ export function FeedBackForm() {
       const { success, error } = await ApplyFeedback(newValues);
       if (error) {
         setError(error);
+        toast({
+          title: "Sorğunuz qeydə alınmadıdı.",
+          variant: "destructive",
+        });
       } else if (true) {
         toast({
           title: "Sorğunuz qeydə alındı.",

@@ -36,7 +36,7 @@ export default function MediumScreenContactList({
         <SheetHeader>
           <SheetTitle className="w-full py-2 text-center">Contact</SheetTitle>
         </SheetHeader>
-        <div className="scrollbar-custom grid h-[450px] w-[270px] grid-cols-1 overflow-y-auto">
+        <div className="scrollbar-custom flex h-[450px] w-[270px] grid-cols-1 flex-col overflow-y-auto">
           {/* Loading State */}
           {loading ? (
             <div className="flex h-full w-full items-center justify-center">

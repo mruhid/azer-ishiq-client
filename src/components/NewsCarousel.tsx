@@ -7,14 +7,15 @@ import { useLayoutEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function NewsCarousel() {
+  const items = exploreWorlds[1]; // Azerbaijani data
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useLayoutEffect(() => {
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % exploreWorlds.length);
-    }, 15000);
+      setCurrentIndex((prev) => (prev + 1) % items.length);
+    }, 3000);
     return () => clearInterval(interval);
-  }, []);
+  }, [items.length]);
 
   return (
     <div className="w-full max-w-[380px] border rounded-lg mx-auto bg-accent px-4 sm:max-w-7xl md:px-10 lg:px-20">
@@ -28,7 +29,7 @@ export default function NewsCarousel() {
             transition: "transform 0.8s ease-in-out",
           }}
         >
-          {exploreWorlds[1].map((item, index) => (
+          {items.map((item, index) => (
             <CarouselItem key={index} className="mx-auto w-full">
               <AnimatePresence mode="wait">
                 <motion.div

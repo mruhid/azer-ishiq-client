@@ -100,7 +100,7 @@ export default function AddSubscriberForm() {
           title: "Successful Operation",
           description: "New substation has been added",
         });
-        router.push(`/user-account/${user?.id}`);
+        router.push(`/user-account/me`);
       }
     });
   }

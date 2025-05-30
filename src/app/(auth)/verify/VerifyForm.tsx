@@ -133,7 +133,7 @@ export default function VerifyForm() {
             <LoadingButton
               loading={isPending}
               type="submit"
-              className="w-full rounded-xl border border-primary bg-primary py-6 text-background transition-all hover:border-foreground/70 hover:bg-secondary hover:text-foreground"
+              className="w-full rounded-full border border-transparent bg-foreground/90 py-6 text-secondary transition-all duration-300 hover:border-foreground hover:bg-secondary hover:text-primary"
             >
               Verify{" "}
             </LoadingButton>

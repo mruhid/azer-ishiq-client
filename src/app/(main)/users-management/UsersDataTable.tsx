@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/tooltip";
 import UserAvatar from "@/components/UserAvatar";
 import Link from "next/link";
+import UnauthorizedPage from "@/components/UnauthorizedPage";
 
 type FilterType = {
   user: string;
@@ -388,17 +389,14 @@ export default function UsersDataTable() {
         : []),
     ],
     queryFn: fetchQueryFN<UserManagementProps>(url, session),
+    retry: 1,
     staleTime: 5000,
     refetchInterval: 5000,
     refetchOnWindowFocus: false,
   });
 
   if (isError) {
-    return (
-      <h1 className="px-2 py-4 text-center text-2xl font-semibold text-destructive">
-        {(error as Error).message}
-      </h1>
-    );
+    return <UnauthorizedPage />;
   }
   if (isPending) {
     return <SubscriberTableLoading />;

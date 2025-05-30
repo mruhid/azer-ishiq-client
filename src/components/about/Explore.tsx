@@ -7,8 +7,9 @@ import styles from "@/lib/styles";
 import { motion } from "framer-motion";
 import { useState } from "react";
 
-const Explore = () => {
+const Explore = ({ lang }: { lang?: string }) => {
   const [active, setActive] = useState("world-1");
+  const isAzerbaijani = lang === "az";
 
   return (
     <section className={`${styles.paddings}`} id="explore">
@@ -19,24 +20,36 @@ const Explore = () => {
         viewport={{ once: false, amount: 0.25 }}
         className={`${styles.innerWidth} mx-auto flex flex-col`}
       >
-        <TypingText title={"| Power Station"} textStyle="text-center" />
+        <TypingText
+          title={isAzerbaijani ? "| Elektrik Stansiyası" : "| Power Station"}
+          textStyle="text-center"
+        />
         <TitleText
           title={
-            <>
-              See our other branch you want <br className="hidden md:block" />{" "}
-              to get information{" "}
-            </>
+            isAzerbaijani ? (
+              <>
+                Məlumat almaq istədiyiniz digər{" "}
+                <br className="hidden md:block" /> filiallarımıza baxın
+              </>
+            ) : (
+              <>
+                See our other branch you want <br className="hidden md:block" />{" "}
+                to get information
+              </>
+            )
           }
           textStyle={"text-center"}
         />
         <div className="mt-[50px] flex min-h-[70vh] flex-col gap-5 lg:flex-row">
-          {exploreWorlds[0].map((world, index) => (
+          {exploreWorlds[isAzerbaijani ? 1 : 0].map((world, index) => (
             <ExploreCard
               key={world.id}
               {...world}
               index={index}
-              title={world.title}
-              description={world.description}
+              title={isAzerbaijani ? world.title : world.title}
+              description={
+                isAzerbaijani ? world.description : world.description
+              }
               imgUrl={world.imgUrl}
               active={active}
               handleClick={setActive}

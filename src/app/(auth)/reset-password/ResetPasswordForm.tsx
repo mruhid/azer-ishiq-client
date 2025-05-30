@@ -51,8 +51,8 @@ export default function ResetPasswordForm() {
         return;
       }
       toast({
-        title: "Try you new password",
-        description: "Check your password on login pagw",
+        title: "Your password is changed",
+        description: "Check your password on login form",
       });
       router.push("/login");
     });
@@ -100,7 +100,7 @@ export default function ResetPasswordForm() {
         <LoadingButton
           loading={isPending}
           type="submit"
-          className="w-full rounded-full bg-primary py-6 transition-all hover:bg-primary/70"
+          className="w-full rounded-full border border-transparent bg-foreground/90 py-6 text-secondary transition-all duration-300 hover:border-foreground hover:bg-secondary hover:text-primary"
         >
           Reset
         </LoadingButton>

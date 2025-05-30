@@ -26,6 +26,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import DataTableLayout from "@/components/DataTableLayout";
 import { fetchQueryFN } from "./fetchQueryFN";
+import UnauthorizedPage from "@/components/UnauthorizedPage";
 
 export default function DataTable() {
   return (
@@ -37,7 +38,7 @@ export default function DataTable() {
 
 export function DefaultTable() {
   const [pageNumber, setPageNumber] = React.useState<number>(1);
-  
+
   const columns: ColumnDef<Tmitem>[] = [
     {
       id: "ID",
@@ -73,8 +74,6 @@ export function DefaultTable() {
                   See this TM
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>View img</DropdownMenuItem>
-              <DropdownMenuItem>View payment location</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         );
@@ -101,7 +100,10 @@ export function DefaultTable() {
   } = useQuery<TmRableProps>({
     queryKey: ["Tms-table-feed", pageNumber, region, district, substation],
     queryFn: fetchQueryFN<TmRableProps>(url, session),
-    staleTime: Infinity,
+    retry: 1,
+    staleTime: 5000,
+    refetchInterval: 5000,
+    refetchOnWindowFocus: false,
   });
   const table = useReactTable({
     data: tmData?.items ?? [],
@@ -115,11 +117,7 @@ export function DefaultTable() {
   });
 
   if (isError) {
-    return (
-      <h1 className="text-center text-xl font-bold text-destructive">
-        Something went wrong .Try latter
-      </h1>
-    );
+    return <UnauthorizedPage />;
   }
   if (isPending) {
     return <DataTableLoading />;

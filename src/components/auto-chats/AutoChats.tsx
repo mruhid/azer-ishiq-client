@@ -81,13 +81,13 @@ export default function AutoChat() {
       <SheetTrigger asChild>
         <div
           className={cn(
-            "fixed bottom-6 right-5 z-50 flex cursor-pointer items-center gap-2 rounded-full bg-primary px-4 py-2 text-white shadow-lg transition-all hover:scale-105 hover:bg-primary/90 active:scale-95",
+            "fixed bottom-6 right-5 z-50 flex cursor-pointer  items-center gap-2 rounded-full bg-primary px-4 py-2 text-white shadow-lg transition-all hover:scale-105 hover:bg-primary/90 active:scale-95",
             isMobile ? "h-12 w-12 justify-center p-0" : "",
           )}
           aria-label="Chat"
         >
           <MessageCircle size={24} />
-          {!isMobile && <span className="font-medium">Auoto chat</span>}
+          {!isMobile && <span className="font-medium">Auto chat</span>}
         </div>
       </SheetTrigger>
       <SheetContent className="flex w-[350px] flex-col bg-secondary">

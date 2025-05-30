@@ -54,6 +54,7 @@ import {
 import { useSidebar } from "@/components/ui/sidebar";
 import { motion } from "framer-motion";
 import { fetchQueryFN } from "../fetchQueryFN";
+import UnauthorizedPage from "@/components/UnauthorizedPage";
 
 export type subscriberFilderDataType = {
   regionId: null | number;
@@ -143,7 +144,7 @@ export default function SubscriberDataTable() {
         })),
       };
     },
-
+    retry: 1, // only retry once on error
     staleTime: 5000,
     refetchInterval: 5000,
     refetchOnWindowFocus: false,
@@ -311,11 +312,7 @@ export default function SubscriberDataTable() {
     },
   });
   if (isError) {
-    return (
-      <h1 className="px-2 py-4 text-center text-2xl font-semibold text-destructive">
-        {(error as Error).message}
-      </h1>
-    );
+    return <UnauthorizedPage />;
   }
 
   return (

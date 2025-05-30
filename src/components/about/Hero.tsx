@@ -2,7 +2,10 @@
 import { slideIn, staggerContainer, textVariant } from "@/lib/motion";
 import styles from "@/lib/styles";
 import { motion } from "framer-motion";
-const Hero = () => {
+
+const Hero = ({ lang }: { lang?: string }) => {
+  const isAz = lang === "az";
+
   return (
     <section className={`${styles.yPaddings} sm:pl-16`}>
       <motion.div
@@ -12,24 +15,21 @@ const Hero = () => {
         viewport={{ once: false, amount: 0.25 }}
         className={`${styles.innerWidth} mx-auto flex flex-col`}
       >
-        <div
-          className={`relative z-0 flex flex-col items-center justify-center`}
-        >
+        <div className="relative z-0 flex flex-col items-center justify-center">
           <motion.h1
             variants={textVariant(1.1)}
             className={`${styles.heroHeading}`}
           >
-            Azerishiq
+            {isAz ? "Azərişıq" : "Azerishiq"}
           </motion.h1>
           <motion.div
             variants={textVariant(1.2)}
             className="mb-[60px] flex flex-row items-center justify-center"
           >
             <h1 className={`${styles.heroHeading}`}>ASC</h1>
-            {/* <div className={`${styles.heroDText}`} />
-            <h1 className={`${styles.heroHeading}`}>Ness</h1> */}
           </motion.div>
         </div>
+
         <motion.div
           variants={slideIn("right", "tween", 0.2, 1)}
           className="relative -mt-[12px] w-full md:-mt-[20px]"
@@ -41,7 +41,7 @@ const Hero = () => {
             className="relative z-0 h-[300px] w-full rounded-tl-[140px] object-cover sm:h-[500px]"
           />
           <a href="#explore">
-            <div className="relative z-0 -mt-[50px] flex w-full justify-end  pr-[40px] sm:-mt-[70px]">
+            <div className="relative z-0 -mt-[50px] flex w-full justify-end pr-[40px] sm:-mt-[70px]">
               <img
                 src="/assets/stock.png"
                 alt="stamp"

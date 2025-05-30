@@ -42,6 +42,7 @@ import { format, formatDate } from "date-fns";
 
 import { fetchQueryFN } from "../fetchQueryFN";
 import { SelectLayout } from "@/components/FilterElementLayout";
+import UnauthorizedPage from "@/components/UnauthorizedPage";
 
 type FilterType = {
   user: string;
@@ -175,7 +176,7 @@ export default function OperationLogsDataTable() {
         : []),
     ],
     queryFn: fetchQueryFN<OperationLogsProps>(url, session),
-
+    retry: 1,
     staleTime: Infinity,
   });
 
@@ -223,11 +224,7 @@ export default function OperationLogsDataTable() {
     },
   });
   if (isError) {
-    return (
-      <h1 className="px-2 py-4 text-center text-2xl font-semibold text-destructive">
-        {(error as Error).message}
-      </h1>
-    );
+    return <UnauthorizedPage />;
   }
   if (isPending) {
     return <SubscriberTableLoading />;
